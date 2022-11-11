@@ -8,7 +8,7 @@ entity wich_Player is
      Port ( clk :           in std_logic;
             reset :         in std_logic;
             change_player:  in std_logic;
-            leds :          out std_logic_vector(7 downto 0);
+            leds :          out std_logic_vector(7 downto 0)
             );
 end wich_Player;
 
@@ -18,7 +18,7 @@ architecture Behavioral of wich_Player is
 
 begin
 
--- Selección del jugador -> encender led 0 - 1
+-- Seleccion del jugador -> encender led 0 - 1
 
 process(clk, reset)
     begin
@@ -27,11 +27,15 @@ process(clk, reset)
         elsif (clk'event and clk = '1') then
             if (change_player = '1') then       
                 player <= not player;
+            end if;
         end if;    
-end process;      
-    
+end process;
+
+--Biestable
+
 with player select
-    leds <= "0000001" when '0',
-            "0000011" when '1',
-            "-------" when others;
+    leds <= "00000001" when '0',
+            "00000011" when '1',
+            "--------" when others;
+            
 end Behavioral;
