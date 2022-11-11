@@ -1,2 +1,0 @@
--- Esto es un comentario en VHDL
--- Otro comentario
