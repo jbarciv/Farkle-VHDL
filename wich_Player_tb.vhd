@@ -42,7 +42,7 @@ begin
         wait for 100 ns;	
 		reset_tb <= '0';
 		change_player_tb <= '1';
-        wait for 100 ns;
+        wait for clk_period;
         change_player_tb <= '0';
    end process;
 
