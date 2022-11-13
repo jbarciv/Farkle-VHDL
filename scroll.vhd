@@ -16,11 +16,11 @@ end scroll;
 architecture Behavioral of scroll is
 
 -- Señales divisor de freq
-    constant maxcount : integer := 125000;
+    constant maxcount : integer := 125000;   -- cambiar a 125000000 para probar en la placa física
     signal count      : integer range 0 to maxcount-1;
     signal enable_1s : std_logic;
 -- Señales frecuencia de segmentos (4HZ)
-    constant maxcount4 : integer := 31;--250
+    constant maxcount4 : integer := 31;      --250
     signal count4 : integer range 0 to maxcount4-1;
     signal enable_4KHz : std_logic;
 -- Señales dados
