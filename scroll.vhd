@@ -8,6 +8,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity scroll is
      Port ( clk : in std_logic;
             reset : in std_logic;
+            dados : in std_logic_vector(17 downto 0);
             segmentos : out std_logic_vector(6 downto 0);
             selector : out std_logic_vector(3 downto 0)
             );
@@ -24,8 +25,8 @@ architecture Behavioral of scroll is
     signal count4 : integer range 0 to maxcount4-1;
     signal enable_4KHz : std_logic;
 -- Señales dados
-    signal dado1,dado2,dado3,dado4,dado5,dado6 : std_logic_vector(2 downto 0); 
-    signal dados : std_logic_vector(20 downto 0) := "001010011100101110000";
+    --signal dado1,dado2,dado3,dado4,dado5,dado6 : std_logic_vector(2 downto 0); 
+    signal dados_aux : std_logic_vector(20 downto 0) := dados & "000";
     signal conta: unsigned(1 downto 0);
     signal BCD : std_logic_vector(2 downto 0);
     signal scroll_d : std_logic_vector(20 downto 0);
@@ -109,11 +110,11 @@ selector <= "0001" when "00",
     process(clk,reset)
     begin
         if (reset = '1') then
-            scroll_d <= dados;--Vector Manu
+            scroll_d <= dados_aux;--Vector Manu
         elsif(clk'event and clk = '1') then
             if(enable_1s = '1') then
-                scroll_d(20 downto 0) <= dados(17 downto 0) & scroll_d(20 downto 18);
-                dados(20 downto 0) <= dados(17 downto 0) & dados(20 downto 18);
+                scroll_d(20 downto 0) <= dados_aux(17 downto 0) & scroll_d(20 downto 18);
+                dados_aux(20 downto 0) <= dados_aux(17 downto 0) & dados_aux(20 downto 18);
             end if;
         end if;            
     end process;  
