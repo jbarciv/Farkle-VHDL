@@ -39,11 +39,12 @@ begin
       -- hold reset state for 100 ns.
 		reset_tb <= '1';
 		change_player_tb <= '0';
-        wait for 100 ns;	
+        wait for 10 ns;	
 		reset_tb <= '0';
 		change_player_tb <= '1';
         wait for clk_period;
         change_player_tb <= '0';
+        wait for 10 ns;
    end process;
 
 -- Instanciar componente rider
