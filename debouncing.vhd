@@ -39,7 +39,6 @@ begin
     
     flanco <= (Q2 and (not Q3));
     
-    
     -- TIMER FOR "FILTERING" BOUNCES
     process (clk, reset)
     begin 
