@@ -48,7 +48,9 @@ begin
                 when "000000" =>
                     dado_i<=(others=>'0');
             end case;
-        end if;
+        else 
+          dado_i<=(others=>'0');
+      end if;
     end if;  
 end process;
 dado_sel<=dado_i;
