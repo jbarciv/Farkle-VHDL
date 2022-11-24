@@ -39,7 +39,7 @@ begin
                     dado_i(8 downto 6)<=dado(8 downto 6);
                 when "--1---" =>
                     --dado_i(3) <= to_integer(unsigned(dado(11 downto 9)));
-                    dado_i(11 downto 6)<=dado(11 downto 9);
+                    dado_i(11 downto 9)<=dado(11 downto 9);
                 when "-1----" =>
                     --dado_i(4) <= to_integer(unsigned(dado(14 downto 12)));
                     dado_i(14 downto 12)<=dado(14 downto 12);
