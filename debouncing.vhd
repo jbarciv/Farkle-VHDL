@@ -68,30 +68,20 @@ begin
 				when S_NADA =>
 					if 	( flanco = '1') then
 						STATE <= S_BOTON;
-						enable <= '0';
-						filtrado <= '0';
 					elsif ( flanco = '0' ) then
 						STATE <= S_NADA;
-						enable <= '0';
-						filtrado <= '0' ;
 					end if;
 					
 				when S_BOTON =>
 				    if 	( T = '1') then
 						STATE <= S_NADA;
-						enable <= '1';
-						if ( Q2 = '1') then
-						  filtrado <= '1';
-						else 
-						  filtrado <= '0';
-						end if;
-					elsif ( T = '0' ) then
+					else 
 						STATE <= S_BOTON;
-						enable <= '1';
-						filtrado <= '0';
 					end if;
 			end case;
 		end if;
     end process;
     
+	filtrado <= '1' when (STATE = S_BOTON and Q2 = '1' and T = '1') else '0';
+	enable <= '1' when STATE = S_BOTON else '0';
 end Behavioral;
