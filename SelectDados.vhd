@@ -14,7 +14,8 @@ end SelectDados;
 
 architecture Behavioral of SelectDados is
 
-signal dado_i : std_logic_vector(17 downto 0);
+signal dado_i   : std_logic_vector(17 downto 0);
+signal dado_sel : std_logic_vector(17 downto 0);
 
 begin
     -- process(clk, reset, sw, dado) -- ¿esta bien esta lista de sensibilidad?
