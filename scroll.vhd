@@ -1,9 +1,6 @@
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
-
 
 entity scroll is
      Port ( clk : in std_logic;
@@ -51,10 +48,9 @@ process(clk,reset)
     
     enable_4KHz <= '1' when(count4 = maxcount4-1) else '0'; 
 
-
 -- Tiempo de scroll (Divisor de freq de segundos)
 
-process(clk,reset)
+process(clk, reset)
     begin
         if (reset = '1') then
             count <= 0;
@@ -85,7 +81,6 @@ begin
    end if;
 end process;
 
-
 -- Decodificador Segmentos
 
 with BCD select
@@ -108,7 +103,7 @@ selector <= "0001" when "00",
             "----" when others;
 
 -- Desplazamiento
-    process(clk,reset)
+    process(clk, reset)
     begin
         if (reset = '1') then
             scroll_d <= dados_aux;--Vector Manu

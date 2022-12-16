@@ -29,7 +29,7 @@ signal clk_tb,reset_tb,enable : std_logic;
 signal segmentos_tb : std_logic_vector(6 downto 0);
 signal selector_tb : std_logic_vector(3 downto 0);
 
-constant clk_period : time := 8ns;
+constant clk_period : time := 8 ns;
 
 begin
 -- Generacion del reloj
@@ -61,7 +61,5 @@ begin
         reset => reset_tb,
         segmentos => segmentos_tb,
         selector => selector_tb);
-
-
 
 end Behavioral;
