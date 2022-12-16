@@ -1,3 +1,4 @@
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -13,7 +14,8 @@ use IEEE.NUMERIC_STD.ALL;
 entity top_LFSR is
   Port (clk: in std_logic;
         reset: in std_logic;
-        dados_out: out std_logic_vector(17 downto 0)
+        tirar: in std_logic;
+        dados: out std_logic_vector(17 downto 0)
          );
 end top_LFSR;
 
@@ -22,7 +24,7 @@ architecture Behavioral of top_LFSR is
 component LFSR16 is
     port (clk: in std_logic;
           reset: in std_logic;
-          data_out: std_logic_vector(15 downto 0);
+          data_out:out std_logic_vector(15 downto 0);
           semilla: in std_logic_vector(15 downto 0)
           );
 end component;
@@ -54,6 +56,9 @@ signal rand3: integer range 0 to 6;
 signal rand4: integer range 0 to 6;
 signal rand5: integer range 0 to 6;
 signal rand6: integer range 0 to 6;
+
+signal dados_out: std_logic_vector(17 downto 0);
+
 begin
 
 LFSR16_1: LFSR16 port map(
@@ -73,14 +78,14 @@ semilla=>semilla2
 LFSR16_3: LFSR16 port map(
 clk=>clk,
 reset=>reset,
-data_out=>data_LFSR2,
+data_out=>data_LFSR3,
 semilla=>semilla3
 );
 
 LFSR16_4: LFSR16 port map(
 clk=>clk,
 reset=>reset,
-data_out=>data_LFSR3,
+data_out=>data_LFSR4,
 semilla=>semilla4
 );
 
@@ -143,7 +148,7 @@ with rand3 select
                          "110" when 6,
                          "000" when others; 
 with rand4 select
-    dados_out(11 downto 7) <= "001" when 1,
+    dados_out(11 downto 9) <= "001" when 1,
                          "010" when 2,
                          "011" when 3,
                          "100" when 4,
@@ -166,5 +171,7 @@ with rand6 select
                          "101" when 5,
                          "110" when 6,
                          "000" when others; 
+              
+dados <= dados_out when(tirar='1') else (others => '0');
                           
 end Behavioral;
