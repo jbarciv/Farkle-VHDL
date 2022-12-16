@@ -1,14 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+use IEEE.NUMERIC_STD.ALL;
 
 entity Random is
 Port (clk : in std_logic;
@@ -21,10 +13,10 @@ architecture Behavioral of Random is
 
 signal tirado : std_logic; --marca que ya se ha realizado la tirada
 signal cnt_rand : integer range 0 to 1000000;
-signal dado1,dado2,dado3,dado4,dado5,dado6: integer;
+signal dado1, dado2, dado3, dado4, dado5, dado6: integer;
 begin
 
-    process(clk,reset)
+    process(clk, reset)
     begin
         if(reset = '1') then
             cnt_rand <= 0;
