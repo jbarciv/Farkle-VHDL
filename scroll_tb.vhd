@@ -54,7 +54,7 @@ begin
       wait;
    end process;
 
--- Instanciar componente rider
+-- Instanciar componente 
 
     CUT: scroll port map(
         clk => clk_tb,

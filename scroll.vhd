@@ -9,6 +9,7 @@ entity scroll is
      Port ( clk : in std_logic;
             reset : in std_logic;
             dados : in std_logic_vector(17 downto 0);
+            cnt_dados: in std_logic_vector(2 downto 0); --Cuantos dados tenemos que mostrar
             segmentos : out std_logic_vector(6 downto 0);
             selector : out std_logic_vector(3 downto 0)
             );
@@ -17,16 +18,16 @@ end scroll;
 architecture Behavioral of scroll is
 
 -- Señales divisor de freq
-    constant maxcount : integer := 125000;   -- cambiar a 125000000 para probar en la placa física
+    constant maxcount : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa física
     signal count      : integer range 0 to maxcount-1;
     signal enable_1s : std_logic;
 -- Señales frecuencia de segmentos (4HZ)
-    constant maxcount4 : integer := 31;      --250
+    constant maxcount4 : integer := 31250;      --31250
     signal count4 : integer range 0 to maxcount4-1;
     signal enable_4KHz : std_logic;
 -- Señales dados
     --signal dado1,dado2,dado3,dado4,dado5,dado6 : std_logic_vector(2 downto 0); 
-    signal dados_aux : std_logic_vector(20 downto 0) := dados & "000";
+    signal dados_aux : std_logic_vector(20 downto 0) := dados & "111";
     signal conta: unsigned(1 downto 0);
     signal BCD : std_logic_vector(2 downto 0);
     signal scroll_d : std_logic_vector(20 downto 0);
@@ -94,7 +95,7 @@ with BCD select
                 "1001100" when "100", -- 4
                 "0100100" when "101", -- 5
                 "0100000" when "110", -- 6
-                "0110110" when "000", -- espacio
+                "0110110" when "111", -- espacio
                 "-------" when others;
 
 -- Selector
