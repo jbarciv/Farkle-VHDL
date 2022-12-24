@@ -51,6 +51,11 @@ signal enable_4KHz : std_logic;
 -- Señal selector
 signal conta : unsigned(1 downto 0);
 
+-- Señales decodificadores display
+signal disp_dados : std_logic_vector(2 downto 0);
+signal disp_ptos : std_logic_vector(2 downto 0);
+
+
 
 
 begin
@@ -117,9 +122,9 @@ selector <= "0001" when "00",
             "1000" when "11",
             "----" when others;
 
--- Decodificador Segmentos
+-- Decodificador Segmentos de dados
 
-with BCD select
+with disp_dados select
    segmentos <= "1001111" when "001", -- 1
                 "0010010" when "010", -- 2
                 "0000110" when "011", -- 3
@@ -130,29 +135,48 @@ with BCD select
                 "1111111" when "000", -- apagado
                 "-------" when others;
 
+-- Decodificador segmentos display de puntos
+
+with digit select
+   segmentos <= "0000001" when "0000", -- 0
+                "1001111" when "0001", -- 1
+                "0010010" when "0010", -- 2
+                "0000110" when "0011", -- 3
+                "1001100" when "0100", -- 4
+                "0100100" when "0101", -- 5
+                "0100000" when "0110", -- 6
+                "0001111" when "0111", -- 7
+                "0000000" when "1000", -- 8
+                "0000100" when "1001", -- 9
+                "0110000" when "1111", -- E de ERROR
+                "1111111" when "1011", -- Apagado
+                "-------" when others;
+
 -- Multiplexor(asignacion dados a vector)
 process(clk,reset)
 begin
     if(en_mostrar_dados = '1') then
         with conta select
-        BCD <=  dados_s(20 downto 18) when "00",
-                dados_s(17 downto 15) when "01",
-                dados_s(14 downto 12) when "10",
-                dados_s(11 downto 9) when "11",
-                "---" when others;
-    elsif(en_mostrar_ptos = '1') then
-        with conta select
-        BCD <=  uni when "00",
-                dec when "01",
-                cen when "10",
-                mil when "11",
-                "---" when others;
+        disp_dados <=   dados_s(20 downto 18) when "00",
+                        dados_s(17 downto 15) when "01",
+                        dados_s(14 downto 12) when "10",
+                        dados_s(11 downto 9) when "11",
+                        "---" when others;
     elsif(en_error = '1') then
         with conta select
-        BCD <=  "111" when "00",
+        digit <="111" when "00",
                 "111" when "01",
                 "111" when "10",
                 "111" when "11",
                 "---" when others;
+    elsif(en_mostrar_ptos = '1') then
+        with conta select
+        digit <=uni when "00",
+                dec when "01",
+                cen when "10",
+                mil when "11",
+                "---" when others;
+    end if:
+end process;
 
 end Behavioral;
