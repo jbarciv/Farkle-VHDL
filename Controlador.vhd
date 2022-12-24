@@ -19,7 +19,7 @@ end Controlador;
 architecture Behavioral of Controlador is
 
     --FSM
-    type estados is (S_ESPERAR, S_MOSTRAR, S_FARKLE, S_CALCULA, S_INVALIDO,S_MOSTRAR_PTOS, S_WIN);
+    type estados is (S_ESPERAR, S_MOSTRAR, S_FARKLE, S_CALCULA, S_INVALIDO, S_MOSTRAR_PTOS, S_WIN);
     signal estado : estados;
     
     --Señales para activar cada bloque
@@ -84,6 +84,7 @@ begin
 
             when S_FARKLE =>
                 en_player <= '1';
+                en_farkle_ok <= '0';
                 estado <= S_ESPERAR;
 
             when S_CALCULA =>
@@ -114,18 +115,16 @@ begin
                     en_ptos_partida <= '1';
                 end if;
 
-                if (ready_mostrar_ptos = '1' and ready_win = '1') then
+                if (ready_mostrar_ptos = '1') then
                     en_ptos_ronda <= '0';
                     en_ptos_partida <= '0';
                     en_mostrar_ptos <= '0';
-                    estado <= S_WIN;
-                end if;
-                
-                if(ready_mostrar_ptos = '1' and ready_win = '0') then
-                    en_ptos_ronda <= '0';
-                    en_ptos_partida <= '0';
-                    en_mostrar_ptos <= '0';
-                    estado <= S_ESPERAR;
+
+                    if(ready_win = '1') then
+                        estado <= S_WIN;
+                    else
+                        estado <= S_ESPERAR;
+                    end if;
                 end if;
                     
             when S_WIN =>
