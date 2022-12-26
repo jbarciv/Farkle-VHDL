@@ -68,7 +68,7 @@ begin
                 en_mostrar_dados <= '1';
                 en_comprobar_farkle <= '1';
 
-                if (farkle_ok='1') then
+                if (en_farkle_ok='1') then
                     estado <= S_FARKLE;
                     en_farkle_ok <='1';
                     
