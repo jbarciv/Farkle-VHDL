@@ -34,6 +34,7 @@ architecture Behavioral of Controlador is
     signal en_calcula : std_logic;
     signal en_ptos_ronda : std_logic;
     signal en_ptos_partida : std_logic;
+    signal en_error: std_logic;
 
     signal flag_sel : std_logic;
 
