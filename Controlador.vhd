@@ -34,6 +34,7 @@ architecture Behavioral of Controlador is
     signal en_calcula : std_logic;
     signal en_ptos_ronda : std_logic;
     signal en_ptos_partida : std_logic;
+    signal en_error: std_logic;
 
     signal flag_sel : std_logic;
 
@@ -68,7 +69,7 @@ begin
                 en_mostrar_dados <= '1';
                 en_comprobar_farkle <= '1';
 
-                if (farkle_ok='1') then
+                if (en_farkle_ok='1') then
                     estado <= S_FARKLE;
                     en_farkle_ok <='1';
                     
