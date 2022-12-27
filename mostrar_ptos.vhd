@@ -6,9 +6,6 @@ use IEEE.NUMERIC_STD.ALL;
 entity Mostrar_P is
     Port ( clk : in std_logic;
            reset : in std_logic;
-           sel : in std_logic;
-           planta : in std_logic;
-           tirar : in std_logic;
            no_ptos : in std_logic; --Si el jugador selecciona dados que no den puntos  
            ptos_partida : in std_logic_vector(15 downto 0); --Señal Estrella
            ptos_ronda : in std_logic_vector(15 downto 0); --Señal Estrella

@@ -55,13 +55,23 @@ signal conta : unsigned(1 downto 0);
 signal disp_dados : std_logic_vector(2 downto 0);
 signal disp_ptos : std_logic_vector(2 downto 0);
 
+-- Señales auxiliares segmentos
+signal segmentos_dados : std_logic_vector(6 downto 0);
+signal segmentos_ptos : std_logic_vector(6 downto 0);
 
+-- Señal de salida scroll
+signal dados_s : std_logic_vector(20 downto 0);
 
 
 begin
 
-Mostrar_dados : mostrar_dados --Instanciamos el scroll
-
+Mostrar_dados : scroll --Instanciamos el scroll
+    port map (  clk => clk,
+                reset => reset,
+                dados => dados,
+                enable_1s => enable_1s
+                dados_s => dados_s
+            );
 
 -- Divisor de frecuencia (4KHz)
 
@@ -125,7 +135,7 @@ selector <= "0001" when "00",
 -- Decodificador Segmentos de dados
 
 with disp_dados select
-   segmentos <= "1001111" when "001", -- 1
+   segmentos_dados <= "1001111" when "001", -- 1
                 "0010010" when "010", -- 2
                 "0000110" when "011", -- 3
                 "1001100" when "100", -- 4
@@ -138,7 +148,7 @@ with disp_dados select
 -- Decodificador segmentos display de puntos
 
 with digit select
-   segmentos <= "0000001" when "0000", -- 0
+   segmentos_ptos <= "0000001" when "0000", -- 0
                 "1001111" when "0001", -- 1
                 "0010010" when "0010", -- 2
                 "0000110" when "0011", -- 3
@@ -164,11 +174,11 @@ begin
                         "---" when others;
     elsif(en_error = '1') then
         with conta select
-        digit <="111" when "00",
-                "111" when "01",
-                "111" when "10",
-                "111" when "11",
-                "---" when others;
+        digit <="1111" when "00",
+                "1111" when "01",
+                "1111" when "10",
+                "1111" when "11",
+                "----" when others;
     elsif(en_mostrar_ptos = '1') then
         with conta select
         digit <=uni when "00",
@@ -178,5 +188,9 @@ begin
                 "---" when others;
     end if:
 end process;
+
+segmentos <=    segmentos_dados when(en_mostrar_dados='1') else
+                segmentos_error when(en_error = '1') else
+                segmentos_
 
 end Behavioral;
