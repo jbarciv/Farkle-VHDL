@@ -12,7 +12,7 @@ entity top_display is
     Port (  clk : in std_logic;
             reset : in std_logic;
             dados : in std_logic_vector(17 downto 0);
-            cnt_dados: in std_logic_vector(2 downto 0); --Cuantos dados tenemos que mostrar
+            puntos : in std_logic_vector(13 downto 0);
             en_mostrar_dados : in std_logic; --Habilitacion del scroll
             flag_sel : in std_logic; --Sel(1) o planta(0)
             en_mostrar_error : in std_logic; --Se seleccionan dados que no dan ptos
@@ -29,12 +29,20 @@ architecture Behavioral of top_display is
 component scroll is
      Port ( clk : in std_logic;
             reset : in std_logic;
-            en_mostrar_dados : in std_logic;
             dados : in std_logic_vector(17 downto 0);
             enable_1s : in std_logic;
-            enable_4KHz : in std_logic;
-            segmentos : out std_logic_vector(6 downto 0);
-            selector : out std_logic_vector(3 downto 0)
+            dados_s : out std_logic(20 downto 0)
+            );
+end component;
+
+component mostrar_ptos is
+    Port ( clk : in std_logic;
+           reset : in std_logic; 
+           num_mostrar : in std_logic_vector(13 downto 0);
+           uni : out std_logic_vector(3 downto 0);
+           dec : out std_logic_vector(3 downto 0);
+           cen : out std_logic_vector(3 downto 0);
+           mil : out std_logic_vector(3 downto 0)
             );
 end component;
 
@@ -42,6 +50,11 @@ end component;
 constant maxcount : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa física
 signal count      : integer range 0 to maxcount-1;
 signal enable_1s : std_logic;
+
+-- Señales divisor de freq (5 segundos)
+constant maxcount_5 : integer := 125*5*10**6;
+signal count_5 : integer range 0 to maxcount_5-1;
+signal enable_5s : std_logic;
 
 -- Señales frecuencia de segmentos (4HZ)
 constant maxcount4 : integer := 31250;      --31250
@@ -62,16 +75,48 @@ signal segmentos_ptos : std_logic_vector(6 downto 0);
 -- Señal de salida scroll
 signal dados_s : std_logic_vector(20 downto 0);
 
+-- Señales de muestra_ptos
+signal uni_r,dec_r,cen_r,mil_r : std_logic_vector(3 downto 0);
+signal uni_p,dec_p,cen_p,mil_P : std_logic_vector(3 downto 0);
+signal digit : std_logic_vector(3 downto 0);
+
 
 begin
 
-Mostrar_dados : scroll --Instanciamos el scroll
+-- Instanciamos el bloque scroll
+
+mostrar_dados : scroll 
     port map (  clk => clk,
                 reset => reset,
                 dados => dados,
                 enable_1s => enable_1s
                 dados_s => dados_s
             );
+
+-- Instanciamos el bloque mostrar_ptos_ronda
+
+mostrar_ptos_ronda : mostrar_ptos
+    port map ( clk => clk,
+    reset => reset,
+    num_mostrar => puntos_ronda,
+    uni => uni_r,
+    dec => dec_r,
+    cen => cen_r,
+    mil => mil_r
+     );    
+
+-- Instanciamos el bloque mostrar_ptos_ronda
+
+mostrar_ptos_partida : mostrar_ptos
+port map ( clk => clk,
+reset => reset,
+num_mostrar => puntos,
+uni => uni_p,
+dec => dec_p,
+cen => cen_p,
+mil => mil_p
+ );    
+
 
 -- Divisor de frecuencia (4KHz)
 
@@ -106,6 +151,23 @@ begin
 end process;      
 
 enable_1s <= '1' when(count = maxcount-1) else '0';  
+
+-- Divisor de freq de 5 segundos
+
+process(clk,reset)
+begin
+    if (reset = '1') then
+        count_5 <= 0;
+    elsif (clk'event and clk = '1') then       
+            if(count_5 = maxcount_5-1) then
+                count_5 <= 0;
+            else 
+                count_5 <= count_5 + 1;
+            end if;
+    end if;    
+end process;      
+
+enable_5s <= '1' when(count_5 = maxcount_5-1) else '0';  
 
 -- Contador de 0 a 3
 process(clk,reset)
@@ -158,39 +220,117 @@ with digit select
                 "0001111" when "0111", -- 7
                 "0000000" when "1000", -- 8
                 "0000100" when "1001", -- 9
+                "0000001" when "1010", -- F de Farkle
                 "0110000" when "1111", -- E de ERROR
                 "1111111" when "1011", -- Apagado
                 "-------" when others;
 
--- Multiplexor(asignacion dados a vector)
-process(clk,reset)
-begin
-    if(en_mostrar_dados = '1') then
+-- Multiplexores
+
         with conta select
         disp_dados <=   dados_s(20 downto 18) when "00",
                         dados_s(17 downto 15) when "01",
                         dados_s(14 downto 12) when "10",
                         dados_s(11 downto 9) when "11",
                         "---" when others;
-    elsif(en_error = '1') then
+
         with conta select
-        digit <="1111" when "00",
+        error <="1111" when "00",
                 "1111" when "01",
                 "1111" when "10",
                 "1111" when "11",
                 "----" when others;
-    elsif(en_mostrar_ptos = '1') then
+
         with conta select
         digit <=uni when "00",
                 dec when "01",
                 cen when "10",
                 mil when "11",
                 "---" when others;
-    end if:
-end process;
+
+-- Proceso para asignar la puntuacion
+
+process(clk,reset)
+begin
+    if(reset='1') then
+        digit <= "1011";
+    elsif(clk'event and clk = '1') then
+        if(en_mostrar_error = '1') then --Selecciona dados que no puntuan (hay que hacer un enable que dure 5 segundos)
+            case conta is
+                when "00" =>
+                    digit <= "1111";
+                when "01" =>
+                    digit <= "1111";
+                when "10" =>
+                    digit <= "1111";
+                when "11" =>
+                    digit <= "1111";
+                when others =>
+                    digit <= "1011";
+            end case;
+        elsif(farkle_ok = '1') then --Selecciona dados que no puntuan (hay que hacer un enable que dure 5 segundos)
+            case conta is
+                when "00" =>
+                    digit <= "1010";
+                when "01" =>
+                    digit <= "1010";
+                when "10" =>
+                    digit <= "1010";
+                when "11" =>
+                    digit <= "1010";
+                when others =>
+                    digit <= "1011";
+                end case;
+        elsif(flag_sel='1') then --Selecciona dados que suman
+            case conta is
+                when "00" =>
+                    digit <= uni_r;
+                when "01" =>
+                    digit <= dec_r;
+                when "10" =>
+                    digit <= cen_r;
+                when "11" =>
+                    digit <= mil_r;
+                when others =>
+                    digit <= "1011";
+            end case;
+        elsif(flag_sel='0') then --Finaliza turno y muestra puntuacion acumulada y total
+            if(enable_5s='1') then
+                case conta is
+                    when "00" =>
+                        digit <= uni_r;
+                    when "01" =>
+                        digit <= dec_r;
+                    when "10" =>
+                        digit <= cen_r;
+                    when "11" =>
+                        digit <= mil_r;
+                    when others =>
+                        digit <= "1011";
+                if(ha pasado 5 segundos) then
+                    case conta is
+                        when "00" =>
+                            digit <= uni_p;
+                        when "01" =>
+                            digit <= dec_p;
+                        when "10" =>
+                            digit <= cen_p;
+                        when "11" =>
+                            digit <= mil_p;
+                        when others =>
+                            digit <= "1011";
+                end case;
+                end if;
+            end if;    
+        end if;
+    end if;
+end process
+
+-- Asignacion a la salida
 
 segmentos <=    segmentos_dados when(en_mostrar_dados='1') else
                 segmentos_error when(en_error = '1') else
-                segmentos_
+                segmentos_ptos when(en_mostrar_ptos = '1') else
+                (others => '-') when others;
 
 end Behavioral;
