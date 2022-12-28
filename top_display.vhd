@@ -12,7 +12,8 @@ entity top_display is
     Port (  clk : in std_logic;
             reset : in std_logic;
             dados : in std_logic_vector(17 downto 0);
-            puntos : in std_logic_vector(13 downto 0);
+            puntos_ronda : in std_logic_vector(13 downto 0);
+            puntos_partida : in std_logic_vector(13 downto 0);
             en_mostrar_dados : in std_logic; --Habilitacion del scroll
             flag_sel : in std_logic; --Sel(1) o planta(0)
             en_mostrar_error : in std_logic; --Se seleccionan dados que no dan ptos
@@ -80,6 +81,10 @@ signal uni_r,dec_r,cen_r,mil_r : std_logic_vector(3 downto 0);
 signal uni_p,dec_p,cen_p,mil_P : std_logic_vector(3 downto 0);
 signal digit : std_logic_vector(3 downto 0);
 
+-- Contadores para activar displays por 1 segundo y 5 segundos
+signal temp_5s : std_logic;
+signal conta_temp : unsigned(2 downto 0);
+
 
 begin
 
@@ -96,26 +101,26 @@ mostrar_dados : scroll
 -- Instanciamos el bloque mostrar_ptos_ronda
 
 mostrar_ptos_ronda : mostrar_ptos
-    port map ( clk => clk,
-    reset => reset,
-    num_mostrar => puntos_ronda,
-    uni => uni_r,
-    dec => dec_r,
-    cen => cen_r,
-    mil => mil_r
-     );    
+    port map (  clk => clk,
+                reset => reset,
+                num_mostrar => puntos_ronda,
+                uni => uni_r,
+                dec => dec_r,
+                cen => cen_r,
+                mil => mil_r
+            );    
 
 -- Instanciamos el bloque mostrar_ptos_ronda
 
 mostrar_ptos_partida : mostrar_ptos
-port map ( clk => clk,
-reset => reset,
-num_mostrar => puntos,
-uni => uni_p,
-dec => dec_p,
-cen => cen_p,
-mil => mil_p
- );    
+port map (  clk => clk,
+            reset => reset,
+            num_mostrar => puntos_partida,
+            uni => uni_p,
+            dec => dec_p,
+            cen => cen_p,
+            mil => mil_p
+        );    
 
 
 -- Divisor de frecuencia (4KHz)
@@ -172,17 +177,35 @@ enable_5s <= '1' when(count_5 = maxcount_5-1) else '0';
 -- Contador de 0 a 3
 process(clk,reset)
 begin
-if (reset = '1') then
-conta<=(others =>'0');
-elsif (clk'event and clk = '1') then
-if(enable_4KHz='1') then
-  if(conta=3) then
-  conta<=(others=>'0');
-  else
-  conta<=conta+1;
-  end if;
-end if;
-end if;
+    if (reset = '1') then
+        conta<=(others =>'0');
+    elsif (clk'event and clk = '1') then
+        if(enable_4KHz='1') then
+            if(conta=3) then
+                conta<=(others=>'0');
+            else
+                conta<=conta+1;
+            end if;
+        end if;
+    end if;
+end process;
+
+-- Contador de 5 segundos
+process(clk,reset)
+begin
+    if (reset = '1') then
+        conta_temp<=(others =>'0');
+        temp_5s<=0;
+    elsif (clk'event and clk = '1') then
+        if(en_mostrar_error='1') then
+            if(conta_temp="100") then
+                conta_temp<=(others=>'0');
+                temp_5s<=not temp_5s;
+            else
+                conta_temp<=conta_temp+1;
+            end if;
+        end if;
+    end if;
 end process;
 
 -- Selector
@@ -220,12 +243,12 @@ with digit select
                 "0001111" when "0111", -- 7
                 "0000000" when "1000", -- 8
                 "0000100" when "1001", -- 9
-                "0000001" when "1010", -- F de Farkle
+                "0111000" when "1010", -- F de Farkle
                 "0110000" when "1111", -- E de ERROR
                 "1111111" when "1011", -- Apagado
                 "-------" when others;
 
--- Multiplexores
+-- Multiplexor de los dados
 
         with conta select
         disp_dados <=   dados_s(20 downto 18) when "00",
@@ -234,20 +257,6 @@ with digit select
                         dados_s(11 downto 9) when "11",
                         "---" when others;
 
-        with conta select
-        error <="1111" when "00",
-                "1111" when "01",
-                "1111" when "10",
-                "1111" when "11",
-                "----" when others;
-
-        with conta select
-        digit <=uni when "00",
-                dec when "01",
-                cen when "10",
-                mil when "11",
-                "---" when others;
-
 -- Proceso para asignar la puntuacion
 
 process(clk,reset)
@@ -255,20 +264,7 @@ begin
     if(reset='1') then
         digit <= "1011";
     elsif(clk'event and clk = '1') then
-        if(en_mostrar_error = '1') then --Selecciona dados que no puntuan (hay que hacer un enable que dure 5 segundos)
-            case conta is
-                when "00" =>
-                    digit <= "1111";
-                when "01" =>
-                    digit <= "1111";
-                when "10" =>
-                    digit <= "1111";
-                when "11" =>
-                    digit <= "1111";
-                when others =>
-                    digit <= "1011";
-            end case;
-        elsif(farkle_ok = '1') then --Selecciona dados que no puntuan (hay que hacer un enable que dure 5 segundos)
+        if(farkle_ok = '1') then --Selecciona dados que no puntuan (hay que hacer un enable que dure 5 segundos)
             case conta is
                 when "00" =>
                     digit <= "1010";
@@ -281,7 +277,21 @@ begin
                 when others =>
                     digit <= "1011";
                 end case;
-        elsif(flag_sel='1') then --Selecciona dados que suman
+        elsif(en_mostrar_error = '1') then --Selecciona dados que no puntuan (hay que hacer un enable que dure 5 segundos)
+            case conta is
+                when "00" =>
+                    digit <= "1111";
+                when "01" =>
+                    digit <= "1111";
+                when "10" =>
+                    digit <= "1111";
+                when "11" =>
+                    digit <= "1111";
+                when others =>
+                    digit <= "1011";
+            end case;
+        
+        elsif(flag_sel='1' or flag_sel='0') then --Selecciona dados que suman
             case conta is
                 when "00" =>
                     digit <= uni_r;
@@ -329,7 +339,7 @@ end process
 -- Asignacion a la salida
 
 segmentos <=    segmentos_dados when(en_mostrar_dados='1') else
-                segmentos_error when(en_error = '1') else
+                segmentos_error when(en_mostrar_error = '1') else
                 segmentos_ptos when(en_mostrar_ptos = '1') else
                 (others => '-') when others;
 
