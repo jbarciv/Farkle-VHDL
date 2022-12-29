@@ -82,8 +82,8 @@ signal uni_p,dec_p,cen_p,mil_P : std_logic_vector(3 downto 0);
 signal digit : std_logic_vector(3 downto 0);
 
 -- Contadores para activar displays por 1 segundo y 5 segundos
-signal temp_5s : std_logic;
 signal conta_temp : unsigned(2 downto 0);
+signal temp_5s : std_logic;
 
 
 begin
@@ -195,12 +195,12 @@ process(clk,reset)
 begin
     if (reset = '1') then
         conta_temp<=(others =>'0');
-        temp_5s<=0;
+        temp_5s <= '0';
     elsif (clk'event and clk = '1') then
-        if(en_mostrar_error='1') then
+        if(enable_1s = '1' and flag_sel = '0') then
             if(conta_temp="100") then
                 conta_temp<=(others=>'0');
-                temp_5s<=not temp_5s;
+                temp_5s <= not temp_5s;
             else
                 conta_temp<=conta_temp+1;
             end if;
@@ -220,33 +220,33 @@ selector <= "0001" when "00",
 -- Decodificador Segmentos de dados
 
 with disp_dados select
-   segmentos_dados <= "1001111" when "001", -- 1
-                "0010010" when "010", -- 2
-                "0000110" when "011", -- 3
-                "1001100" when "100", -- 4
-                "0100100" when "101", -- 5
-                "0100000" when "110", -- 6
-                "0110110" when "111", -- espacio
-                "1111111" when "000", -- apagado
-                "-------" when others;
+    segmentos_dados <=  "1001111" when "001", -- 1
+                        "0010010" when "010", -- 2
+                        "0000110" when "011", -- 3
+                        "1001100" when "100", -- 4
+                        "0100100" when "101", -- 5
+                        "0100000" when "110", -- 6
+                        "0110110" when "111", -- espacio
+                        "1111111" when "000", -- apagado
+                        "-------" when others;
 
 -- Decodificador segmentos display de puntos
 
 with digit select
-   segmentos_ptos <= "0000001" when "0000", -- 0
-                "1001111" when "0001", -- 1
-                "0010010" when "0010", -- 2
-                "0000110" when "0011", -- 3
-                "1001100" when "0100", -- 4
-                "0100100" when "0101", -- 5
-                "0100000" when "0110", -- 6
-                "0001111" when "0111", -- 7
-                "0000000" when "1000", -- 8
-                "0000100" when "1001", -- 9
-                "0111000" when "1010", -- F de Farkle
-                "0110000" when "1111", -- E de ERROR
-                "1111111" when "1011", -- Apagado
-                "-------" when others;
+    segmentos_ptos <="0000001" when "0000", -- 0
+                    "1001111" when "0001", -- 1
+                    "0010010" when "0010", -- 2
+                    "0000110" when "0011", -- 3
+                    "1001100" when "0100", -- 4
+                    "0100100" when "0101", -- 5
+                    "0100000" when "0110", -- 6
+                    "0001111" when "0111", -- 7
+                    "0000000" when "1000", -- 8
+                    "0000100" when "1001", -- 9
+                    "0111000" when "1010", -- F de Farkle
+                    "0110000" when "1111", -- E de ERROR
+                    "1111111" when "1011", -- Apagado
+                    "-------" when others;
 
 -- Multiplexor de los dados
 
@@ -264,48 +264,36 @@ begin
     if(reset='1') then
         digit <= "1011";
     elsif(clk'event and clk = '1') then
-        if(farkle_ok = '1') then --Selecciona dados que no puntuan (hay que hacer un enable que dure 5 segundos)
-            case conta is
-                when "00" =>
-                    digit <= "1010";
-                when "01" =>
-                    digit <= "1010";
-                when "10" =>
-                    digit <= "1010";
-                when "11" =>
-                    digit <= "1010";
-                when others =>
-                    digit <= "1011";
+        if(en_mostrar_dados = '0') then
+            if(farkle_ok = '1') then --Esta señal tiene que durar 5 segundos
+                case conta is
+                    when "00" =>
+                        digit <= "1010";
+                    when "01" =>
+                        digit <= "1010";
+                    when "10" =>
+                        digit <= "1010";
+                    when "11" =>
+                        digit <= "1010";
+                    when others =>
+                        digit <= "1011";
+                    end case;
+            elsif(en_mostrar_error = '1') then --Esta señal tiene que durar 5 segundos
+                case conta is
+                    when "00" =>
+                        digit <= "1111";
+                    when "01" =>
+                        digit <= "1111";
+                    when "10" =>
+                        digit <= "1111";
+                    when "11" =>
+                        digit <= "1111";
+                    when others =>
+                        digit <= "1011";
                 end case;
-        elsif(en_mostrar_error = '1') then --Selecciona dados que no puntuan (hay que hacer un enable que dure 5 segundos)
-            case conta is
-                when "00" =>
-                    digit <= "1111";
-                when "01" =>
-                    digit <= "1111";
-                when "10" =>
-                    digit <= "1111";
-                when "11" =>
-                    digit <= "1111";
-                when others =>
-                    digit <= "1011";
-            end case;
-        
-        elsif(flag_sel='1' or flag_sel='0') then --Selecciona dados que suman
-            case conta is
-                when "00" =>
-                    digit <= uni_r;
-                when "01" =>
-                    digit <= dec_r;
-                when "10" =>
-                    digit <= cen_r;
-                when "11" =>
-                    digit <= mil_r;
-                when others =>
-                    digit <= "1011";
-            end case;
-        elsif(flag_sel='0') then --Finaliza turno y muestra puntuacion acumulada y total
-            if(enable_5s='1') then
+            
+            elsif(flag_sel='1') then --Selecciona dados que suman
+                temp_5s <= '0';
                 case conta is
                     when "00" =>
                         digit <= uni_r;
@@ -317,21 +305,37 @@ begin
                         digit <= mil_r;
                     when others =>
                         digit <= "1011";
-                if(ha pasado 5 segundos) then
+                end case;
+            elsif(flag_sel='0') then --Finaliza turno y muestra puntuacion acumulada y total
+                if(conta_temp < "100" and temp_5s='0') then
                     case conta is
                         when "00" =>
-                            digit <= uni_p;
+                            digit <= uni_r;
                         when "01" =>
-                            digit <= dec_p;
+                            digit <= dec_r;
                         when "10" =>
-                            digit <= cen_p;
+                            digit <= cen_r;
                         when "11" =>
-                            digit <= mil_p;
+                            digit <= mil_r;
                         when others =>
                             digit <= "1011";
-                end case;
-                end if;
-            end if;    
+                end if;    
+                if(conta_temp < "100" and temp_5s='1') then
+                        case conta is
+                            when "00" =>
+                                digit <= uni_p;
+                            when "01" =>
+                                digit <= dec_p;
+                            when "10" =>
+                                digit <= cen_p;
+                            when "11" =>
+                                digit <= mil_p;
+                            when others =>
+                                digit <= "1011";
+                    end case;
+                    end if;
+                end if;    
+            end if;
         end if;
     end if;
 end process
@@ -339,8 +343,6 @@ end process
 -- Asignacion a la salida
 
 segmentos <=    segmentos_dados when(en_mostrar_dados='1') else
-                segmentos_error when(en_mostrar_error = '1') else
-                segmentos_ptos when(en_mostrar_ptos = '1') else
-                (others => '-') when others;
+                segmentos_ptos when others;
 
 end Behavioral;
