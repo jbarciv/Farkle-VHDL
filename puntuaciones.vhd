@@ -3,18 +3,17 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 
-entity Puntuacion is
-  Port (clk     : in std_logic; 
-        reset   : in std_logic;
-        dado_pto: in std_logic_vector(2 downto 0);
-        ptos    : out std_logic_vector(13 downto 0);
-        error   : out std_logic;
-        farkle  : out std_logic;
-        en_dado : in std_logic;
-        en_suma_ronda: out std_logic;
-        
-        );
-end Puntuacion;
+entity puntuaciones is
+    Port ( clk             : in std_logic; 
+           reset           : in std_logic;
+           dado_pto        : in std_logic_vector(2 downto 0);
+           en_dado         : in std_logic;
+           en_suma_ronda   : out std_logic;
+           error           : out std_logic;
+           farkle          : out std_logic;
+           puntuacion      : out std_logic_vector(13 downto 0)
+          );
+   end puntuaciones;
 
 architecture Behavioral of Puntuacion is
 
