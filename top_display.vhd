@@ -19,6 +19,8 @@ entity top_display is
             en_mostrar_error : in std_logic; --Se seleccionan dados que no dan ptos
             en_farkle_ok : in std_logic; --Hay farkle por lo tanto se hace scroll dos veces
             ready_win : in std_logic; --Se muestra el jugador que gano en la pantalla
+            en_ptos_ronda : in std_logic;
+            en_ptos_partida : in std_logic;
             ready_mostrar_ptos : out std_logic;
             segmentos : out std_logic_vector(6 downto 0);
             selector : out std_logic_vector(3 downto 0)
@@ -48,17 +50,12 @@ component mostrar_ptos is
 end component;
 
 -- Señales divisor de freq (1 segundo)
-constant maxcount : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa física
+constant maxcount : integer := 125*10**3;   -- cambiar a 125000000 para probar en la placa física
 signal count      : integer range 0 to maxcount-1;
 signal enable_1s : std_logic;
 
--- Señales divisor de freq (5 segundos)
-constant maxcount_5 : integer := 125*5*10**6;
-signal count_5 : integer range 0 to maxcount_5-1;
-signal enable_5s : std_logic;
-
 -- Señales frecuencia de segmentos (4HZ)
-constant maxcount4 : integer := 31250;      --31250
+constant maxcount4 : integer := 31;      --31250
 signal count4 : integer range 0 to maxcount4-1;
 signal enable_4KHz : std_logic;
 
@@ -83,7 +80,6 @@ signal digit : std_logic_vector(3 downto 0);
 
 -- Contadores para activar displays por 1 segundo y 5 segundos
 signal conta_temp : unsigned(2 downto 0);
-signal temp_5s : std_logic;
 
 
 begin
@@ -157,23 +153,6 @@ end process;
 
 enable_1s <= '1' when(count = maxcount-1) else '0';  
 
--- Divisor de freq de 5 segundos
-
-process(clk,reset)
-begin
-    if (reset = '1') then
-        count_5 <= 0;
-    elsif (clk'event and clk = '1') then       
-            if(count_5 = maxcount_5-1) then
-                count_5 <= 0;
-            else 
-                count_5 <= count_5 + 1;
-            end if;
-    end if;    
-end process;      
-
-enable_5s <= '1' when(count_5 = maxcount_5-1) else '0';  
-
 -- Contador de 0 a 3
 process(clk,reset)
 begin
@@ -193,14 +172,12 @@ end process;
 -- Contador de 5 segundos
 process(clk,reset)
 begin
-    if (reset = '1') then
+    if (en_ptos_ronda = '1') then
         conta_temp<=(others =>'0');
-        temp_5s <= '0';
     elsif (clk'event and clk = '1') then
         if(enable_1s = '1' and flag_sel = '0') then
             if(conta_temp="100") then
                 conta_temp<=(others=>'0');
-                temp_5s <= not temp_5s;
             else
                 conta_temp<=conta_temp+1;
             end if;
@@ -229,6 +206,15 @@ with disp_dados select
                         "0110110" when "111", -- espacio
                         "1111111" when "000", -- apagado
                         "-------" when others;
+                        
+-- Multiplexor de los dados
+
+        with conta select
+        disp_dados <=   dados_s(20 downto 18) when "00",
+                        dados_s(17 downto 15) when "01",
+                        dados_s(14 downto 12) when "10",
+                        dados_s(11 downto 9) when "11",
+                        "---" when others;
 
 -- Decodificador segmentos display de puntos
 
@@ -248,14 +234,6 @@ with digit select
                     "1111111" when "1011", -- Apagado
                     "-------" when others;
 
--- Multiplexor de los dados
-
-        with conta select
-        disp_dados <=   dados_s(20 downto 18) when "00",
-                        dados_s(17 downto 15) when "01",
-                        dados_s(14 downto 12) when "10",
-                        dados_s(11 downto 9) when "11",
-                        "---" when others;
 
 -- Proceso para asignar la puntuacion
 
@@ -292,22 +270,8 @@ begin
                         digit <= "1011";
                 end case;
             
-            elsif(flag_sel='1') then --Selecciona dados que suman
-                temp_5s <= '0';
-                case conta is
-                    when "00" =>
-                        digit <= uni_r;
-                    when "01" =>
-                        digit <= dec_r;
-                    when "10" =>
-                        digit <= cen_r;
-                    when "11" =>
-                        digit <= mil_r;
-                    when others =>
-                        digit <= "1011";
-                end case;
-            elsif(flag_sel='0') then --Finaliza turno y muestra puntuacion acumulada y total
-                if(conta_temp < "100" and temp_5s='0') then
+            elsif(en_ptos_ronda = '1') then --Selecciona dados que suman
+                if(conta_temp < "100") then
                     case conta is
                         when "00" =>
                             digit <= uni_r;
@@ -320,8 +284,9 @@ begin
                         when others =>
                             digit <= "1011";
                     end case;
-                end if;    
-                if(conta_temp < "100" and temp_5s='1') then
+                end if;
+                if(en_ptos_partida = '1') then  
+                    if(conta_temp < "100") then
                         case conta is
                             when "00" =>
                                 digit <= uni_p;
@@ -334,6 +299,7 @@ begin
                             when others =>
                                 digit <= "1011";
                     end case;
+                    end if;
                 end if;    
             end if;
         end if;
