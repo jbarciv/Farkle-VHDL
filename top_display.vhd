@@ -32,7 +32,7 @@ component scroll is
             reset : in std_logic;
             dados : in std_logic_vector(17 downto 0);
             enable_1s : in std_logic;
-            dados_s : out std_logic(20 downto 0)
+            dados_s : out std_logic_vector(20 downto 0)
             );
 end component;
 
@@ -94,7 +94,7 @@ mostrar_dados : scroll
     port map (  clk => clk,
                 reset => reset,
                 dados => dados,
-                enable_1s => enable_1s
+                enable_1s => enable_1s,
                 dados_s => dados_s
             );
 
@@ -265,7 +265,7 @@ begin
         digit <= "1011";
     elsif(clk'event and clk = '1') then
         if(en_mostrar_dados = '0') then
-            if(farkle_ok = '1') then --Esta señal tiene que durar 5 segundos
+            if(en_farkle_ok = '1') then --Esta señal tiene que durar 5 segundos
                 case conta is
                     when "00" =>
                         digit <= "1010";
@@ -319,6 +319,7 @@ begin
                             digit <= mil_r;
                         when others =>
                             digit <= "1011";
+                    end case;
                 end if;    
                 if(conta_temp < "100" and temp_5s='1') then
                         case conta is
@@ -333,16 +334,15 @@ begin
                             when others =>
                                 digit <= "1011";
                     end case;
-                    end if;
                 end if;    
             end if;
         end if;
     end if;
-end process
+end process;
 
 -- Asignacion a la salida
 
-segmentos <=    segmentos_dados when(en_mostrar_dados='1') else
-                segmentos_ptos when others;
-
+segmentos <= segmentos_dados when(en_mostrar_dados='1') else
+             segmentos_ptos;
+                
 end Behavioral;
