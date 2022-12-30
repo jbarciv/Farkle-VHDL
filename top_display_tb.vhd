@@ -68,23 +68,23 @@ begin
     en_mostrar_error <= '0';
     en_farkle_ok <= '0';
     en_win <= '0';
-    ready_mostrar_ptos <= '0';
-    player <= '0';
+    player <= '1';
     en_ptos_ronda <= '0';
     en_ptos_partida <= '0';
+    en_apagado <= '1';
    wait for 100 ns;	
    -- Enciendo la muestra de dados y se visualiza el scroll
     reset <= '0';
     en_apagado <= '0';
     en_mostrar_dados <= '1';
    wait for 5000 us;
-   -- Pruebo el farkle (visualizo F de farkle)
-    en_mostrar_dados <= '0';
+   -- Pruebo el farkle 
     en_farkle_ok <= '1';
-   wait for 5000 us;
+    en_mostrar_dados <= '0';
+   wait for 10 ms;
    -- Vuelvo al estado ESPERA y cambio el jugador
     en_farkle_ok <= '0';
-    player <= '1';
+    player <= '0';
     en_apagado <= '1';
    wait for 5000 us;
    -- Se apreta tirar y se vuelven a visualizar los dados	
@@ -99,7 +99,7 @@ begin
     en_mostrar_error <= '0';
     en_ptos_ronda <= '1';
     en_ptos_partida <= '1';
-   wait for 11 ms;
+   wait for 10 ms;
    -- Pruebo el temporizador interno de 5 segundos
     en_ptos_ronda <= '0';
     en_ptos_partida <= '0';
@@ -111,7 +111,15 @@ begin
     en_mostrar_dados <= '1';
    wait for 1000 us;
     en_mostrar_dados <= '0';
+    en_ptos_ronda <= '1';
+   wait for 5 ms;
+    en_ptos_ronda <= '0';
     en_win <= '1';
+   wait for 5 ms;
+    reset <= '1';
+   wait for 100 ns;
+    reset <= '0';
+    en_apagado <= '1';
    wait;
 end process;
 

@@ -27,7 +27,6 @@ architecture Behavioral of Controlador is
     signal en_comprobar_farkle : std_logic;
     signal en_mostrar_dados : std_logic;
     signal en_mostrar_error : std_logic;
-    signal en_mostrar_ptos : std_logic;
     signal en_farkle_ok : std_logic;
     signal en_player : std_logic; --Cambia de jugador
     signal en_win : std_logic;
@@ -50,7 +49,7 @@ architecture Behavioral of Controlador is
     signal count      : integer range 0 to maxcount-1;
     signal enable_1s : std_logic;
     signal conta_2s : unsigned(1 downto 0);
-    signal conta_5s : unsigned(2 downto 0);
+    signal conta_15s : unsigned(3 downto 0);
 
     
     
@@ -82,10 +81,8 @@ begin
                 en_mostrar_dados <= '1';
                 en_comprobar_farkle <= '1';
 
-                if (en_farkle_ok='1') then
+                if (en_farkle_ok='1') then -- La misma señal dos veces?!
                     estado <= S_FARKLE;
-                    en_mostrar_dados <= '0';
-                    en_farkle_ok <= '1';
                 elsif (sel='1' or planta='1') then
                     en_calcula <= '1';
                     estado <= S_CALCULA;
@@ -97,10 +94,13 @@ begin
                 end if;
 
             when S_FARKLE =>
-                en_player <= '1';
-                if(conta_5s = "100") then
-                    estado <= S_ESPERAR;
+                if(conta_15s = "100") then
+                    en_mostrar_dados <= '0';
+                    en_farkle_ok <= '1';              
+                elsif(ready_mostrar_ptos = '1') then
+                    en_player <= '1';
                     en_farkle_ok <= '0';
+                    estado <= S_ESPERAR;
                 end if;
 
             when S_CALCULA =>
@@ -142,7 +142,7 @@ begin
                 end if;
                     
             when S_WIN =>
-                if(conta_5s = "100") then
+                if(ready_mostrar_ptos = '1') then
                     en_ptos_ronda <= '0';
                     en_win <= '1';
                 end if;
@@ -173,30 +173,34 @@ enable_1s <= '1' when(count = maxcount-1) else '0';
 -- Contador de 2 segundos para mostrar error
 process(clk)
 begin
-    if (estado = S_INVALIDO) then
+    if (reset = '1') then
         conta_2s<=(others =>'0');
     elsif (clk'event and clk = '1') then
-        if(enable_1s = '1') then
-            if(conta_2s="10") then
-                conta_2s<=(others=>'0');
-            else
-                conta_2s<=conta_2s+1;
+        if(estado = S_INVALIDO) then
+            if(enable_1s = '1') then
+                if(conta_2s="10") then
+                    conta_2s<=(others=>'0');
+                else
+                    conta_2s<=conta_2s+1;
+                end if;
             end if;
-        end if;
+        end if;    
     end if;
 end process;
 
--- Contador de 5 segundos para mostrar ptos
-process(clk)
+-- Contador de 15 segundos para mostrar ptos
+process(clk,reset)
 begin
-    if (estado = S_FARKLE or S_WIN) then
-        conta_5s<=(others =>'0');
+    if (reset = '1') then
+        conta_15s<=(others =>'0');
     elsif (clk'event and clk = '1') then
-        if(enable_1s = '1') then
-            if(conta_5s="100") then
-                conta_5s<=(others=>'0');
-            else
-                conta_5s<=conta_5s+1;
+        if(estado = S_FARKLE) then
+            if(enable_1s = '1') then
+                if(conta_15s="1110") then
+                    conta_15s<=(others=>'0');
+                else
+                    conta_15s<=conta_15s+1;
+                end if;
             end if;
         end if;
     end if;

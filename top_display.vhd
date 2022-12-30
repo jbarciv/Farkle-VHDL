@@ -179,26 +179,30 @@ begin
     end if;
 end process;
 
--- Contador de 5 segundos
-process(clk,reset)
+-- Contador de 5 segundos para ptos_ronda y 5 para ptos_partida
+process(clk)
 begin
-    if (reset = '1') then
+    if (en_apagado = '1') then
         conta_temp<=(others =>'0');
         s_ronda <= '1';
         s_partida <= '0';
+        listo_mostrar_ptos <= '0';
     elsif (clk'event and clk = '1') then
-        if (en_ptos_ronda = '1' or en_win = '1') then
+        if (en_ptos_ronda = '1' or en_farkle_ok = '1') then
             if(enable_1s = '1') then
                 if(conta_temp = "1001") then
                     s_partida <= '0';
+                    listo_mostrar_ptos <= '1';
                     conta_temp<=(others=>'0');
                 else
                     conta_temp<=conta_temp+1;
                 end if;
                 if(conta_temp="0100") then
                     s_ronda <='0';
-                    if(en_ptos_partida = '1') then
+                    if(en_ptos_partida = '1' or en_farkle_ok = '1') then
                         s_partida <='1';
+                    else
+                        listo_mostrar_ptos <= '1';
                     end if;
                 end if;    
             end if;
@@ -250,7 +254,6 @@ with digit select
                     "0001111" when "0111", -- 7
                     "0000000" when "1000", -- 8
                     "0000100" when "1001", -- 9
-                    "0111000" when "1010", -- F de Farkle
                     "0110000" when "1111", -- E de ERROR
                     "1111111" when "1011", -- Apagado
                     "-------" when others;
@@ -262,22 +265,36 @@ process(clk,reset)
 begin
     if(reset='1') then
         digit <= "1011";
-        listo_mostrar_ptos <= '0';
     elsif(clk'event and clk = '1') then
         if(en_mostrar_dados = '0') then
             if(en_farkle_ok = '1') then --Esta señal tiene que durar 5 segundos
-                case conta is
-                    when "00" =>
-                        digit <= "1010";
-                    when "01" =>
-                        digit <= "1010";
-                    when "10" =>
-                        digit <= "1010";
-                    when "11" =>
-                        digit <= "1010";
-                    when others =>
-                        digit <= "1011";
-                    end case;
+                if(s_ronda = '1') then
+                     case conta is
+                        when "00" =>
+                            digit <= "0000";
+                        when "01" =>
+                            digit <= "0000";
+                        when "10" =>
+                            digit <= "0000";
+                        when "11" =>
+                            digit <= "0000";
+                        when others =>
+                            digit <= "1011";
+                     end case;                   
+                elsif(s_partida = '1') then
+                        case conta is
+                            when "00" =>
+                                digit <= uni_p;
+                            when "01" =>
+                                digit <= dec_p;
+                            when "10" =>
+                                digit <= cen_p;
+                            when "11" =>
+                                digit <= mil_p;
+                            when others =>
+                                digit <= "1011";
+                        end case;                   
+                end if;
             elsif(en_mostrar_error = '1') then --Esta señal tiene que durar 5 segundos
                 case conta is
                     when "00" =>
@@ -291,7 +308,6 @@ begin
                     when others =>
                         digit <= "1011";
                 end case;
-            
             elsif(en_ptos_ronda = '1') then --Selecciona dados que suman
                 if(s_ronda = '1') then
                     case conta is
@@ -305,8 +321,7 @@ begin
                             digit <= mil_r;
                         when others =>
                             digit <= "1011";
-                    end case;
-                
+                    end case;                
                 elsif(s_partida = '1') then
                         case conta is
                             when "00" =>
@@ -319,9 +334,7 @@ begin
                                 digit <= mil_p;
                             when others =>
                                 digit <= "1011";
-                        end case;
-                 else               
-                    listo_mostrar_ptos <= '1';                   
+                        end case;                   
                 end if;
             elsif(en_win = '1') then
                     case conta is
@@ -347,6 +360,6 @@ segmentos <= "1111111" when(en_apagado = '1') else
              segmentos_dados when(en_mostrar_dados='1') else
              segmentos_ptos;
              
-ready_mostrar_ptos <= listo_mostrar_ptos;
+ready_mostrar_ptos <= '1' when(listo_mostrar_ptos = '1') else '0';
                 
 end Behavioral;
