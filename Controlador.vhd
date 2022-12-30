@@ -51,6 +51,8 @@ architecture Behavioral of Controlador is
     signal enable_1s : std_logic;
     signal conta_2s : unsigned(1 downto 0);
     signal conta_5s : unsigned(2 downto 0);
+
+    
     
 begin
 
@@ -66,7 +68,8 @@ begin
         case estado is
             when S_ESPERAR =>
                 en_player <= '0';
-                en_apagado = '1';
+                en_mostrar_dados <= '0';
+                en_apagado <= '1';
                 if(tirar='1') then
                     en_apagado = '0';
                     en_lfsr_top <= '1';
@@ -132,13 +135,18 @@ begin
 
                     if(ready_win = '1') then
                         estado <= S_WIN;
+                        en_ptos_ronda <= '1';
                     else
                         estado <= S_ESPERAR;
                     end if;
                 end if;
                     
             when S_WIN =>
-                -- Acciones a realizar en el estado S_WIN
+                if(conta_5s = "100") then
+                    en_ptos_ronda <= '0';
+                    en_win <= '1';
+                end if;
+
             when others =>
                 -- Acciones a realizar en caso de que no se cumpla ninguna de las condiciones anteriores
         end case;
@@ -163,7 +171,7 @@ end process;
 enable_1s <= '1' when(count = maxcount-1) else '0'; 
     
 -- Contador de 2 segundos para mostrar error
-process(clk,reset)
+process(clk)
 begin
     if (estado = S_INVALIDO) then
         conta_2s<=(others =>'0');
@@ -179,9 +187,9 @@ begin
 end process;
 
 -- Contador de 5 segundos para mostrar ptos
-process(clk,reset)
+process(clk)
 begin
-    if (estado = S_FARKLE) then
+    if (estado = S_FARKLE or S_WIN) then
         conta_5s<=(others =>'0');
     elsif (clk'event and clk = '1') then
         if(enable_1s = '1') then
