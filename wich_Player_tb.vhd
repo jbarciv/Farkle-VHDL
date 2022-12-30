@@ -20,7 +20,7 @@ end component;
 signal clk_tb, reset_tb, change_player_tb : std_logic;
 signal leds_tb : std_logic_vector(7 downto 0);
 
-constant clk_period : time := 8ns;
+constant clk_period : time := 8 ns;
 
 begin
 -- Generacion del reloj
