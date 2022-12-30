@@ -5,7 +5,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity win is
   Port (clk     : in std_logic;
         reset   : in std_logic;
-        ready_win  : in std_logic;
+        en_win : in std_logic;
         leds    : out std_logic_vector(7 downto 0);
         segmentos_win:  out std_logic_vector(6 downto 0);
         which_player    : in std_logic
@@ -14,7 +14,7 @@ end win;
 
 architecture Behavioral of win is
 --Divisor de frecuencia
-constant count_max  : integer:=125000000; --1250000000
+constant count_max  : integer:=125000000/2; --1250000000
 signal count        : integer range 0 to count_max-1; 
 signal Enable_1s    :  std_logic;
 
@@ -33,7 +33,7 @@ process(clk,reset)
      if reset='1' then 
         count<=0; 
      elsif clk'event and clk='1' then 
-        if ready_win='1' then 
+        if en_win='1' then 
             if count=count_max-1 then 
                 count<=0; 
             else 
@@ -50,18 +50,15 @@ begin
     if reset='1' then 
         leds_i<=(others=>'0');
     elsif clk'event and clk='1' then 
-        if enable_1s='1' and ready_win='1' then 
+        if enable_1s='1' and en_win='1' then 
             leds_i<=not leds_i;
         end if; 
     end if;
 end process;        
 
 leds<=leds_i;
-segmentos_win<="1001111" when ready_win='1' and which_player='0' else  -- Gana 1
-               "0010010" when ready_win='1' and which_player='1' else  -- Gana 2
+segmentos_win<="1001111" when en_win='1' and which_player='0' else  -- Gana 1
+               "0010010" when en_win='1' and which_player='1' else  -- Gana 2
                "0000000";
         
-
-
-
 end Behavioral;
