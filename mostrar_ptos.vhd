@@ -1,3 +1,4 @@
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
@@ -152,9 +153,9 @@ begin
     end if;
 end process;
 
-uni <= uni_num;
-dec <= dec_num;
-cen <= cen_num;
-mil <= mil_num;
+uni <= std_logic_vector(uni_num);
+dec <= std_logic_vector(dec_num);
+cen <= std_logic_vector(cen_num);
+mil <= std_logic_vector(mil_num);
 
 end Behavioral;
