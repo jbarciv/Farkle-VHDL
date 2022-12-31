@@ -7,7 +7,9 @@ entity puntuaciones is
         reset           : in std_logic;
         dado_pto        : in std_logic_vector(2 downto 0);
         en_dado         : in std_logic;
-        en_tirar        : in std_logic;
+        sel_ON          : in std_logic; -- necesito saber si se ha seleccionado dados o se ha elegido plantarse
+        planta_ON       : in std_logic;
+        num_dados       : in std_logic_vector(2 downto 0); -- necesito saber cuantos dados se han seleccionado si se pulsa 'sel'
         en_suma_ronda   : out std_logic;
         en_EEEE         : out std_logic;
         puntuacion      : out std_logic_vector(13 downto 0)
@@ -21,6 +23,7 @@ architecture Behavioral of puntuaciones is
     signal ptos_1, ptos_2, ptos_3, ptos_4, ptos_5, ptos_6                   : integer range 0 to 3000;
     -- Contar dados entran
     signal cnt_dados                                                        : unsigned(2 downto 0); -- Max 6 dados codificados en binario
+    signal fin_dados                                                        : std_logic;
     -- Error: seleccion de dados erronea (no puntuable)
     signal error                                                            : std_logic;
 begin
@@ -31,17 +34,18 @@ begin
         if (reset = '1') then 
             cnt_dados <= "000";
         elsif (clk'event and clk = '1') then 
-            if (en_dado = '1') then 
-                if (cnt_dados = 5) then 
+            if (en_dado = '1' and sel_ON = '1') then 
+                if (cnt_dados = unsigned(num_dados)) then 
                     cnt_dados <= "000";
                 else 
                     cnt_dados <= cnt_dados + 1;
                 end if;
-            elsif (en_tirar = '1') then  -- Cada vez que se proceda a tirar los dados se resetea la cuenta
+            else
                 cnt_dados <= "000";
             end if;
         end if;
     end process;
+    fin_dados <= '1' when (cnt_dados = unsigned(num_dados) and en_dado = '1') else '0';
     
     --Logica puntuacion
     process(clk, reset)
@@ -71,7 +75,7 @@ begin
                     when others =>
                         count_0 <= count_0 + 1;
                 end case;
-            elsif (en_tirar = '1') then
+            elsif (fin_dados = '1') then
                 count_1 <= 0;
                 count_2 <= 0;
                 count_3 <= 0;  
@@ -149,9 +153,9 @@ begin
                  '1' when 2, 
                  '0' when others;             
     
-    en_EEEE <= error;
-    ptos_tot <= ptos_1 + ptos_2 + ptos_3 + ptos_4 + ptos_5 + ptos_6;
+    en_EEEE <= error when (sel_ON = '1' and planta_ON = '0') else '0'; -- cuando planta_ON = '1' no debo atender a la senal de error
+    ptos_tot <= (ptos_1 + ptos_2 + ptos_3 + ptos_4 + ptos_5 + ptos_6) when ((sel_ON = '1' and fin_dados = '1') or planta_ON = '1') else 0;
     puntuacion <= std_logic_vector(TO_UNSIGNED(ptos_tot, 14));
-    en_suma_ronda <= '1' when (ptos_tot /= 0  and error = '0') else '0'; -- hace falta aclara cuando deben funcionar las cosas (instante de tiempo)
+    en_suma_ronda <= '1' when ((sel_ON = '1' and fin_dados = '1') or planta_ON = '1') else '0';
     
 end Behavioral;
