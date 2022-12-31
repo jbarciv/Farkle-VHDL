@@ -94,7 +94,7 @@ mostrar_dados : scroll
     port map (  clk => clk,
                 reset => reset,
                 dados => dados,
-                enable_1s => enable_1s
+                enable_1s => enable_1s,
                 dados_s => dados_s
             );
 
