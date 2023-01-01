@@ -6,9 +6,7 @@ entity win is
   Port (clk     : in std_logic;
         reset   : in std_logic;
         en_win : in std_logic;
-        leds    : out std_logic_vector(7 downto 0);
-        segmentos_win:  out std_logic_vector(6 downto 0);
-        which_player    : in std_logic
+        leds    : out std_logic_vector(7 downto 0)
          );
 end win;
 
@@ -20,10 +18,6 @@ signal Enable_1s    :  std_logic;
 
 --Senal leds interna
 signal leds_i  : std_logic_vector(7 downto 0);
-
---Senal segmentos interna
-signal segmentos_i: std_logic_vector(6 downto 0);
-
 
 begin
 
@@ -57,8 +51,5 @@ begin
 end process;        
 
 leds<=leds_i;
-segmentos_win<="1001111" when en_win='1' and which_player='0' else  -- Gana 1
-               "0010010" when en_win='1' and which_player='1' else  -- Gana 2
-               "0000000";
         
 end Behavioral;
