@@ -18,6 +18,7 @@ architecture Behavioral of top_LFSR_tb is
     Port (clk: in std_logic;
           reset: in std_logic;
           tirar: in std_logic;
+          mascara: in std_logic_vector(17 downto 0);
           dados: out std_logic_vector(17 downto 0)
            );
     end component;
@@ -25,7 +26,7 @@ architecture Behavioral of top_LFSR_tb is
   signal tirar: std_logic;
   signal reset: std_logic;
   signal dados: std_logic_vector(17 downto 0);
-  
+  signal mascara: std_logic_vector(17 downto 0);
   
 begin
 
@@ -34,7 +35,8 @@ begin
       clk => clk,
       reset => reset,
       tirar => tirar,
-      dados => dados
+      dados => dados,
+      mascara => mascara
     );
     
   --clk
