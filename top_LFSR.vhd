@@ -7,7 +7,8 @@ entity top_LFSR is
   Port (clk: in std_logic;
         reset: in std_logic;
         en_LFSR_top: in std_logic;
-        dados: out std_logic_vector(17 downto 0)
+        dados: out std_logic_vector(17 downto 0);
+        not_sel: in std_logic_vector(17 downto 0)
         );
 end top_LFSR;
 
@@ -170,7 +171,7 @@ with rand6 select
                                 "110" when 6,
                                 "000" when others; 
               
-dados <= dados_out when en_LFSR_top = '1';
+dados <= dados_out and not_sel when en_LFSR_top = '1';
 
   
 -- dados <= dados_out when *(en_LFSR_top'event and en_LFSR_top = '0') else (others => '0'); -- para que sea solo en el flanco de bajada.
