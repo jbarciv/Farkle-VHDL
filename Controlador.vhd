@@ -6,9 +6,9 @@ use IEEE.NUMERIC_STD.ALL;
 entity Controlador is
     Port (  clk : in std_logic;
             reset : in std_logic;
-            tirar : in std_logic;
-            sel : in std_logic;
-            planta : in std_logic;
+            tirar_s : in std_logic;
+            sel_s : in std_logic;
+            planta_s : in std_logic;
             switch : in std_logic_vector(5 downto 0);
             leds : out std_logic_vector(7 downto 0);
             segmentos : out std_logic_vector(6 downto 0);
@@ -43,6 +43,7 @@ architecture Behavioral of Controlador is
     signal ready_calcula : std_logic;
     signal ready_mostrar_ptos : std_logic;
     signal ready_win : std_logic;
+    signal farkle_ok : std_logic;
 
     -- Contadores para activar displays por 1 segundo y 5 segundos
     constant maxcount : integer := 125*10**3;   -- cambiar a 125000000 para probar en la placa física
@@ -51,11 +52,90 @@ architecture Behavioral of Controlador is
     signal conta_2s : unsigned(1 downto 0);
     signal conta_15s : unsigned(3 downto 0);
 
-    
+    -- Señales auxiliares
+    signal dados : std_logic_vecto(18 downto 0);
     
 begin
 
 --Aqui irian todos los componentes que usaremos con la inst(work."nombre del bloque")
+
+Display : entity work.top_display
+    port map (  clk => clk,
+            reset => reset,
+            dados => dados,
+            puntos_ronda => puntos_ronda,
+            puntos_partida => puntos-partida,
+            en_apagado => en_apagado,
+            en_mostrar_dados => en_mostrar_dados, --Habilitacion del scroll
+            en_mostrar_error => en_mostrar_error, --Se seleccionan dados que no dan ptos
+            en_farkle_ok => en_farkle_ok, --Hay farkle por lo tanto se hace scroll dos veces
+            en_win => en_win,  --Se muestra el jugador que gano en la pantalla
+            en_ptos_ronda => en_ptos_ronda,
+            en_ptos_partida => en_ptos_partida,
+            player => player,
+            ready_mostrar_ptos => ready_mostrar_ptos,
+            segmentos => segmentos,
+            selector => selector
+            );
+
+LFSR : entity work.top_LFSR 
+  port map(
+        clk => clk,
+        reset => reset,
+        en_LFSR_top => en_LFSR_top,
+        dados => dados
+        );
+
+WIN: entity work.win
+  Port (clk     => clk,
+        reset   => reset,
+        en_win => en_win,
+        leds    => leds
+         );
+
+Puntuacion : entity work.Puntuacion --queda por subir a Github
+  port map (clk     => clk, 
+            reset   =>reset,
+            dado_pto=> dado_pto,
+            ptos    => ptos,
+            error   => error, 
+            farkle_ok  => farkle_ok,
+            dado_valido => dado_valido,
+            en_suma_ronda=> en_suma_ronda --No funciona
+            ready_puntuacion: out std_logic
+            );
+
+SelectDados_v1: entity work.SelectDados_v1
+  port map (clk     => clk, 
+            reset   => reset,
+            sel     => sel, 
+            sw      => sw, 
+            dados   => dados, 
+            dado_pto=> dado_pto,
+            dado_valido=>dado_valido, 
+            );
+
+sel : entity work.debouncing
+    port map (  clk => clk,
+                reset => reset,
+                boton => sel_s,
+                filtrado => sel
+            );
+
+tirar : entity work.debouncing
+    port map (  clk => clk,
+                reset => reset,
+                boton => tirar_s,
+                filtrado => tirar
+                );
+
+planta : entity work.debouncing
+    port map (  clk => clk,
+                reset => reset,
+                boton => planta_s,
+                filtrado => planta
+                );
+            
 
 --Maquina de estados
 
@@ -68,6 +148,7 @@ begin
             when S_ESPERAR =>
                 en_player <= '0';
                 en_mostrar_dados <= '0';
+                en_farkle_ok <= '0';
                 en_apagado <= '1';
                 if(tirar='1') then
                     en_apagado = '0';
@@ -81,7 +162,7 @@ begin
                 en_mostrar_dados <= '1';
                 en_comprobar_farkle <= '1';
 
-                if (en_farkle_ok='1') then -- La misma señal dos veces?!
+                if (farkle_ok='1') then -- La misma señal dos veces?!
                     estado <= S_FARKLE;
                 elsif (sel='1' or planta='1') then
                     en_calcula <= '1';
@@ -94,7 +175,7 @@ begin
                 end if;
 
             when S_FARKLE =>
-                if(conta_15s = "100") then
+                if(conta_15s = "1110") then
                     en_mostrar_dados <= '0';
                     en_farkle_ok <= '1';              
                 elsif(ready_mostrar_ptos = '1') then
@@ -108,16 +189,19 @@ begin
                 if(en_error = '1') then
                     estado <= S_INVALIDO;
                     en_mostrar_dados <= '0';
-                    en_mostrar_error <='1';
+                    
                 elsif (ready_calcula='1')
                     estado <= S_MOSTRAR_PTOS;
                     en_mostrar_dados <= '0';
                  end if;   
                 
             when S_INVALIDO =>
+                en_mostrar_error <='1';
                 if(conta_2s = "10") then
                     estado <= S_MOSTRAR;
+                    en_mostrar_error <='0';
                 end if;
+
                 
             when S_MOSTRAR_PTOS =>
                 
@@ -146,7 +230,6 @@ begin
                     en_ptos_ronda <= '0';
                     en_win <= '1';
                 end if;
-
             when others =>
                 -- Acciones a realizar en caso de que no se cumpla ninguna de las condiciones anteriores
         end case;
