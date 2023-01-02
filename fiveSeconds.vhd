@@ -9,7 +9,7 @@ entity fiveSeconds is
             reset :         in std_logic;
             enable_timer:   in std_logic;
             finTimer :      out std_logic;
-            timer_5s_on   :       out_std_logic
+            timer_5s_on   : out std_logic
             );
 end fiveSeconds;
 
