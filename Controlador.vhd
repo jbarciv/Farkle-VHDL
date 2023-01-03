@@ -59,6 +59,11 @@ begin
 
 --Aqui irian todos los componentes que usaremos con la inst(work."nombre del bloque")
 
+which_Player : entity work.which_Player
+    port map (  
+
+    );
+
 Display : entity work.top_display
     port map (  clk => clk,
             reset => reset,
