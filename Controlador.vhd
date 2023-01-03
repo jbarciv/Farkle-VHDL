@@ -60,16 +60,18 @@ begin
 --Aqui irian todos los componentes que usaremos con la inst(work."nombre del bloque")
 
 which_Player : entity work.which_Player
-    port map (  
-
-    );
+    port map (  clk             => clk,         
+                reset           => reset,        
+                change_player   => change_player,
+                leds            => leds(1 downto 0)         
+            );
 
 Display : entity work.top_display
     port map (  clk                 => clk,
                 reset               => reset,
                 dados               => dados,
                 puntos_ronda        => puntos_ronda,
-                puntos_partida      => puntos-partida,
+                puntos_partida      => puntos_partida,
                 en_apagado          => en_apagado,
                 en_mostrar_dados    => en_mostrar_dados, --Habilitacion del scroll
                 en_mostrar_error    => en_mostrar_error, --Se seleccionan dados que no dan ptos
@@ -99,7 +101,7 @@ WIN: entity work.win
 
 Puntuacion : entity work.Puntuacion --queda por subir a Github
   port map (clk                 => clk, 
-            reset               =>reset,
+            reset               => reset,
             dado_pto            => dado_pto,
             ptos                => ptos,
             error               => error, 
@@ -116,7 +118,19 @@ SelectDados_v1: entity work.SelectDados_v1
             sw          => sw, 
             dados       => dados, 
             dado_pto    => dado_pto,
-            dado_valido =>dado_valido
+            dado_valido => dado_valido
+            );
+
+llevar_cuenta_puntuaciones : entity work.cuenta_puntuaciones
+    port map (  clk             => clk, 
+                reset           => reset,
+                ptos            => ptos,
+                en_suma_ronda   => en_suma_ronda,
+                which_player    => which_player,
+                planta_en       => planta_en, -- necesitaria un enable desde el controlador que indique mediante
+                farkle_ok       => farkle_ok, -- un pulso de un clk que planta se ha pulsado...
+                puntos_ronda    => puntos_ronda,
+                puntos_partida  => puntos_partida
             );
 
 sel : entity work.Antirrebotes
