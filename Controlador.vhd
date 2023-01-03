@@ -120,21 +120,21 @@ SelectDados_v1: entity work.SelectDados_v1
             dado_valido=>dado_valido, 
             );
 
-sel : entity work.debouncing
+sel : entity work.Antirrebotes
     port map (  clk => clk,
                 reset => reset,
                 boton => sel_s,
                 filtrado => sel
             );
 
-tirar : entity work.debouncing
+tirar : entity work.Antirrebotes
     port map (  clk => clk,
                 reset => reset,
                 boton => tirar_s,
                 filtrado => tirar
                 );
 
-planta : entity work.debouncing
+planta : entity work.Antirrebotes
     port map (  clk => clk,
                 reset => reset,
                 boton => planta_s,
