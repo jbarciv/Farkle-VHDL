@@ -9,7 +9,7 @@ entity cuenta_puntuaciones is
         en_suma_ronda   : in std_logic;
         which_player    : in std_logic;
         planta_en       : in std_logic;
-        farkle_en       : in std_logic;
+        farkle_ok       : in std_logic;
         puntos_ronda    : out std_logic_vector(13 downto 0);
         puntos_partida  : out std_logic_vector(13 downto 0)
        );
@@ -26,6 +26,12 @@ architecture Behavioral of cuenta_puntuaciones is
 begin
 
     --Proceso para sumar puntuaciones 
+    
+    -- en_suma_ronda y planta_en se espera que sean pulsos de un ciclo
+    -- Y es necesario que se produzcan en el mismo instante de tiempo
+    -- entre la señal de farkle_ok (que tambien es un pulso) y el cambio
+    -- de jugador en necesario que pasen varios ciclos de reloj, pues se 
+    -- sobreescribe la informacion
     process(clk, reset)
     begin
         if(reset = '1') then
@@ -37,24 +43,25 @@ begin
             case which_player is
                 when '0' =>
                     ptos_ronda_2 <= (others => '0');
-                    if (en_suma_ronda = '1') then
-                        ptos_ronda_1 <= ptos_ronda_1 + unsigned(ptos);
-                        if (planta_en = '1') then
-                            ptos_partida_1 <= ptos_partida_1 + ptos_ronda_1;
-                        elsif (farkle_en = '1') then
-                            ptos_ronda_1 <= (others => '0');
+                    if (en_suma_ronda = '1') then                       
+                        ptos_ronda_1 <= ptos_ronda_1 + unsigned(ptos);  
+                        if (planta_en = '1') then                       
+                            ptos_partida_1 <= ptos_partida_1 + ptos_ronda_1 + unsigned(ptos);
                         end if;
+                    elsif (farkle_ok = '1') then
+                        ptos_ronda_1 <= (others => '0');
                     end if;
                 when '1'=>
                     ptos_ronda_1 <= (others => '0');
                     if (en_suma_ronda = '1') then
                         ptos_ronda_2 <= ptos_ronda_2 + unsigned(ptos);
                         if (planta_en = '1') then
-                            ptos_partida_2 <= ptos_partida_2 + ptos_ronda_2;
-                        elsif (farkle_en = '1') then
-                            ptos_ronda_2 <= (others => '0');
+                            ptos_partida_2 <= ptos_partida_2 + ptos_ronda_2 + unsigned(ptos);
                         end if;
+                    elsif (farkle_ok = '1') then
+                            ptos_ronda_2 <= (others => '0');
                     end if;
+                when others =>
             end case;
         end if;
     end process;
