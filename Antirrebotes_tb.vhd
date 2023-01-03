@@ -4,20 +4,20 @@
 --
 -- Create Date:   17:51:11 11/16/2016
 -- Design Name:   
--- Module Name:   C:/ed/prac3/debouncing_tb.vhd
+-- Module Name:   C:/ed/prac3/Antirrebotes_tb.vhd
 -- Test bench Anti-bounce circuit
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
  
-ENTITY debouncing_tb IS
-END debouncing_tb;
+ENTITY Antirrebotes_tb IS
+END Antirrebotes_tb;
  
-ARCHITECTURE behavior OF debouncing_tb IS 
+ARCHITECTURE behavior OF Antirrebotes_tb IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
-    COMPONENT debouncing
+    COMPONENT Antirrebotes
     PORT(
          clk : IN  std_logic;
 			reset	: in std_logic;	
@@ -40,7 +40,7 @@ ARCHITECTURE behavior OF debouncing_tb IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: debouncing PORT MAP (
+   uut: Antirrebotes PORT MAP (
           	clk => clk,
 			reset => reset,
           	boton => boton,
