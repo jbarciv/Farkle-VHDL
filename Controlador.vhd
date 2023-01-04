@@ -54,6 +54,7 @@ architecture Behavioral of Controlador is
 
     -- Señales auxiliares
     signal dados                : std_logic_vecto(18 downto 0);
+    signal player               : std_logic;
     
 begin
 
@@ -63,6 +64,7 @@ which_Player : entity work.which_Player
     port map (  clk             => clk,         
                 reset           => reset,        
                 change_player   => change_player,
+                player          => player,
                 leds            => leds(1 downto 0)         
             );
 
