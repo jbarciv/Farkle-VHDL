@@ -23,7 +23,7 @@ architecture Behavioral of Controlador is
     signal estado : estados;
     
     --Señales para activar cada bloque
-    signal en_lfsr_top          : std_logic;
+    signal en_LFSR_top          : std_logic;
     signal en_comprobar_farkle  : std_logic;
     signal en_mostrar_dados     : std_logic;
     signal en_mostrar_error     : std_logic;
@@ -53,8 +53,13 @@ architecture Behavioral of Controlador is
     signal conta_15s            : unsigned(3 downto 0);
 
     -- Señales auxiliares
+    -- which_Player
     signal dados                : std_logic_vecto(18 downto 0);
     signal player               : std_logic;
+    signal change_player        : std_logic;
+
+    signal puntos_ronda :  std_logic_vector(13 downto 0);
+    signal puntos_partida : std_logic_vector(13 downto 0);
     
 begin
 
@@ -65,9 +70,9 @@ which_Player : entity work.which_Player
                 reset           => reset,        
                 change_player   => change_player,
                 player          => player,
-                leds            => leds(1 downto 0)         
+                leds            => leds     
             );
-
+    leds
 Display : entity work.top_display
     port map (  clk                 => clk,
                 reset               => reset,
@@ -75,10 +80,10 @@ Display : entity work.top_display
                 puntos_ronda        => puntos_ronda,
                 puntos_partida      => puntos_partida,
                 en_apagado          => en_apagado,
-                en_mostrar_dados    => en_mostrar_dados, --Habilitacion del scroll
-                en_mostrar_error    => en_mostrar_error, --Se seleccionan dados que no dan ptos
-                en_farkle_ok        => en_farkle_ok, --Hay farkle por lo tanto se hace scroll dos veces
-                en_win              => en_win,  --Se muestra el jugador que gano en la pantalla
+                en_mostrar_dados    => en_mostrar_dados,    -- Habilitacion del scroll
+                en_mostrar_error    => en_mostrar_error,    -- Se seleccionan dados que no dan ptos
+                en_farkle_ok        => en_farkle_ok,        -- Hay farkle por lo tanto se hace scroll dos veces
+                en_win              => en_win,              -- Se muestra el jugador que gano en la pantalla
                 en_ptos_ronda       => en_ptos_ronda,
                 en_ptos_partida     => en_ptos_partida,
                 player              => player,
@@ -117,7 +122,7 @@ SelectDados_v1: entity work.SelectDados_v1
   port map (clk         => clk, 
             reset       => reset,
             sel         => sel, 
-            sw          => sw, 
+            sw          => switch, 
             dados       => dados, 
             dado_pto    => dado_pto,
             dado_valido => dado_valido
@@ -128,7 +133,7 @@ llevar_cuenta_puntuaciones : entity work.cuenta_puntuaciones
                 reset           => reset,
                 ptos            => ptos,
                 en_suma_ronda   => en_suma_ronda,
-                which_player    => which_player,
+                which_player    => player,
                 planta_en       => planta_en, -- necesitaria un enable desde el controlador que indique mediante
                 farkle_ok       => farkle_ok, -- un pulso de un clk que planta se ha pulsado...
                 puntos_ronda    => puntos_ronda,
