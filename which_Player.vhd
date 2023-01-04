@@ -5,16 +5,17 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity which_Player is
-     Port ( clk :           in std_logic;
-            reset :         in std_logic;
-            change_player:  in std_logic;
-            leds :          out std_logic_vector(7 downto 0)
+     Port ( clk             :  in std_logic;
+            reset           :  in std_logic;
+            change_player   :  in std_logic;
+            player          :  out std_logic;
+            leds            :  out std_logic_vector(7 downto 0)
             );
 end which_Player;
 
 architecture Behavioral of which_Player is
     
-    signal player: std_logic;
+    signal player_aux: std_logic;
 
 begin
 
@@ -23,19 +24,21 @@ begin
 process(clk, reset)
     begin
         if (reset = '1') then
-           player <= '0';
+           player_aux <= '0';
         elsif (clk'event and clk = '1') then
             if (change_player = '1') then       
-                player <= not player;
+                player_aux <= not player_aux;
             end if;
         end if;    
 end process;
 
 --Biestable
 
-with player select
+with player_aux select
     leds <= "00000001" when '0',
             "00000011" when '1',
             "--------" when others;
+
+player <= player_aux;
             
 end Behavioral;
