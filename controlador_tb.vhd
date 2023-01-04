@@ -72,7 +72,6 @@ begin
     wait for 8 ns;
     tirar <= '0';
     wait for 8 ms;
-    tirar <= '0';
     switch <= "011001";
     wait for 50 ns;
     sel <= '1';
