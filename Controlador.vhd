@@ -57,11 +57,11 @@ architecture Behavioral of Controlador is
     signal player               : std_logic;
     signal change_player        : std_logic;
 
-    signal puntos_ronda :  std_logic_vector(13 downto 0);
-    signal puntos_partida : std_logic_vector(13 downto 0);
+    signal puntos_ronda         :  std_logic_vector(13 downto 0);
+    signal puntos_partida       : std_logic_vector(13 downto 0);
 
-    signal dado_pto : std_logic;
-    signal dado_valido : std_logic;
+    signal dado_pto             : std_logic;
+    signal dado_valido          : std_logic;
     
 begin
 
@@ -74,7 +74,7 @@ which_Player : entity work.which_Player
                 player          => player,
                 leds            => leds     
             );
-    leds
+            
 Display : entity work.top_display
     port map (  clk                 => clk,
                 reset               => reset,
