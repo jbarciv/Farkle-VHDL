@@ -10,7 +10,10 @@ entity SelectDados_v1 is
         sw      : in std_logic_vector(5 downto 0);
         dados   : in std_logic_vector(17 downto 0);
         dado_pto: out std_logic_vector(2 downto 0);
-        dado_valido: out std_logic
+        dado_valido: out std_logic;
+        farkle_ok: in std_logic;
+        planta  : in std_logic;--boton filtrado
+        not_sel : out std_logic_vector(17 downto 0)
         );
 end SelectDados_v1;
 
@@ -41,8 +44,14 @@ sw_i(14 downto 12)<= "111" when sw(4)='1' else
 sw_i(17 downto 15)<= "111" when sw(5)='1' else
                    "000";   
                    
--- Asignacion de valores                                           
+-- Asignacion de valores                                         
 dado_i<=sw_i and dados;
+not_sel<=not(sw_i);
+--1a tirada 164231
+--switches  100001
+--2a tirada -5426-
+
+
 
 
 -----------------------------------
@@ -62,7 +71,7 @@ process(clk,reset)
 end process; 
 
 --Multiplexor
----FALTA CONDICION SEL O PLANTA
+
 with Count_0a5 select 
  dado_pto<=dado_i(2 downto 0) when "000", --0
            dado_i(5 downto 3) when "001", --1
@@ -72,7 +81,7 @@ with Count_0a5 select
            dado_i(17 downto 15) when "101", --5
            "---" when others; 
 
-dado_valido<='1' when sw/="000000" and sel='1' else 
+dado_valido<='1' when sw/="000000" and (sel='1' or planta='1') and farkle_ok='0' else 
             '0';
 
 
