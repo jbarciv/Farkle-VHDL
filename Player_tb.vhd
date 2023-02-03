@@ -3,13 +3,13 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity which_Player_tb is
-end which_Player_tb;
+entity Player_tb is
+end Player_tb;
 
-architecture Behavioral of which_Player_tb is
+architecture Behavioral of Player_tb is
 
 
-component which_Player is
+component Player is
     Port ( clk :           in std_logic;
            reset :         in std_logic;
            change_player:  in std_logic;
@@ -49,7 +49,7 @@ begin
 
 -- Instanciar componente rider
 
-    CUT: which_Player port map(  clk => clk_tb,
+    CUT: Player port map(  clk => clk_tb,
                                 reset => reset_tb,
                                 change_player => change_player_tb,
                                 leds => leds_tb  );
