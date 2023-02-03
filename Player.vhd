@@ -5,8 +5,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity Player is
-     Port 
-        (   clk             :  in std_logic;
+     Port ( clk             :  in std_logic;
             reset           :  in std_logic;
             change_player   :  in std_logic;
             player          :  out std_logic;
