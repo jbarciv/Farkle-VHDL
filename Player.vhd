@@ -1,4 +1,4 @@
--- PLAYER INDICATOR
+-- PLAYER LED INDICATOR
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -21,8 +21,7 @@ architecture Behavioral of Player is
 
 begin
 
--- Seleccion del jugador -> encender led 0 - 1
-
+-- Player selection -> switch on led 0 or 1
 process(clk, reset)
     begin
         if (reset = '1') then
@@ -34,14 +33,16 @@ process(clk, reset)
         end if;    
 end process;
 
---Biestable
-
+-- Bistable
 with player_aux select
     leds_i <=   "00000001" when '0',
                 "00000011" when '1',
                 "--------" when others;
 
-player <= player_aux;
-leds <= leds_i;
+-- Output: 
+-- > the current player (0: for player 1 and 1: for player 2)
+-- > the "vector" of leds to be displayed, only two possibilites are posible
+player  <= player_aux; 
+leds    <= leds_i;
          
 end Behavioral;
