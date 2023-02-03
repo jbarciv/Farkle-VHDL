@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity Anti_bounce is
         Port (  clk         : in std_logic;
                 reset       : in std_logic;
-                boton       : in std_logic;
+                button       : in std_logic;
                 filtered    : out std_logic);
 end Anti_bounce;
 
@@ -32,7 +32,7 @@ begin
 		  	Q2 <= '0';
 		  	Q3 <= '0';
 		elsif (clk'event and clk = '1') then
-		  	Q1 <= boton;
+		  	Q1 <= button;
 		  	Q2 <= Q1;
 		  	Q3 <= Q2;
 		end if; 
