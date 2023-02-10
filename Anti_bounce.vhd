@@ -2,10 +2,11 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 entity Anti_bounce is
-        Port (  clk         : in std_logic;
-                reset       : in std_logic;
-                button       : in std_logic;
-                filtered    : out std_logic);
+    Port (  clk         : in std_logic;
+            reset       : in std_logic;
+            button       : in std_logic;
+            filtered    : out std_logic
+		 );
 end Anti_bounce;
 
 architecture Behavioral of Anti_bounce is

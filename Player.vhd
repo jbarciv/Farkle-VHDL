@@ -5,12 +5,12 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity Player is
-     Port ( clk             :  in std_logic;
+    Port (  clk             :  in std_logic;
             reset           :  in std_logic;
             change_player   :  in std_logic;
             player          :  out std_logic;
             leds            :  out std_logic_vector(7 downto 0)
-        );
+         );
 end Player;
 
 architecture Behavioral of Player is
@@ -39,8 +39,8 @@ with player_aux select
                 "--------" when others;
 
 -- Output: 
--- > the current player (0: for player 1 and 1: for player 2)
--- > the "vector" of leds to be displayed, only two possibilites are posible
+-- > current player (0: for player 1 and 1: for player 2)
+-- > "vector" of leds to be displayed, with only two possibilites
 player  <= player_aux; 
 leds    <= leds_i;
          
