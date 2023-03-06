@@ -22,7 +22,7 @@ architecture Behavioral of Controlador is
     type estados is (S_ESPERAR, S_MOSTRAR, S_FARKLE, S_CALCULA, S_INVALIDO, S_MOSTRAR_PTOS, S_WIN);
     signal estado : estados;
     
-    --Señales para activar cada bloque
+    --Seï¿½ales para activar cada bloque
     signal en_LFSR_top          : std_logic := '0';
     signal en_comprobar_farkle  : std_logic := '0';
     signal en_mostrar_dados     : std_logic := '0';
@@ -41,7 +41,7 @@ architecture Behavioral of Controlador is
 
     signal flag_sel             : std_logic := '0';
 
-    -- Señales ready
+    -- Senales ready
     --signal ready_error          : std_logic;
     signal ready_calcula        : std_logic;
     signal ready_mostrar_ptos   : std_logic;
@@ -52,13 +52,13 @@ architecture Behavioral of Controlador is
     signal ready_comprobar_farkle : std_logic;
 
     -- Contadores para activar displays por 1 segundo y 5 segundos
-    constant maxcount           : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa física
+    constant maxcount           : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa fï¿½sica
     signal count                : integer range 0 to maxcount-1;
     signal enable_1s            : std_logic;
     signal conta_2s             : unsigned(1 downto 0);
     signal conta_15s            : unsigned(3 downto 0);
 
-    -- Señales auxiliares
+    -- Senales auxiliares
     signal dados                : std_logic_vector(17 downto 0);
     signal player               : std_logic;
 
@@ -73,7 +73,7 @@ architecture Behavioral of Controlador is
     signal leds_which_player : std_logic_vector(7 downto 0);
     signal leds_win : std_logic_vector(7 downto 0);
     
-    -- Señales botones filtrados
+    -- Senales botones filtrados
     signal tirar : std_logic;
     signal planta : std_logic;
     signal sel : std_logic;
@@ -166,29 +166,17 @@ Farkle : entity work.ComprobarFarkle
                 en_comprobar_farkle => en_comprobar_farkle,
                 farkle_ok           => farkle_ok
               );
-
-sel_boton : entity work.Antirrebotes
-    port map (  clk         => clk,
-                reset       => reset,
-                boton       => sel_s,
-                filtrado    => sel
-            );
-
-tirar_boton : entity work.Antirrebotes
-    port map (  clk         => clk,
-                reset       => reset,
-                boton       => tirar_s,
-                filtrado    => tirar
-                );
-
-planta_boton : entity work.Antirrebotes
-    port map (  clk         => clk,
-                reset       => reset,
-                boton       => planta_s,
-                filtrado    => planta
-                );
-            
-
+          
+Antirrebotes: entity work.top_Antirrebotes
+    port map (  clk                 => clk,
+                reset               => reset,
+                sel_s               => sel_s,
+                tirar_s             => tirar_s,
+                planta_s            => planta_s,
+                sel                 => sel,
+                tirar               => tirar,
+                planta              => planta
+              );
 --Maquina de estados
 
 process(clk,reset)
@@ -218,7 +206,7 @@ begin
                 en_mostrar_dados    <= '1';
                 en_comprobar_farkle <= '1';
 
-                if (farkle_ok='1') then -- La misma señal dos veces?!
+                if (farkle_ok='1') then -- La misma seï¿½al dos veces?!
                     estado <= S_FARKLE;
                     
                 elsif (sel='1' or planta='1') then
