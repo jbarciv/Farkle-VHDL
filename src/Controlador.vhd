@@ -125,7 +125,7 @@ WIN: entity work.win
             leds    => leds_win
          );
 
-Puntuacion : entity work.Puntuacion --queda por subir a Github
+top_puntuacion : entity work.Puntuacion  
   port map (clk                 => clk, 
             reset               => reset,
             en_calcula          => en_calcula,
