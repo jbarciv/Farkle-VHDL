@@ -4,13 +4,15 @@ use IEEE.NUMERIC_STD.ALL;
 
 
 entity Puntuacion is
-  Port (clk     : in std_logic; 
-        reset   : in std_logic;
-        en_calcula : in std_logic;
-        dado_pto: in std_logic_vector(2 downto 0);
-        ptos    : out std_logic_vector(13 downto 0);
-        error   : out std_logic;
-        ready_puntuacion: out std_logic
+  Port (clk                 : in std_logic; 
+        reset               : in std_logic;
+        en_calcula          : in std_logic;
+        dado_pto            : in std_logic_vector(2 downto 0);
+        en_comprobar_farkle : in std_logic; 
+        ptos                : out std_logic_vector(13 downto 0);
+        error               : out std_logic;
+        ready_puntuacion    : out std_logic;
+        farkle_ok           : out std_logic 
         );
 end Puntuacion;
 
@@ -24,11 +26,8 @@ signal ptos_1,ptos_2,ptos_3,ptos_4,ptos_5,ptos_6 : integer range 0 to 3000;
 signal cnt_dados    : unsigned(2 downto 0);
 signal ovf_dados    : std_logic;
 
-signal ready_puntuacion_i: std_logic;
 
 begin
-
-
 
 --Contador dados que entran --Hay que utilizar la variable count_0, count_1, etc
 process(clk,reset)
@@ -36,7 +35,7 @@ begin
     if reset='1' then 
         cnt_dados<="000";
     elsif clk'event and clk='1' then
-        if en_calcula = '1' then
+        if en_calcula = '1' or en_comprobar_farkle='1' then
             if cnt_dados=6 then 
                     cnt_dados<="000";
             else
@@ -62,7 +61,8 @@ begin
         count_6<=0;
         count_0<=0;
     elsif(clk'event and clk='1') then 
-        if (ovf_dados='0' and en_calcula='1') then 
+        if (en_calcula='1' or en_comprobar_farkle='1') then 
+        --if (ovf_dados='0' and (en_calcula='1' or en_comprobar_farkle='1')) then 
             case dado_pto is 
                 when "001" =>
                     count_1<=count_1+1;
@@ -97,7 +97,7 @@ end process;
 --Puntuacion/Me han metido un dado mal
 -------------------------------------------------------
 with count_1 select 
-    ptos_1<=    100 when 1, 
+    ptos_1<=   100 when 1, 
                200 when 2,
                1000 when 3, 
                1000 when 4,
@@ -136,7 +136,7 @@ with count_5 select
 
 with count_6 select 
     ptos_6<=    600 when 3, 
-               1000 when 4,
+               1000 when 4, 
                2000 when 5, 
                3000 when 6, 
                0 when others;       
@@ -153,6 +153,8 @@ error<='1' when ((count_2=1 or count_2=2) or
                   (count_6=1 or count_6=2)) and ovf_dados='1' else '0';
 
 
+--Hay farkle
+farkle_ok <= '1' when (count_1 = 0 and count_5 = 0 and count_2 < 3 and count_3 < 3 and count_4 < 3 and count_6 < 3 and ovf_dados='1') else '0';     
 
 --ready_puntuacion <= '1' when(ptos_tirada /= 0 and ovf_dados = '1') else '0';
 ready_puntuacion <=ovf_dados;
