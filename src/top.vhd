@@ -119,7 +119,7 @@ WIN: entity work.win
             leds    => leds_win
          );
 
-Puntuacion : entity work.Puntuacion --queda por subir a Github
+top_puntuacion : entity work.Puntuacion  
   port map (clk                 => clk, 
             reset               => reset,
             en_calcula          => en_calcula,
@@ -154,27 +154,25 @@ llevar_cuenta_puntuaciones : entity work.cuenta_puntuaciones
                 ready_win       => ready_win
             );
             
+Farkle : entity work.ComprobarFarkle
+port map (  clk                 => clk,
+            reset               => reset,
+            dados               => dados,
+            en_comprobar_farkle => en_comprobar_farkle,
+            farkle_ok           => farkle_ok
+          );
+                  
+Antirrebotes: entity work.top_Antirrebotes
+    port map (  clk                 => clk,
+                reset               => reset,
+                sel_s               => sel_s,
+                tirar_s             => tirar_s,
+                planta_s            => planta_s,
+                sel                 => sel,
+                tirar               => tirar,
+                planta              => planta
+              );
 
-sel_boton : entity work.Antirrebotes
-    port map (  clk         => clk,
-                reset       => reset,
-                boton       => sel_s,
-                filtrado    => sel
-            );
-
-tirar_boton : entity work.Antirrebotes
-    port map (  clk         => clk,
-                reset       => reset,
-                boton       => tirar_s,
-                filtrado    => tirar
-                );
-
-planta_boton : entity work.Antirrebotes
-    port map (  clk         => clk,
-                reset       => reset,
-                boton       => planta_s,
-                filtrado    => planta
-                );
 
 controlador_i: entity work.Controlador
     Port map(  clk         => clk, 
