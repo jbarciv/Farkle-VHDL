@@ -4,11 +4,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity top_LFSR is
-    Port (  clk: in std_logic;
-            reset: in std_logic;
-            en_LFSR_top: in std_logic;
-            dados: out std_logic_vector(17 downto 0);
-            not_sel: in std_logic_vector(17 downto 0)
+    Port (  clk         : in std_logic;
+            reset       : in std_logic;
+            en_LFSR_top : in std_logic;
+            dados       : out std_logic_vector(17 downto 0)
             );
 end top_LFSR;
 
@@ -21,13 +20,6 @@ architecture Structural of top_LFSR is
                 semilla : in std_logic_vector(15 downto 0)
                 );
   end component;
-
-  signal data_LFSR1: std_logic_vector(15 downto 0);
-  signal data_LFSR2: std_logic_vector(15 downto 0);
-  signal data_LFSR3: std_logic_vector(15 downto 0);
-  signal data_LFSR4: std_logic_vector(15 downto 0);
-  signal data_LFSR5: std_logic_vector(15 downto 0);
-  signal data_LFSR6: std_logic_vector(15 downto 0);
 
   signal semilla1: std_logic_vector(15 downto 0) := "1111111111111111";
   signal semilla2: std_logic_vector(15 downto 0) := "0000000000000001";
@@ -50,57 +42,69 @@ architecture Structural of top_LFSR is
   signal rand5: integer range 0 to 6;
   signal rand6: integer range 0 to 6;
 
+  signal data_LFSR1: std_logic_vector(15 downto 0);
+  signal data_LFSR2: std_logic_vector(15 downto 0);
+  signal data_LFSR3: std_logic_vector(15 downto 0);
+  signal data_LFSR4: std_logic_vector(15 downto 0);
+  signal data_LFSR5: std_logic_vector(15 downto 0);
+  signal data_LFSR6: std_logic_vector(15 downto 0);
+
   signal dados_out: std_logic_vector(17 downto 0);
 
 begin
 
   LFSR16_1: LFSR16 
     port map(
-              clk       =>  clk,
-              reset     =>  reset,
-              data_out  =>  data_LFSR1,
-              semilla   =>  semilla1
+                clk       =>    clk,
+                reset     =>    reset,
+                new_lsfr  =>    new_lsfr,
+                semilla   =>    semilla1,
+                data_out  =>    data_LFSR1
             );
 
   LFSR16_2: LFSR16 
     port map(
-              clk       =>  clk,
-              reset     =>  reset,
-              data_out  =>  data_LFSR2,
-              semilla   =>  semilla2
+                clk       =>    clk,
+                reset     =>    reset,
+                new_lsfr  =>    new_lsfr,
+                semilla   =>    semilla2,
+                data_out  =>    data_LFSR2
             );
 
   LFSR16_3: LFSR16 
     port map(
-              clk       =>  clk,
-              reset     =>  reset,
-              data_out  =>  data_LFSR3,
-              semilla   =>  semilla3
+                clk       =>    clk,
+                reset     =>    reset,
+                new_lsfr  =>    new_lsfr,
+                semilla   =>    semilla3,
+                data_out  =>    data_LFSR3
             );
 
   LFSR16_4: LFSR16 
     port map(
-              clk       =>  clk,
-              reset     =>  reset,
-              data_out  =>  data_LFSR4,
-              semilla   =>  semilla4
+                clk       =>    clk,
+                reset     =>    reset,
+                new_lsfr  =>    new_lsfr,
+                semilla   =>    semilla4,
+                data_out  =>    data_LFSR4
             );
 
   LFSR16_5: LFSR16 
     port map(
-              clk       =>  clk,
-              reset     =>  reset,
-              data_out  =>  data_LFSR5,
-              semilla   =>  semilla5
+                clk       =>    clk,
+                reset     =>    reset,
+                new_lsfr  =>    new_lsfr,
+                semilla   =>    semilla5,
+                data_out  =>    data_LFSR5
             );
 
   LFSR16_6: LFSR16 
     port map(
-              clk       =>  clk,
-              reset     =>  reset,
-              data_out  =>  data_LFSR6,
-              semilla   =>  semilla6
+                clk       =>    clk,
+                reset     =>    reset,
+                new_lsfr  =>    new_lsfr,
+                semilla   =>    semilla6,
+                data_out  =>    data_LFSR6
             );
 
-           
 end Structural;

@@ -18,9 +18,9 @@ architecture Behavioral of Antirrebotes is
     type Status_t is (S_NADA, S_BOTON);
     signal STATE: Status_t;
     
-    signal T, enable     : std_logic;
-    constant max_valor   : integer := 124999; --124999; --Esta para el test bench
-    signal conta    : integer range 0 to max_valor;
+    signal T, enable    : std_logic;
+    constant max_valor  : integer := 124999; -- ¿como automatizar el cambio para el testbench?
+    signal conta        : integer range 0 to max_valor;
     
 begin
 
@@ -35,7 +35,7 @@ begin
 		  Q1 <= boton;
 		  Q2 <= Q1;
 		  Q3 <= Q2;
-		 end if; 
+		end if; 
     end process;
     
     flanco <= (Q2 and (not Q3));
