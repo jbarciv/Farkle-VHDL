@@ -108,8 +108,8 @@ LFSR : entity work.top_LFSR
   port map( clk         => clk,
             reset       => reset,
             en_LFSR_top => en_LFSR_top,
-            dados       => dados,
-            not_sel     => not_sel
+            LSFR_listo  => LSFR_listo,
+            dados       => dados
         );
 
 WIN: entity work.win
