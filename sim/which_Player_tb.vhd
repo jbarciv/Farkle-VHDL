@@ -6,22 +6,22 @@ end which_Player_tb;
 
 architecture Behavioral of which_Player_tb is
 
+    component which_Player is
+        Port ( clk :           in std_logic;
+               reset :         in std_logic;
+               change_player:  in std_logic;
+               leds :          out std_logic_vector(7 downto 0);
+               player:         out std_logic
+             );
+    end component;
 
-component which_Player is
-    Port ( clk :           in std_logic;
-           reset :         in std_logic;
-           change_player:  in std_logic;
-           leds :          out std_logic_vector(7 downto 0);
-           player:         out std_logic
-         );
-end component;
+    signal clk_tb, reset_tb, change_player_tb, player : std_logic;
+    signal leds_tb : std_logic_vector(7 downto 0);
 
-signal clk_tb, reset_tb, change_player_tb,player : std_logic;
-signal leds_tb : std_logic_vector(7 downto 0);
-
-constant clk_period : time := 8 ns;
+    constant clk_period : time := 8 ns;
 
 begin
+    
 -- Generacion del reloj
     clk_proc: process
         begin
@@ -48,10 +48,12 @@ begin
 
 -- Instanciar componente
 
-    CUT: which_Player port map(  clk => clk_tb,
-                                reset => reset_tb,
-                                change_player => change_player_tb,
-                                player  => player, 
-                                leds => leds_tb  );
+    CUT: which_Player 
+    port map  ( clk             => clk_tb,
+                reset           => reset_tb,
+                change_player   => change_player_tb,
+                player          => player, 
+                leds            => leds_tb  
+            );
 
 end Behavioral;
