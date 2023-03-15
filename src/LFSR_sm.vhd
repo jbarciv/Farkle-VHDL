@@ -29,10 +29,6 @@ architecture Behavioral of LSFR_sm is
 
 begin
 
---Calculo de los numeros aleatorios
---   rand1_aux   <= to_integer(unsigned(data_LFSR1));
---   rand1       <= (rand1_aux mod 6) + 1; 
-
     process (clk, reset)
     begin
         if( reset = '1') then
