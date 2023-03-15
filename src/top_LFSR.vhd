@@ -29,7 +29,7 @@ architecture Structural of top_LFSR is
   signal data_LFSR6: std_logic_vector(15 downto 0);
   
   signal new_lfsr : std_logic;
-
+  
 begin
     
   LFSR16_1: entity work.LFSR16 
