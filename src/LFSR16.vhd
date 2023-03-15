@@ -25,7 +25,7 @@ begin
         if reset = '1' then
             Qint <= semilla;
         elsif clk'event and clk='1' then
-            if (new_lsfr = '1') then
+            if (new_lfsr = '1') then
                 Qint (15 downto 1) <= Qint (14 downto 0);
                 Qint (0) <= Qint (15);
                 Qint (2) <= Qint (1) xor Qint (15);

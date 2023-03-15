@@ -7,7 +7,7 @@ entity top_LFSR is
     Port (  clk         : in std_logic;
             reset       : in std_logic;
             en_LFSR_top : in std_logic;
-            LSFR_listo  : out std_logic;
+            LFSR_listo  : out std_logic;
             dados       : out std_logic_vector(17 downto 0)
             );
 end top_LFSR;
@@ -27,6 +27,8 @@ architecture Structural of top_LFSR is
   signal data_LFSR4: std_logic_vector(15 downto 0);
   signal data_LFSR5: std_logic_vector(15 downto 0);
   signal data_LFSR6: std_logic_vector(15 downto 0);
+  
+  signal new_lfsr : std_logic;
 
 begin
     
@@ -34,7 +36,7 @@ begin
     port map(
                 clk       =>    clk,
                 reset     =>    reset,
-                new_lsfr  =>    new_lsfr,
+                new_lfsr  =>    new_lfsr,
                 semilla   =>    semilla1,
                 data_out  =>    data_LFSR1
             );
@@ -43,7 +45,7 @@ begin
     port map(
                 clk       =>    clk,
                 reset     =>    reset,
-                new_lsfr  =>    new_lsfr,
+                new_lfsr  =>    new_lfsr,
                 semilla   =>    semilla2,
                 data_out  =>    data_LFSR2
             );
@@ -52,7 +54,7 @@ begin
     port map(
                 clk       =>    clk,
                 reset     =>    reset,
-                new_lsfr  =>    new_lsfr,
+                new_lfsr  =>    new_lfsr,
                 semilla   =>    semilla3,
                 data_out  =>    data_LFSR3
             );
@@ -61,7 +63,7 @@ begin
     port map(
                 clk       =>    clk,
                 reset     =>    reset,
-                new_lsfr  =>    new_lsfr,
+                new_lfsr  =>    new_lfsr,
                 semilla   =>    semilla4,
                 data_out  =>    data_LFSR4
             );
@@ -70,7 +72,7 @@ begin
     port map(
                 clk       =>    clk,
                 reset     =>    reset,
-                new_lsfr  =>    new_lsfr,
+                new_lfsr  =>    new_lfsr,
                 semilla   =>    semilla5,
                 data_out  =>    data_LFSR5
             );
@@ -79,23 +81,24 @@ begin
     port map(
                 clk       =>    clk,
                 reset     =>    reset,
-                new_lsfr  =>    new_lsfr,
+                new_lfsr  =>    new_lfsr,
                 semilla   =>    semilla6,
                 data_out  =>    data_LFSR6
             );
 
- SMACHINE_LSFR: entity work.LSFR_sm
+ SMACHINE_LFSR: entity work.LFSR_sm
     port map(
-                clk         => clk;
-                reset       => reset;
-                en_LSFR     => en_LFSR_top;
-                data_LSFR1  => data_LSFR1;
-                data_LSFR2  => data_LSFR2;
-                data_LSFR3  => data_LSFR3;
-                data_LSFR4  => data_LSFR4;
-                data_LSFR5  => data_LSFR5;
-                data_LSFR6  => data_LSFR6;
-                LSFR_listo  => LSFR_listo;
+                clk         => clk,
+                reset       => reset,
+                en_LFSR     => en_LFSR_top,
+                data_LFSR1  => data_LFSR1,
+                data_LFSR2  => data_LFSR2,
+                data_LFSR3  => data_LFSR3,
+                data_LFSR4  => data_LFSR4,
+                data_LFSR5  => data_LFSR5,
+                data_LFSR6  => data_LFSR6,
+                new_lfsr    => new_lfsr,
+                LFSR_listo  => LFSR_listo,
                 dados        => dados
             );
 

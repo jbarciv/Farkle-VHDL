@@ -2,30 +2,29 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity LSFR_sm is
+entity LFSR_sm is
         Port (  clk         : in std_logic;
                 reset       : in std_logic;
-                en_LSFR     : in std_logic;
-                data_LSFR1  : in std_logic_vector 15 downto 0;
-                data_LSFR2  : in std_logic_vector 15 downto 0;
-                data_LSFR3  : in std_logic_vector 15 downto 0;
-                data_LSFR4  : in std_logic_vector 15 downto 0;
-                data_LSFR5  : in std_logic_vector 15 downto 0;
-                data_LSFR6  : in std_logic_vector 15 downto 0;
-                LSFR_listo  : out std_logic
-                dados       : out std_logic_vector 17 downto 0
+                en_LFSR     : in std_logic;
+                data_LFSR1  : in std_logic_vector (15 downto 0);
+                data_LFSR2  : in std_logic_vector (15 downto 0);
+                data_LFSR3  : in std_logic_vector (15 downto 0);
+                data_LFSR4  : in std_logic_vector (15 downto 0);
+                data_LFSR5  : in std_logic_vector (15 downto 0);
+                data_LFSR6  : in std_logic_vector (15 downto 0);
+                new_lfsr    : out std_logic;
+                LFSR_listo  : out std_logic;
+                dados       : out std_logic_vector (17 downto 0)
                 );
-end LSFR_sm;
+end LFSR_sm;
 
-architecture Behavioral of LSFR_sm is
+architecture Behavioral of LFSR_sm is
 
-    type Status_t is (S_LISTO, S_GENERANDO, S_NUEVO_LSFR);
+    type Status_t is (S_LISTO, S_GENERANDO, S_NUEVO_LFSR);
     signal STATE: Status_t;
 
-    signal num_LSFR_ready : unsigned 5 downto 0;  -- numero de lsfr validos obtenidos (debe llegar a "6" == '111111')
-    signal all_LSFR_ready : std_logic;            -- bandera para avisar a la M.Estados que ya estan listos los lfsr
-   
-    signal dados_out: std_logic_vector(17 downto 0);
+    signal num_LFSR_ready   : std_logic_vector (5 downto 0);    -- numero de lfsr validos obtenidos (debe llegar a 6 == 111111)
+    signal all_LFSR_ready   : std_logic;                        -- bandera para avisar a la M.Estados que ya estan listos los lfsr
 
 begin
 
@@ -39,27 +38,27 @@ begin
                 when S_LISTO =>
 
                     -- si la maquina de estados me habilita empiezo a generar la nueva secuencia de n. aleatorios
-                    if 	( en_LSFR = '1') then   -- la Maq. Estados puede darme un "pulso" de enable o mantener el enable
-                        all_LSFR_ready <= '0';  -- bajo la bandera de que hay nuevos LSFR listos
-                        LSFR_listo <= '0';
-                        num_LSFR_ready <= '111111';
-                        STATE <= S_NUEVO_LSFR;  -- me paso a generar los numeros aleatorios
+                    if 	( en_LFSR = '1') then   -- la Maq. Estados puede darme un pulso de enable o mantener el enable
+                        all_LFSR_ready <= '0';  -- bajo la bandera de que hay nuevos LFSR listos
+                        LFSR_listo <= '0';
+                        num_LFSR_ready <= "111111";
+                        STATE <= S_NUEVO_LFSR;  -- me paso a generar los numeros aleatorios
                     end if;
                     
-                when S_NUEVO_SLFR =>
+                when S_NUEVO_LFSR =>
 
-                    new_LSFR <= '1';            -- habilito la genenración de 6 nuevos numeros pseudoaleatorios
-                    STATE <= S_GENERANDO
+                    new_LFSR <= '1';            -- habilito la genenracion de 6 nuevos numeros pseudoaleatorios
+                    STATE <= S_GENERANDO;
 
                 when S_GENERANDO =>
 
-                    new_LSFR <= '0';
+                    new_LFSR <= '0';
 
-                    if 	( all_LSFR_ready = '1') then
-                        LSFR_listo <= '1';
+                    if 	( all_LFSR_ready = '1') then
+                        LFSR_listo <= '1';
                         STATE <= S_LISTO;
                     else
-                        STATE <= S_NUEVO_LSFR;
+                        STATE <= S_NUEVO_LFSR;
                     end if;
 
             end case;
@@ -70,33 +69,34 @@ begin
     process (clk, reset)
     begin
         if (reset = '1') then
-            num_lsfr_ready <= '111111';
+            num_lfsr_ready <= "111111";
         elsif (clk'event and clk = '1') then
-            if (num_LSFR_ready /= '000000') then
-                if (data_LSFR1(2 downto 0) <= '101' and data_LSFR1(2 downto 0) > '000') then
-                    num_LSFR_ready <= num_LSFR_ready and '111110';
+             if (num_LFSR_ready /= "000000") then
+                if (data_LFSR1(2 downto 0) <= "101" and data_LFSR1(2 downto 0) > "000") then
+                    num_LFSR_ready <= num_LFSR_ready and "111110";
                 end if;
-                if (data_LSFR2(2 downto 0) <= '101' and data_LSFR2(2 downto 0) > '000') then
-                    num_LSFR_ready <= num_LSFR_ready and '111101';
+                if (data_LFSR2(2 downto 0) <= "101" and data_LFSR2(2 downto 0) > "000") then
+                    num_LFSR_ready <= num_LFSR_ready and "111101";
                 end if;
-                if (data_LSFR3(2 downto 0) <= '101' and data_LSFR3(2 downto 0) > '000') then
-                    num_LSFR_ready <= num_LSFR_ready and '111011';
+                if (data_LFSR3(2 downto 0) <= "101" and data_LFSR3(2 downto 0) > "000") then
+                    num_LFSR_ready <= num_LFSR_ready and "111011";
                 end if;
-                if (data_LSFR4(2 downto 0) <= '101' and data_LSFR4(2 downto 0) > '000') then
-                    num_LSFR_ready <= num_LSFR_ready and '110111';
+                if (data_LFSR4(2 downto 0) <= "101" and data_LFSR4(2 downto 0) > "000") then
+                    num_LFSR_ready <= num_LFSR_ready and "110111";
                 end if;
-                if (data_LSFR5(2 downto 0) <= '101' and data_LSFR5(2 downto 0) > '000') then
-                    num_LSFR_ready <= num_LSFR_ready and '101111';
+                if (data_LFSR5(2 downto 0) <= "101" and data_LFSR5(2 downto 0) > "000") then
+                    num_LFSR_ready <= num_LFSR_ready and "101111";
                 end if;
-                if (data_LSFR6(2 downto 0) <= '101' and data_LSFR6(2 downto 0) > '000') then
-                    num_LSFR_ready <= num_LSFR_ready and '011111';
+                if (data_LFSR6(2 downto 0) <= "101" and data_LFSR6(2 downto 0) > "000") then
+                    num_LFSR_ready <= num_LFSR_ready and "011111";
                 end if;
             else
-                all_LSFR_ready <= '1';
+                all_LFSR_ready <= '1';
+            end if;
         end if;
     end process;
          
-    dados <=  ( data_LSFR1(2 downto 0) & data_LSFR2(2 downto 0) &
-                data_LSFR3(2 downto 0) & data_LSFR4(2 downto 0) &
-                data_LSFR5(2 downto 0) & data_LSFR6(2 downto 0) ) when all_LSFR_ready = '1';
-                
+    dados <=  ( data_LFSR1(2 downto 0) & data_LFSR2(2 downto 0) &
+                data_LFSR3(2 downto 0) & data_LFSR4(2 downto 0) &
+                data_LFSR5(2 downto 0) & data_LFSR6(2 downto 0) ) when all_LFSR_ready = '1';
+end Behavioral;
