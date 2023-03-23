@@ -32,7 +32,7 @@ signal en_aux               : std_logic;
 signal flag_aux             : std_logic;
 
 signal num_dados_validos    : integer range 6 to 0;
-signal n_to_show            : integer rango 6 to 0;
+signal n_to_show            : integer range 6 to 0;
 
 
 begin
