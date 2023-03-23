@@ -8,23 +8,25 @@ end Puntuacion_tb;
 
 architecture Behavioral of Puntuacion_tb is
 component Puntuacion is
-  Port (clk     : in std_logic; 
-        reset   : in std_logic;
-        en_calcula : in std_logic;
-        dado_pto: in std_logic_vector(2 downto 0);
-        ptos    : out std_logic_vector(13 downto 0);
-        error   : out std_logic;
-        ready_puntuacion: out std_logic
+  Port (clk             : in std_logic; 
+        reset           : in std_logic;
+        en_calcula      : in std_logic;
+        dado_pto        : in std_logic_vector(2 downto 0);
+        en_comprobar_farkle: in std_logic;
+        ptos            : out std_logic_vector(13 downto 0);
+        error           : out std_logic;
+        ready_puntuacion: out std_logic; 
+        farkle_ok       : out std_logic
         );
 end component;
 
 
 --Inputs
-signal clk, reset               : std_logic;
+signal clk, reset, en_calcula, en_comprobar_farkle  : std_logic;
 signal dado_pto                 : std_logic_vector(2 downto 0);
 
 --Outputs
-signal error, ready_puntuacion, en_calcula  : std_logic;
+signal error, ready_puntuacion, farkle_ok  : std_logic;
 signal ptos                                    : std_logic_vector(13 downto 0);
 
 constant clk_period : time := 8 ns;
@@ -49,7 +51,7 @@ begin
     
     --Viene la siguiente secuencia de dados 110501
     -- Debe dar como puntuacion 1050 ptos
-    --error=0, en_suma_ronda=1
+    --error=0
     en_calcula<='1';
     dado_pto<="001";        
     wait for clk_period; 
@@ -142,10 +144,11 @@ i_Puntuacion: Puntuacion
             reset   => reset,
             en_calcula=> en_calcula,
             dado_pto=> dado_pto, 
+            en_comprobar_farkle=> en_comprobar_farkle, 
             ptos    => ptos, 
             error   => error,
-            ready_puntuacion=> ready_puntuacion
-  
+            ready_puntuacion=> ready_puntuacion, 
+            farkle_ok => farkle_ok
         );
 
 

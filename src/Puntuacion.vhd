@@ -4,7 +4,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 
 entity Puntuacion is
-  Port (clk                 : in std_logic; 
+  Port (clk                 : in std_logic;
         reset               : in std_logic;
         en_calcula          : in std_logic;
         dado_pto            : in std_logic_vector(2 downto 0);
