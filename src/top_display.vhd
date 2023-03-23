@@ -2,8 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
+
 library UNISIM;
 use UNISIM.VComponents.all;
 
@@ -51,31 +50,31 @@ component mostrar_ptos is
             );
 end component;
 
--- Señales divisor de freq (1 segundo)
-constant maxcount : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa física
+-- Senales divisor de freq (1 segundo)
+constant maxcount : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa fï¿½sica
 signal count      : integer range 0 to maxcount-1;
 signal enable_1s : std_logic;
 
--- Señales frecuencia de segmentos (4HZ)
+-- Seï¿½ales frecuencia de segmentos (4HZ)
 constant maxcount4 : integer := 31250;      --31250
 signal count4 : integer range 0 to maxcount4-1;
 signal enable_4KHz : std_logic;
 
--- Señal selector
+-- Seï¿½al selector
 signal conta : unsigned(1 downto 0);
 
--- Señales decodificadores display
+-- Seï¿½ales decodificadores display
 signal disp_dados : std_logic_vector(2 downto 0);
 signal disp_ptos : std_logic_vector(2 downto 0);
 
--- Señales auxiliares segmentos
+-- Seï¿½ales auxiliares segmentos
 signal segmentos_dados : std_logic_vector(6 downto 0);
 signal segmentos_ptos : std_logic_vector(6 downto 0);
 
--- Señal de salida scroll
+-- Seï¿½al de salida scroll
 signal dados_s : std_logic_vector(20 downto 0);
 
--- Señales de muestra_ptos
+-- Seï¿½ales de muestra_ptos
 signal uni_r,dec_r,cen_r,mil_r : std_logic_vector(3 downto 0);
 signal uni_p,dec_p,cen_p,mil_P : std_logic_vector(3 downto 0);
 signal digit : std_logic_vector(3 downto 0);
@@ -85,7 +84,7 @@ signal conta_temp : unsigned(3 downto 0);
 signal s_ronda : std_logic;
 signal s_partida : std_logic;
 
--- Señal auxiliar del jugador
+-- Seï¿½al auxiliar del jugador
 signal player_d : std_logic_vector(3 downto 0);
 signal listo_mostrar_ptos : std_logic;
 
@@ -274,7 +273,7 @@ begin
         digit <= "1011";
     elsif(clk'event and clk = '1') then
         if(en_mostrar_dados = '0') then
-            if(en_farkle_ok = '1') then --Esta señal tiene que durar 5 segundos
+            if(en_farkle_ok = '1') then --Esta seï¿½al tiene que durar 5 segundos
                 if(s_ronda = '1') then
                      case conta is
                         when "00" =>
@@ -302,7 +301,7 @@ begin
                                 digit <= "1011";
                         end case;                   
                 end if;
-            elsif(en_mostrar_error = '1') then --Esta señal tiene que durar 5 segundos
+            elsif(en_mostrar_error = '1') then --Esta seï¿½al tiene que durar 5 segundos
                 case conta is
                     when "00" =>
                         digit <= "1111";
