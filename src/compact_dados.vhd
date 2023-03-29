@@ -2,59 +2,102 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-
-entity compact_dados is
-  Port (clk     : in std_logic;
-        reset   : in std_logic;
-        sw      : in std_logic_vector(5 downto 0);
-        dados   : in std_logic_vector(17 downto 0);
-        num_dados: out std_logic_vector(2 downto 0);
-        dados_s : out std_logic_vector(17 downto 0)
+entity compacta_dados is
+  Port (clk                 : in std_logic;
+        reset               : in std_logic;
+        en_compacta         : in std_logic;
+        dados               : in std_logic_vector(17 downto 0);
+        num_dados_mostrar   : in std_logic_vector(2 downto 0);
+        ready_compacta      : out std_logic;
+        dados_s             : out std_logic_vector(20 downto 0)
         );
-end compact_dados;
+end compacta_dados;
 
-architecture Behavioral of compact_dados is
-signal num_dados_i: unsigned(2 downto 0);
-signal dados_aux: std_logic_vector(17 downto 0);
+architecture Behavioral of compacta_dados is
 
+-- Maquina de estados
+type Status_t is (S_ESPERANDO, S_COMPACTANDO, S_COMPACTADO);
+signal STATE: Status_t;
+
+signal flag_aux : std_logic;
 
 begin
 
-process(clk,reset)
-begin  
-    if reset='1' then 
-        num_dados_i<=(others=>'0');
-        dados_aux<=(others=>'0');
-    elsif clk'event and clk='1' then
-        if sw(5)='1' then
-            dados_aux<=dados(17 downto 15)&dados_aux;
-            num_dados_i<=num_dados_i+1;
-        end if;
-        if sw(4)='1' then
-            dados_aux<=dados(14 downto 12)&dados_aux;
-            num_dados_i<=num_dados_i+1;
-        end if;
-        if sw(3)='1' then
-            dados_aux<=dados(11 downto 9)&dados_aux;
-            num_dados_i<=num_dados_i+1;
-        end if;
-        if sw(2)='1' then
-            dados_aux<=dados(8 downto 6)&dados_aux;
-            num_dados_i<=num_dados_i+1;
-        end if;
-        if sw(1)='1' then
-            dados_aux<=dados(5 downto 3)&dados_aux;
-            num_dados_i<=num_dados_i+1;
-        end if;
-        if sw(0)='1' then
-            dados_aux<=dados(2 downto 0)&dados_aux;
-            num_dados_i<=num_dados_i+1;
-        end if;
-                 
-    end if; 
-end process;
+    process (clk, reset)
+    begin
+        if( reset = '1') then
+            ready_compacta <= '0';
+            STATE <= S_ESPERANDO;
+        elsif (clk'event and clk = '1') then
+            case STATE is
+            
+                when S_ESPERANDO =>
+                    if 	( en_compacta = '1') then   
+                        STATE <= S_COMPACTANDO;  
+                    end if;
 
-dados_s<=dados_aux;
-num_dados<=std_logic_vector(num_dados_i);
+                when S_COMPACTANDO =>
+                    if 	( flag_aux = '1' ) then
+                        ready_compacta <= '1';
+                        STATE <= S_COMPACTADO;
+                    end if;
+                    
+                when S_COMPACTADO =>
+                    if (en_compacta = '0') then
+                        ready_compacta <= '0';
+                        STATE <= S_ESPERANDO;
+                    end if;
+            end case;
+        end if;
+    end process;
 
+    -- -- Cuento cuantos '1's hay en sw: cuantos dados se retiran
+    -- process (clk, reset)
+    -- begin
+    --     if (reset = '1') then
+    --         num_dados_validos <= 0;
+    --         flag_aux_cuenta <= '0';
+    --         n_to_show <= 0;
+    --     elsif (clk'event and clk = '1') then
+    --         if (en_aux_cuenta = '1' and flag_aux_cuenta = '0') then
+    --             for i in 0 to 5 loop
+    --                 if (sw(i) = '1') then
+    --                     num_dados_validos <= num_dados_validos + 1;
+    --                 end if;            
+    --             end loop;
+    --             n_to_show <= n_to_show - num_dados_validos;
+    --             flag_aux_cuenta <= '1';
+    --         elsif (STATE = S_COMPACTANDO) then
+    --             flag_aux_cuenta <= '0';
+    --             num_dados_validos <= 0;
+    --         end if;
+    --     end if;
+    -- end process;
+
+    -- Compacto segun los numeros a mostrar (que me ha dicho la M. Estados)
+    process (clk, reset)
+    begin
+        if (reset = '1') then
+            flag_aux <= '0';
+            dados_s <= (others => '0');
+        elsif (clk'event and clk = '1') then
+            if (en_compacta = '1' and flag_aux = '0') then
+                case num_dados_mostrar is
+                    when "000" => dados_s <= "111" & dados(17 downto 0);
+                    when "001" => dados_s <= dados(17 downto 15) & "111" & dados(14 downto 0);
+                    when "010" => dados_s <= dados(17 downto 12) & "111" & dados(11 downto 0);
+                    when "011" => dados_s <= dados(17 downto 9) & "111" & dados(8 downto 0);
+                    when "100" => dados_s <= dados(17 downto 6) & "111" & dados(5 downto 0);
+                    when "101" => dados_s <= dados(17 downto 3) & "111" & dados(2 downto 0);
+                    when "110" => dados_s <= dados(17 downto 0) & "111";
+                    when others => dados_s <= (others => '1');
+                end case;
+                flag_aux <= '1';
+            elsif (STATE = S_ESPERANDO) then
+                flag_aux <= '0';
+            end if;
+        end if;
+    end process;
+    
 end Behavioral;
+
