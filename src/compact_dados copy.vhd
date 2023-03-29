@@ -16,7 +16,7 @@ end compacta_dados;
 architecture Behavioral of compacta_dados is
 
 -- Maquina de estados
-type Status_t is (S_ESPERANDO, S_CUENTA, S_COMPACTANDO, S_COMPACTADO);
+type Status_t is (S_ESPERANDO, S_COMPACTANDO, S_COMPACTADO);
 signal STATE: Status_t;
 
 signal flag_aux : std_logic;
@@ -26,6 +26,7 @@ begin
     process (clk, reset)
     begin
         if( reset = '1') then
+            ready_compacta <= '0';
             STATE <= S_ESPERANDO;
         elsif (clk'event and clk = '1') then
             case STATE is
@@ -78,11 +79,21 @@ begin
     begin
         if (reset = '1') then
             flag_aux <= '0';
+            dados_s <= (others => '0');
         elsif (clk'event and clk = '1') then
             if (en_compacta = '1' and flag_aux = '0') then
-                dados_s((20-3*TO_INTEGER(UNSIGNED(num_dados_mostrar))) downto (20-3*TO_INTEGER(UNSIGNED(num_dados_mostrar))-2)) <= "111";
+                case num_dados_mostrar is
+                    when "000" => dados_s <= "111" & dados(17 downto 0);
+                    when "001" => dados_s <= dados(17 downto 15) & "111" & dados(14 downto 0);
+                    when "010" => dados_s <= dados(17 downto 12) & "111" & dados(11 downto 0);
+                    when "011" => dados_s <= dados(17 downto 9) & "111" & dados(8 downto 0);
+                    when "100" => dados_s <= dados(17 downto 6) & "111" & dados(5 downto 0);
+                    when "101" => dados_s <= dados(17 downto 3) & "111" & dados(2 downto 0);
+                    when "110" => dados_s <= dados(17 downto 0) & "111";
+                    when others => dados_s <= (others => '1');
+                end case;
                 flag_aux <= '1';
-            elsif (STATE = S_COMPACTADO) then
+            elsif (STATE = S_ESPERANDO) then
                 flag_aux <= '0';
             end if;
         end if;
