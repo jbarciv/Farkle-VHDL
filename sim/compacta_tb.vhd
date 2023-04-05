@@ -1,9 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- se trata de comprobar si funciona bien el bloque de compacta. La casuística es la siguiente:
--- dada una tirada inicial (ya se han mostrado los 6 dados random), se acaba de realizar una seleccion... debo coger los dados y agruparlos
-
 entity compacta_tb is
 end compacta_tb;
 
