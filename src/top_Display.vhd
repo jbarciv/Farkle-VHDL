@@ -10,18 +10,13 @@ entity top_display is
     Port (  clk : in std_logic;
             reset : in std_logic;
             dados : in std_logic_vector(17 downto 0);
-            puntos_ronda : in std_logic_vector(13 downto 0);
-            puntos_partida : in std_logic_vector(13 downto 0);
+            
             en_apagado : in std_logic;
             en_mostrar_dados : in std_logic; --Habilitacion del scroll
-            en_mostrar_error : in std_logic; --Se seleccionan dados que no dan ptos
-            en_farkle_ok : in std_logic; --Hay farkle por lo tanto se hace scroll dos veces
-            en_win : in std_logic; --Se muestra el jugador que gano en la pantalla
-            en_ptos_ronda : in std_logic;
-            en_ptos_partida : in std_logic;
+            
             en_refresh : in std_logic;
             player : in std_logic;
-            ready_mostrar_ptos : out std_logic;
+            
             segmentos : out std_logic_vector(6 downto 0);
             selector : out std_logic_vector(3 downto 0)
             );
