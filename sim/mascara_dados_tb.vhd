@@ -8,9 +8,9 @@ architecture behavioral of mascara_dados_tb is
     
   --Inputs
   signal clk          : std_logic;
-  signal reset        : std_logic;
+  signal reset        : std_logic := '0';
   signal sw           : std_logic_vector(5 downto 0)  := "000000";
-  signal dados        : std_logic_vector(17 downto 0) := "011011001110100011";  -- dado = 331643  
+  signal dados        : std_logic_vector(17 downto 0);
   signal en_select    : std_logic;
 
   --Outputs
@@ -22,27 +22,28 @@ architecture behavioral of mascara_dados_tb is
   
 begin
 
-  -- Clock process definitions
-  clk_process :process
-  begin
-    clk <= '0';
-    wait for clk_period/2;
-    clk <= '1';
-    wait for clk_period/2;
-  end process;
+-- Generacion del reloj
+    process
+    begin
+        clk <= '1';
+        wait for clk_period/2;
+        clk <= '0';
+        wait for clk_period/2;
+    end process;
 
   -- Stimulus process
   stim_proc: process
   begin        
     reset <= '1';
-    en_calcula<='0';
-    wait for 10*clk_period;
+    en_select <= '0';
+    wait for 1*clk_period;
     reset <= '0';
-    wait for 10*clk_period;
-    wait for clk_period/2;
-	  sw <= "111001";
-	  wait for 10*clk_period;
-	  en_calcula<='0';
+    wait for 5*clk_period;
+    dados <= "011011001110100011"; -- dado = 331643
+    sw <= "111001";
+    en_select <= '1';
+	wait for 10*clk_period;
+	en_select <= '0';
     wait;
   end process;
   
