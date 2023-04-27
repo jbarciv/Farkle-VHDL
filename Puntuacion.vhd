@@ -86,6 +86,8 @@ begin
             else
                cnt_dados <= cnt_dados + 1; 
             end if;
+        elsif STATE=S_ESPERA then
+            flag_cnt<='0';
         end if;
    end if;
 end process; 
