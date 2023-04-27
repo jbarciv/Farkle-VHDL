@@ -11,7 +11,7 @@ architecture Behavioral of compacta_tb is
     signal en_compacta      : std_logic;
     signal dados            :  std_logic_vector(17 downto 0);
     signal ready_compacta   :  std_logic;
-    signal num_dados_mostrar        :  std_logic_vector(2 downto 0);
+    signal num_dados_mostrar:  std_logic_vector(2 downto 0);
     signal dados_s          :  std_logic_vector(20 downto 0);
 
     constant clk_period : time := 8 ns;
