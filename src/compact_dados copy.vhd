@@ -31,6 +31,7 @@ begin
             case STATE is
             
                 when S_ESPERANDO =>
+                    dados_s<=(others=>'0');
                     if 	( en_compacta = '1') then   
                         STATE <= S_COMPACTANDO;  
                     end if;
@@ -89,4 +90,5 @@ begin
     end process;
     
 end Behavioral;
+
 
