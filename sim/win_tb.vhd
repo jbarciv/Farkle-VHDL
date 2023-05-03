@@ -35,9 +35,9 @@ end process;
 process
   begin
     clk <= '0';
-    wait for 8ns;
+    wait for 8 ns;
     clk <= '1';
-    wait for 8ns;
+    wait for 8 ns;
   end process;
   
 process
