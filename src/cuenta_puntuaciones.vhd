@@ -19,7 +19,7 @@ end cuenta_puntuaciones;
 
 architecture Behavioral of cuenta_puntuaciones is
 
-    -- Señales ptos partida y ronda 1 y 2
+    -- Seï¿½ales ptos partida y ronda 1 y 2
     signal ptos_partida_1   : unsigned (13 downto 0); 
     signal ptos_partida_2   : unsigned (13 downto 0); 
     signal ptos_ronda_1     : unsigned (13 downto 0); 
@@ -32,7 +32,7 @@ begin
     
     -- en_suma_ronda y planta_en se espera que sean pulsos de un ciclo
     -- Y es necesario que se produzcan en el mismo instante de tiempo
-    -- entre la señal de farkle_ok (que tambien es un pulso) y el cambio
+    -- entre la senal de farkle_ok (que tambien es un pulso) y el cambio
     -- de jugador en necesario que pasen varios ciclos de reloj, pues se 
     -- sobreescribe la informacion
     
