@@ -5,7 +5,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity display_sm is
         Port (  clk         : in std_logic;
                 reset       : in std_logic;
-                en_display  : in std_logic;
+                en_display  : in std_logic
             );
 end display_sm;
 
