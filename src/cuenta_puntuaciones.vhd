@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
-
+-- ¡¡¡¡ DEBE REVISARSE!!!! <--> NO SE SI FUNCIONA BIEN...
 entity cuenta_puntuaciones is
  Port ( clk             : in std_logic; 
         reset           : in std_logic;

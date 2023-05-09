@@ -3,7 +3,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-
 entity mostrar_ptos is
     Port ( clk : in std_logic;
            reset : in std_logic; 
@@ -17,14 +16,14 @@ end mostrar_ptos;
 
 architecture Behavioral of mostrar_ptos is
 
--- Señales del display
+-- Senales del display
 signal uni_num : unsigned(3 downto 0);
 signal dec_num : unsigned(3 downto 0);
 signal cen_num : unsigned(3 downto 0);
 signal mil_num : unsigned(3 downto 0);
 signal digit : unsigned(3 downto 0);
     
---SEÑALES CONTADORES BCD --
+--SENALES CONTADORES BCD --
 signal cuenta : integer range 0 to 8000;
 signal fin : std_logic;
 signal en_dec : std_logic;
@@ -72,8 +71,6 @@ begin
     end if;
 end process;
 
-
-
 ---------------------------
 -- CONTADOR BCD DECENAS --
 ---------------------------
@@ -102,8 +99,6 @@ begin
     end if;
 end process;
 
-
-
 ---------------------------
 -- CONTADOR BCD CENTENAS --
 ---------------------------
@@ -131,7 +126,6 @@ begin
         end if;
     end if;
 end process;
-
 
 ---------------------------
 -- CONTADOR BCD MILLARES --

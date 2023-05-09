@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 
-entity Puntuacion is --decirle a chema cuantos dados tiene que mostrar en la siguiente tirada
+entity Puntuacion is
   Port (clk                 : in std_logic;
         reset               : in std_logic;
         en_calcula          : in std_logic;

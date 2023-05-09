@@ -2,10 +2,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-
-library UNISIM;
-use UNISIM.VComponents.all;
-
 entity top_display is
     Port (  clk : in std_logic;
             reset : in std_logic;
@@ -55,26 +51,26 @@ constant maxcount : integer := 125*10**6;   -- cambiar a 125000000 para probar e
 signal count      : integer range 0 to maxcount-1;
 signal enable_1s : std_logic;
 
--- Se�ales frecuencia de segmentos (4HZ)
+-- Senales frecuencia de segmentos (4HZ)
 constant maxcount4 : integer := 31250;      --31250
 signal count4 : integer range 0 to maxcount4-1;
 signal enable_4KHz : std_logic;
 
--- Se�al selector
+-- Senal selector
 signal conta : unsigned(1 downto 0);
 
--- Se�ales decodificadores display
+-- Senales decodificadores display
 signal disp_dados : std_logic_vector(2 downto 0);
 signal disp_ptos : std_logic_vector(2 downto 0);
 
--- Se�ales auxiliares segmentos
+-- Senales auxiliares segmentos
 signal segmentos_dados : std_logic_vector(6 downto 0);
 signal segmentos_ptos : std_logic_vector(6 downto 0);
 
--- Se�al de salida scroll
+-- Senal de salida scroll
 signal dados_s : std_logic_vector(20 downto 0);
 
--- Se�ales de muestra_ptos
+-- Senales de muestra_ptos
 signal uni_r,dec_r,cen_r,mil_r : std_logic_vector(3 downto 0);
 signal uni_p,dec_p,cen_p,mil_P : std_logic_vector(3 downto 0);
 signal digit : std_logic_vector(3 downto 0);
@@ -84,7 +80,7 @@ signal conta_temp : unsigned(3 downto 0);
 signal s_ronda : std_logic;
 signal s_partida : std_logic;
 
--- Se�al auxiliar del jugador
+-- Senal auxiliar del jugador
 signal player_d : std_logic_vector(3 downto 0);
 signal listo_mostrar_ptos : std_logic;
 
@@ -92,7 +88,6 @@ signal listo_mostrar_ptos : std_logic;
 begin
 
 -- Instanciamos el bloque scroll
-
 mostrar_dados : scroll 
     port map (  clk => clk,
                 reset => reset,
@@ -103,7 +98,6 @@ mostrar_dados : scroll
             );
 
 -- Instanciamos el bloque mostrar_ptos_ronda
-
 mostrar_ptos_ronda : mostrar_ptos
     port map (  clk => clk,
                 reset => reset,
@@ -115,7 +109,6 @@ mostrar_ptos_ronda : mostrar_ptos
             );    
 
 -- Instanciamos el bloque mostrar_ptos_ronda
-
 mostrar_ptos_partida : mostrar_ptos
 port map (  clk => clk,
             reset => reset,
@@ -131,7 +124,6 @@ player_d <= "0001" when (player = '0') else
             "0010";
 
 -- Divisor de frecuencia (4KHz)
-
 process(clk,reset)
 begin
     if (reset = '1') then
@@ -148,7 +140,6 @@ end process;
 enable_4KHz <= '1' when(count4 = maxcount4-1) else '0'; 
 
 -- Tiempo de scroll (Divisor de freq 1 segundo)
-
 process(clk, reset)
 begin
     if (reset = '1') then
@@ -217,7 +208,6 @@ begin
 end process;
 
 -- Selector
-    
 with conta select
 selector <= "0001" when "00",
             "0010" when "01",
@@ -225,8 +215,7 @@ selector <= "0001" when "00",
             "1000" when "11",
             "----" when others;
 
--- Decodificador Segmentos de dados
-
+-- Decodificador Segmentos de dadoS
 with disp_dados select
     segmentos_dados <=  "1001111" when "001", -- 1
                         "0010010" when "010", -- 2
@@ -239,7 +228,6 @@ with disp_dados select
                         "-------" when others;
                         
 -- Multiplexor de los dados
-
         with conta select
         disp_dados <=   dados_s(20 downto 18) when "11",
                         dados_s(17 downto 15) when "10",
@@ -248,7 +236,6 @@ with disp_dados select
                         "---" when others;
 
 -- Decodificador segmentos display de puntos
-
 with digit select
     segmentos_ptos <="0000001" when "0000", -- 0
                     "1001111" when "0001", -- 1
@@ -266,7 +253,6 @@ with digit select
 
 
 -- Proceso para asignar la puntuacion
-
 process(clk,reset)
 begin
     if(reset='1') then
@@ -361,7 +347,6 @@ begin
 end process;
 
 -- Asignacion a la salida
-
 segmentos <= "1111111" when(en_apagado = '1') else
              segmentos_dados when(en_mostrar_dados='1') else
              segmentos_ptos;
