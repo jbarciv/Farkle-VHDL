@@ -13,13 +13,14 @@ entity display_sm is
                 en_planta           : out std_logic;
                 en_win              : out std_logic;
                 en_error            : out std_logic;
-                en_ptos             : out std_logic
+                en_ptos_tirada      : out std_logic;
+                en_ptos_partida     : out std_logic
             );
 end display_sm;
 
 architecture Behavioral of display_sm is
 
-    type Status_t is (S_APAGADO, S_DADOS, S_FARKLE, S_PLANTA, S_WIN, S_ERROR, S_PTOS);
+    type Status_t is (S_APAGADO, S_DADOS, S_FARKLE, S_PLANTA, S_WIN, S_ERROR, S_PTOS_TIRADA, S_PTOS_PARTIDA);
     signal STATE: Status_t;
 
 begin
@@ -45,7 +46,9 @@ begin
                             when "100" =>
                                 STATE <= S_ERROR;
                             when "101" =>
-                                STATE <= S_PTOS;
+                                STATE <= S_PTOS_TIRADA;
+                            when "110" =>
+                                STATE <= S_PTOS_PARTIDA;
                         end case;
                     end if;
 
@@ -79,8 +82,14 @@ begin
                         STATE <= S_APAGADO;
                 end if;
 
-                when S_PTOS =>
-                en_ptos <= '1';
+                when S_PTOS_TIRADA =>
+                en_ptos_tirada <= '1';
+                if (en_change_mode = '1') then 
+                        STATE <= S_APAGADO;
+                end if;
+
+                when S_PTOS_PARTIDA =>
+                en_ptos_partida <= '1';
                 if (en_change_mode = '1') then 
                         STATE <= S_APAGADO;
                 end if;
@@ -89,5 +98,4 @@ begin
         end if;
     end process; 
 
-    
 end Behavioral;
