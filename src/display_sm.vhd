@@ -9,7 +9,6 @@ entity display_sm is
                 en_change_mode      : in std_logic;
                 mode_display        : in std_logic_vector(2 downto 0);
                 en_display_dados    : out std_logic;
-                en_farkle           : out std_logic;
                 en_planta           : out std_logic;
                 en_win              : out std_logic;
                 en_error            : out std_logic;
@@ -38,8 +37,6 @@ begin
                             when "000" =>
                                 STATE <= S_DADOS;
                             when "001" =>
-                                STATE <= S_FARKLE;
-                            when "010" =>
                                 STATE <= S_PLANTA;
                             when "011" =>
                                 STATE <= S_WIN;
@@ -57,12 +54,6 @@ begin
                     if (en_change_mode = '1') then 
                             STATE <= S_APAGADO;
                     end if;
-
-                when S_FARKLE =>
-                en_farkle <= '1';
-                if (en_change_mode = '1') then 
-                        STATE <= S_APAGADO;
-                end if;
 
                 when S_PLANTA =>
                 en_planta <= '1';
