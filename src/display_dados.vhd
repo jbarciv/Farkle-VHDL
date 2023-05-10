@@ -7,6 +7,7 @@ entity display_dados is
             reset               : in std_logic;
             en_display_dados    : in std_logic;
             dados_s             : in std_logic_vector (17 downto 0);
+            enable_4Khz         : in std_logic;
             segmentos           : out std_logic_vector(6 downto 0);
             selector            : out std_logic_vector(3 downto 0)
             );
@@ -17,11 +18,6 @@ architecture Behavioral of display_dados is
     -- Senal selector
     signal conta : unsigned(1 downto 0);
 
-    -- Senales frecuencia de segmentos (4HZ)
-    constant maxcount4  : integer := 31250;
-    signal count4       : integer range 0 to maxcount4-1;
-    signal enable_4KHz  : std_logic;
-
     -- Senales auxiliares segmentos
     signal segmentos_dados : std_logic_vector(6 downto 0);
     -- Senales decodificadores display
@@ -29,21 +25,6 @@ architecture Behavioral of display_dados is
 
 begin
 
-    -- Divisor de frecuencia (4KHz): para el encendido de los displays
-    process(clk, reset)
-    begin
-        if (reset = '1') then
-           count4 <= 0;
-        elsif (clk'event and clk = '1') then       
-                if(count4 = maxcount4-1) then
-                    count4 <= 0;
-                else 
-                    count4 <= count4 + 1;
-                end if;
-        end if;    
-    end process;      
-
-    enable_4KHz <= '1' when(count4 = maxcount4-1) else '0'; 
 
     -- Contador de 0 a 3
     process(clk,reset)

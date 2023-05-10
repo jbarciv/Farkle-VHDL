@@ -8,6 +8,7 @@ entity scroll is
             dados               : in std_logic_vector(20 downto 0);
             en_refresh          : in std_logic;
             num_dados_mostrar   : in std_logic_vector(2 downto 0);
+            enable_1s           : in std_logic;
             dados_s             : out std_logic_vector(20 downto 0)
             
     );
@@ -17,29 +18,8 @@ architecture Behavioral of scroll is
 
 -- Senales dados
 signal dados_i: std_logic_vector(20 downto 0);
--- Señales divisor de frecuencia
-constant maxcount   : integer := 125*10**3;   -- cambiar a 125000000 para probar en la placa f�sica
-signal count        : integer range 0 to maxcount-1;
-signal enable_1s    : std_logic;
 
 begin
-
--- Dvisor de frecuencia 
-
-process(clk, reset)
-begin
-    if (reset = '1') then
-        count <= 0;
-    elsif (clk'event and clk = '1') then       
-            if(count = maxcount-1) then
-                count <= 0;
-            else 
-                count <= count + 1;
-            end if;
-    end if;    
-end process;      
-
-enable_1s <= '1' when(count = maxcount-1) else '0';
 
 -- Desplazamiento
     process(clk, reset)
