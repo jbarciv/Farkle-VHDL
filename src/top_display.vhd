@@ -1,8 +1,6 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
 
-entity top_display is
+
+entity display is
     Port (  clk : in std_logic;
             reset : in std_logic;
             dados : in std_logic_vector(17 downto 0);
@@ -23,7 +21,7 @@ entity top_display is
             );
 end top_display;
 
-architecture Behavioral of top_display is
+architecture Behavioral of display is
 
 component scroll is
      Port ( clk : in std_logic;

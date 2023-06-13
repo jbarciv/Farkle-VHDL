@@ -12,6 +12,16 @@ end top_display;
 
 architecture Behavioral of timer is
 
+    -- Senales divisor de freq (1 segundo)
+constant maxcount : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa f�sica
+signal count      : integer range 0 to maxcount-1;
+signal enable_1s : std_logic;
+
+-- Senales frecuencia de segmentos (4HZ)
+constant maxcount4 : integer := 31250;      --31250
+signal count4 : integer range 0 to maxcount4-1;
+signal enable_4KHz : std_logic;
+
 
 -- Divisor de frecuencia (4KHz)
 process(clk,reset)
