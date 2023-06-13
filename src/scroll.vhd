@@ -43,13 +43,12 @@ begin
     end process;  
 
 with num_dados_mostrar select  
-
-dados_s <= dados_i when "101", 
-           dados_i when "110", 
-           "000000000000000000" & dados_i(20 downto 18) when "001", 
-           "000000000000000" & dados_i(20 downto 15) when "010", 
-           "000000000000" & dados_i(20 downto 12) when "011", 
-           "000000000" & dados_i(20 downto 9) when "100", 
+dados_s <= dados_i when "101",      --5 dados
+           dados_i when "110",      --6 dados
+           "000000000000000000" & dados_i(20 downto 18) when "001", --1 dado
+           "000000000000000" & dados_i(20 downto 15) when "010",    --2 dados
+           "000000000000" & dados_i(20 downto 12) when "011",       --3 dados
+           "000000000" & dados_i(20 downto 9) when "100",           --4 dados
            "---------------------" when others;
            
 end Behavioral;

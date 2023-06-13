@@ -5,21 +5,25 @@ use IEEE.NUMERIC_STD.ALL;
 entity display_sm is
         Port (  clk                 : in std_logic;
                 reset               : in std_logic;
-                en_display          : in std_logic;
-                en_change_mode      : in std_logic;
-                mode_display        : in std_logic_vector(2 downto 0);
-                en_display_dados    : out std_logic;
-                en_farkle           : out std_logic;
-                en_planta           : out std_logic;
-                en_win              : out std_logic;
-                en_error            : out std_logic;
-                en_ptos             : out std_logic
+                do_apagado          : in std_logic;
+                do_mostrar_dados    : in std_logic;
+                do_mostrar_error    : in std_logic;
+                do_ptos_tirada      : in std_logic;
+                do_ptos_partida     : in std_logic;
+                do_ptos_ronda       : in std_logic;
+                do_mostrar_win      : in std_logic;
+                flag_mostrar_dados    : out std_logic;
+                flag_error            : out std_logic;
+                flag_ptos_tirada      : out std_logic;
+                flag_ptos_ronda       : out std_logic;
+                flag_ptos_partida     : out std_logic;
+                flag_win              : out std_logic  
             );
 end display_sm;
 
 architecture Behavioral of display_sm is
 
-    type Status_t is (S_APAGADO, S_DADOS, S_FARKLE, S_PLANTA, S_WIN, S_ERROR, S_PTOS);
+    type Status_t is (S_APAGADO, S_DADOS, S_ERROR, S_PTOS_TIRADA, S_PTOS_RONDA, S_PTOS_PARTIDA, S_WIN);
     signal STATE: Status_t;
 
 begin
@@ -32,59 +36,49 @@ begin
             case STATE is
             
                 when S_APAGADO =>
-                    if (en_display = '1') then
-                        case mode_display is
-                            when "000" =>
-                                STATE <= S_DADOS;
-                            when "001" =>
-                                STATE <= S_FARKLE;
-                            when "010" =>
-                                STATE <= S_PLANTA;
-                            when "011" =>
-                                STATE <= S_WIN;
-                            when "100" =>
-                                STATE <= S_ERROR;
-                            when "101" =>
-                                STATE <= S_PTOS;
-                        end case;
+                    if (do_mostrar_dados = '1') then
+                        STATE <= S_DADOS;
                     end if;
 
                 when S_DADOS =>
-                    en_display_dados <= '1';
-                    if (en_change_mode = '1') then 
-                            STATE <= S_APAGADO;
+                    flag_mostrar_dados <= '1';
+                    if (do_mostrar_error = '1') then 
+                        STATE <= S_ERROR;
+                    elsif (do_ptos_tirada) then
+                        STATE <= S_PTOS_TIRADA;
+                    elsif (do_ptos_ronda) then
+                        STATE <= S_PTOS_RONDA;
                     end if;
 
-                when S_FARKLE =>
-                en_farkle <= '1';
-                if (en_change_mode = '1') then 
-                        STATE <= S_APAGADO;
-                end if;
+                when S_ERROR =>
+                    flag_error <= '1';
+                    if (do_mostrar_dados = '1') then 
+                        STATE <= S_DADOS;
+                    end if;
 
-                when S_PLANTA =>
-                en_planta <= '1';
-                if (en_change_mode = '1') then 
+                when S_PTOS_TIRADA =>
+                    flag_ptos_tirada <= '1';
+                    if (do_mostrar_dados = '1') then 
+                        STATE <= S_DADOS;
+                    elsif (do_mostrar_win) then
+                        STATE <= S_WIN;
+                    end if;
+
+                when S_PTOS_RONDA =>
+                    flag_ptos_ronda <= '1';
+                    if (do_ptos_partida = '1') then 
+                        STATE <= S_PTOS_TIRADA;
+                    end if;
+
+                when S_PTOS_PARTIDA =>
+                    flag_ptos_partida <= '1';
+                    if (do_apagado = '1') then 
                         STATE <= S_APAGADO;
-                end if;
+                    end if;
 
                 when S_WIN =>
-                en_win <= '1';
-                if (en_change_mode = '1') then 
-                        STATE <= S_APAGADO;
-                end if;
+                    flag_win <= '1';
 
-                when S_ERROR =>
-                en_error <= '1';
-                if (en_change_mode = '1') then 
-                        STATE <= S_APAGADO;
-                end if;
-
-                when S_PTOS =>
-                en_ptos <= '1';
-                if (en_change_mode = '1') then 
-                        STATE <= S_APAGADO;
-                end if;
-                    
             end case;
         end if;
     end process; 

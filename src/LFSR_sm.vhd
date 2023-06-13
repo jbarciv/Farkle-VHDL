@@ -52,7 +52,7 @@ begin
                     new_lfsr <= '1';
                     -- si la maquina de estados me habilita empiezo a generar la nueva secuencia de n. aleatorios
                     if 	( en_LFSR = '1') then   -- la Maq. Estados puede darme un pulso de enable o mantener el enable
-                        STATE <= S_GENERANDO;  -- me paso a generar los numeros aleatorios
+                        STATE <= S_GENERANDO;   -- me paso a generar los numeros aleatorios
                     end if;
 
                 when S_GENERANDO =>
