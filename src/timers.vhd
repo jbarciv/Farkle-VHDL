@@ -2,15 +2,15 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity timer is
+entity timers is
     Port (  clk         : in std_logic;
             reset       : in std_logic;
             enable_4KHz : out std_logic; 
-            enable_1s   : out std_logic; 
+            enable_1s   : out std_logic
             );
-end top_display;
+end timers;
 
-architecture Behavioral of timer is
+architecture Behavioral of timers is
 
     -- Senales divisor de freq (1 segundo)
 constant maxcount : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa f�sica
@@ -24,7 +24,7 @@ signal enable_4KHz : std_logic;
 
 
 -- Divisor de frecuencia (4KHz)
-process(clk,reset)
+process(clk, reset)
 begin
     if (reset = '1') then
        count4 <= 0;
@@ -54,3 +54,5 @@ begin
 end process;      
 
 enable_1s <= '1' when(count = maxcount-1) else '0';
+
+end Behavioral;

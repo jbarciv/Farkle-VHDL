@@ -52,29 +52,6 @@ begin
         end if;
     end process;
 
-    -- -- Cuento cuantos '1's hay en sw: cuantos dados se retiran
-    -- process (clk, reset)
-    -- begin
-    --     if (reset = '1') then
-    --         num_dados_validos <= 0;
-    --         flag_aux_cuenta <= '0';
-    --         n_to_show <= 0;
-    --     elsif (clk'event and clk = '1') then
-    --         if (en_aux_cuenta = '1' and flag_aux_cuenta = '0') then
-    --             for i in 0 to 5 loop
-    --                 if (sw(i) = '1') then
-    --                     num_dados_validos <= num_dados_validos + 1;
-    --                 end if;            
-    --             end loop;
-    --             n_to_show <= n_to_show - num_dados_validos;
-    --             flag_aux_cuenta <= '1';
-    --         elsif (STATE = S_COMPACTANDO) then
-    --             flag_aux_cuenta <= '0';
-    --             num_dados_validos <= 0;
-    --         end if;
-    --     end if;
-    -- end process;
-
     -- Compacto segun los numeros a mostrar (que me ha dicho la M. Estados)
     process (clk, reset)
     begin

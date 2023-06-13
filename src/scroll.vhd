@@ -10,7 +10,6 @@ entity scroll is
             num_dados_mostrar   : in std_logic_vector(2 downto 0);
             enable_1s           : in std_logic;
             dados_s             : out std_logic_vector(20 downto 0)
-            
     );
 end scroll;
 
@@ -32,10 +31,10 @@ begin
             end if; 
             if enable_1s='1' then 
                 case num_dados_mostrar is 
-                    when "101"=> 
-                        dados_i<=dados_i(17 downto 3)& dados_i(20 downto 18)&dados_i(2 downto 0);
-                    when "110"=>
-                        dados_i<= dados_i(17 downto 0) & dados_i(20 downto 18);
+                    when "101" => 
+                        dados_i <= dados_i(17 downto 3) & dados_i(20 downto 18) & dados_i(2 downto 0);
+                    when "110" =>
+                        dados_i <= dados_i(17 downto 0) & dados_i(20 downto 18);
                     when others=>
                     
                 end case; 
@@ -47,7 +46,7 @@ with num_dados_mostrar select
 
 dados_s <= dados_i when "101", 
            dados_i when "110", 
-           "000000000000000000"& dados_i(20 downto 18) when "001", 
+           "000000000000000000" & dados_i(20 downto 18) when "001", 
            "000000000000000" & dados_i(20 downto 15) when "010", 
            "000000000000" & dados_i(20 downto 12) when "011", 
            "000000000" & dados_i(20 downto 9) when "100", 
