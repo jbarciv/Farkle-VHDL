@@ -79,7 +79,7 @@ begin
     -- Estado S_DADOS
     en_ptos_tirada <= '0';
     en_mostrar_dados <= '1';
-    wait for 5000 us;
+    wait for 5 ms;
 
     -- Pruebo visualizar puntuacion de la ronda, debe pasar automaticamente a ronda tras 5s
     en_mostrar_dados <= '0';
@@ -89,7 +89,7 @@ begin
     -- Estado S_DADOS
     en_ptos_ronda <= '0';
     en_mostrar_dados <= '1';
-    wait for 5000 us;
+    wait for 5 ms;
 
     --Pruebo visualizar el error
     en_mostrar_dados <= '0';
@@ -99,7 +99,7 @@ begin
     -- Estado S_DADOS
     en_mostrar_error <= '0';
     en_mostrar_dados <= '1';
-    wait for 5000 us;
+    wait for 5 ms;
 
     -- Pruebo visualizar puntuacion de la tirada
     en_mostrar_dados <= '0';
