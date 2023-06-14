@@ -227,7 +227,7 @@ with disp_dados select
 
 
             
-with conta select
+
 disp_dados <=   dados_s(20 downto 18) when "11",
                 dados_s(17 downto 15) when "10",
                 dados_s(14 downto 12) when "01",
