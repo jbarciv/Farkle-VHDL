@@ -16,7 +16,6 @@ entity display is
             en_ptos_ronda       : in std_logic;
             en_ptos_partida     : in std_logic;
             en_ptos_tirada      : in std_logic;
-            count_dados         : in std_logic_vector(2 downto 0);
             uni_t, dec_t, cen_t, mil_t : in std_logic_vector(3 downto 0);
             uni_r, dec_r, cen_r, mil_r : in std_logic_vector(3 downto 0);
             uni_p, dec_p, cen_p, mil_P : in std_logic_vector(3 downto 0);

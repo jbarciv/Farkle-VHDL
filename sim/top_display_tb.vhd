@@ -38,8 +38,7 @@ begin
     puntos_tirada<="00000010010110";    -- 150
     puntos_ronda <= "00001000000000";   -- 512
     puntos_partida <= "10001000000000"; -- 8704
-    en_refresh <= '0';
-    count_dados<="110";
+    count_dados<="101";
 
 -- Generacion del reloj
 process
@@ -67,6 +66,9 @@ begin
 
     -- Estado S_DADOS
     reset <= '0';
+    en_refresh <= '1';
+    wait for clk_period;
+    en_refresh <= '0';
     en_mostrar_dados <= '1';
     wait for 10 ms;
 
@@ -79,7 +81,7 @@ begin
     -- Estado S_DADOS
     en_ptos_tirada <= '0';
     en_mostrar_dados <= '1';
-    wait for 5 ms;
+    wait for 5000 us;
 
     -- Pruebo visualizar puntuacion de la ronda, debe pasar automaticamente a ronda tras 5s
     en_mostrar_dados <= '0';
@@ -89,17 +91,17 @@ begin
     -- Estado S_DADOS
     en_ptos_ronda <= '0';
     en_mostrar_dados <= '1';
-    wait for 5 ms;
+    wait for 5000 us;
 
     --Pruebo visualizar el error
     en_mostrar_dados <= '0';
     en_mostrar_error <= '1';
-    wait;
+    wait for 2 ms;
 
     -- Estado S_DADOS
     en_mostrar_error <= '0';
     en_mostrar_dados <= '1';
-    wait for 5 ms;
+    wait for 5000 us;
 
     -- Pruebo visualizar puntuacion de la tirada
     en_mostrar_dados <= '0';
