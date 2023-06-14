@@ -2,38 +2,51 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity top_display_chella is
-    Port (  clk             : in std_logic; 
-            reset           : in std_logic; 
-            dados           : in std_logic_vector(20 downto 0);
-            puntos_ronda    : in std_logic_vector(13 downto 0);
-            puntos_partida  : in std_logic_vector(13 downto 0);
-            en_refresh      : in std_logic;
-            player          : in std_logic;
-            en_mostrar_dados: in std_logic; --Habilitacion del scroll
-            en_mostrar_error: in std_logic; --Se seleccionan dados que no dan ptos
-            en_farkle_ok    : in std_logic; --Hay farkle por lo tanto se hace scroll dos veces
-            en_win          : in std_logic; --Se muestra el jugador que gano en la pantalla
-            en_ptos_ronda   : in std_logic;
-            en_ptos_partida : in std_logic;
-            count_dados     : in std_logic_vector(2 downto 0);
-            segmentos       : out std_logic_vector(6 downto 0);
-            selector        : out std_logic_vector(3 downto 0)
+entity display is
+    Port (  clk                 : in std_logic; 
+            reset               : in std_logic; 
+            dados               : in std_logic_vector(20 downto 0);
+            puntos_ronda        : in std_logic_vector(13 downto 0);
+            puntos_partida      : in std_logic_vector(13 downto 0);
+            en_refresh          : in std_logic;
+            player              : in std_logic;
+            en_mostrar_dados    : in std_logic; --Habilitacion del scroll
+            en_mostrar_error    : in std_logic; --Se seleccionan dados que no dan ptos
+            en_win              : in std_logic; --Se muestra el jugador que gano en la pantalla
+            en_ptos_ronda       : in std_logic;
+            en_ptos_partida     : in std_logic;
+            en_ptos_tirada      : in std_logic;
+            count_dados         : in std_logic_vector(2 downto 0);
+            uni_t, dec_t, cen_t, mil_t : in std_logic_vector(3 downto 0);
+            uni_r, dec_r, cen_r, mil_r : in std_logic_vector(3 downto 0);
+            uni_p, dec_p, cen_p, mil_P : in std_logic_vector(3 downto 0);
+            segmentos           : out std_logic_vector(6 downto 0);
+            selector            : out std_logic_vector(3 downto 0);
+            flag_mostrar_dados   : out std_logic;   -- ha terminado proceso
+            flag_error           : out std_logic;
+            flag_ptos_tirada     : out std_logic;
+            flag_ptos_ronda      : out std_logic;
+            flag_ptos_partida    : out std_logic;
+            flag_win             : out std_logic;
+            en_1s                : out std_logic
             ); 
-end top_display_chella; 
+end display; 
 
-architecture Behavioral of top_display_chella is
+architecture Behavioral of display is
 
 
 --Senales divisor de frecuencia 4KHz
-constant maxcount4  : integer := 31250;      --31250
+constant maxcount4  : integer := 31;      --31250
 signal count4       : integer range 0 to maxcount4-1;
 signal enable_4KHz  : std_logic;
 
 --Senales divisor de frecuencia 1s
-constant maxcount   : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa f�sica
-signal count        : integer range 0 to maxcount-1;
+constant maxcount   : integer := 125*10**3;   -- cambiar a 125000000 para probar en la placa fisica
+signal count_1s        : integer range 0 to maxcount-1;
 signal enable_1s    : std_logic;
+
+--Senal timer
+signal timer        : unsigned(2 downto 0);
 
 -- Senal selector
 signal conta : unsigned(1 downto 0);
@@ -46,27 +59,100 @@ signal disp_ptos : std_logic_vector(2 downto 0);
 signal segmentos_dados : std_logic_vector(6 downto 0);
 signal segmentos_ptos : std_logic_vector(6 downto 0);
 
--- Senal de salida scroll
-signal dados_s : std_logic_vector(20 downto 0);
-
 -- Senales de muestra_ptos
-signal uni_t,dec_t,cen_t,mil_t : std_logic_vector(3 downto 0);
-signal uni_r,dec_r,cen_r,mil_r : std_logic_vector(3 downto 0);
-signal uni_p,dec_p,cen_p,mil_P : std_logic_vector(3 downto 0);
 signal digit : std_logic_vector(3 downto 0);
 
 -- Senal auxiliar del jugador
 signal player_d : std_logic_vector(3 downto 0);
 
---Senal FSM
+--Maquina de Estados
 type Status_t is (S_APAGADO, S_DADOS, S_ERROR, S_PTOS_TIRADA, S_PTOS_RONDA, S_PTOS_PARTIDA, S_WIN);
 signal STATE: Status_t;
 
 begin 
 
+-- Maquina de estados
+process (clk, reset)
+begin
+    if( reset = '1') then
+        STATE <= S_APAGADO;
+    elsif (clk'event and clk = '1') then
+        case STATE is
+            when S_APAGADO =>
+                if (en_mostrar_dados = '1') then    --Desde FSM general 
+                    STATE <= S_DADOS;
+                end if;
+            when S_DADOS =>
+                flag_mostrar_dados <= '0';
+                if (en_mostrar_error = '1') then    --Desde FSM
+                    STATE <= S_ERROR;
+                    flag_mostrar_dados <= '0';
+                elsif (en_ptos_tirada='1') then     --Desde FSM
+                    STATE <= S_PTOS_TIRADA;
+                    flag_mostrar_dados <= '0';
+                elsif (en_ptos_ronda='1') then      --Desde FSM
+                    STATE <= S_PTOS_RONDA;
+                    flag_mostrar_dados <= '0';
+                end if;
+            when S_ERROR =>
+                flag_error <= '1';
+                if enable_1s='1' then 
+                    timer<=timer+1;
+                    if (timer = 2) then 
+                        STATE <= S_DADOS;
+                        timer<=(others=>'0');
+                        flag_error<='0';
+                    end if;
+                end if;
+            when S_PTOS_TIRADA =>
+                flag_ptos_tirada <= '1';
+                if enable_1s='1' then 
+                    timer<=timer+1;
+                    if (timer=5) then 
+                        if (en_win='1') then     --Desde FSM general 
+                            STATE <= S_WIN;
+                        else
+                            STATE <= S_DADOS;
+                        end if;
+                        flag_ptos_tirada <= '0';
+                        timer<=(others=>'0');
+                    end if;
+                end if;
+                
+            when S_PTOS_RONDA =>
+                flag_ptos_ronda <= '1';
+                if enable_1s='1' then 
+                    timer<=timer+1;
+                    if (timer=5) then 
+                        STATE <= S_PTOS_PARTIDA;
+                        timer<=(others=>'0');
+                        flag_ptos_ronda <= '1';
+                    end if;
+                end if;
+            when S_PTOS_PARTIDA =>
+                flag_ptos_partida <= '1';
+                if enable_1s='1' then 
+                    timer<=timer+1;
+                    if (timer=5) then 
+                        if(en_win='1') then 
+                            STATE<=S_WIN;
+                        else
+                            STATE <= S_APAGADO;
+                        end if;
+                        timer<=(others=>'0');
+                        flag_ptos_partida <= '0';
+                    end if;
+                end if;
+            when S_WIN =>
+                flag_win<='1';
+            when others=>
+                
+        end case;
+    end if;
+end process; 
 
 -- Divisor de frecuencia (4KHz)
-process(clk,reset)
+process(clk, reset)
 begin
     if (reset = '1') then
        count4 <= 0;
@@ -85,17 +171,20 @@ enable_4KHz <= '1' when(count4 = maxcount4-1) else '0';
 process(clk, reset)
 begin
     if (reset = '1') then
-        count <= 0;
+        count_1s<= 0;
     elsif (clk'event and clk = '1') then       
-            if(count = maxcount-1) then
-                count <= 0;
+            if(count_1s = maxcount-1) then
+                count_1s <= 0;
             else 
-                count <= count + 1;
+                count_1s <= count_1s + 1;
             end if;
     end if;    
 end process;      
 
-enable_1s <= '1' when(count = maxcount-1) else '0'; 
+enable_1s <= '1' when(count_1s = maxcount-1) else '0'; 
+
+en_1s<=enable_1s;
+   
 
 -- Contador de 0 a 3
 process(clk,reset)
@@ -113,13 +202,11 @@ begin
     end if;
 end process;
 
-
-
 -- Proceso para asignar la puntuacion
 process(clk,reset)
 begin
     if(reset='1') then
-        digit <= "1011";
+        digit <= "1011"; -- "1011 equivale a apagar el display"
     elsif(clk'event and clk = '1') then
         if(STATE=S_APAGADO) then 
             case conta is
@@ -171,7 +258,7 @@ begin
                 when others =>
             end case;  
 
-        elsif(STATE=S_ERROR) then --Esta se�al tiene que durar 5 segundos
+        elsif(STATE=S_ERROR) then --Esta senal tiene que durar 5 segundos
             case conta is
                 when "00" =>
                     digit <= "1111";
@@ -202,8 +289,7 @@ end process;
 
 -- Jugador seleccionado
 player_d <= "0001" when (player = '0') else "0010";
-
-
+        
 
 -- Selector
 with conta select
@@ -227,11 +313,11 @@ with disp_dados select
 
 
             
-
-disp_dados <=   dados_s(20 downto 18) when "11",
-                dados_s(17 downto 15) when "10",
-                dados_s(14 downto 12) when "01",
-                dados_s(11 downto 9) when "00",
+with conta select
+disp_dados <=   dados(20 downto 18) when "11",
+                dados(17 downto 15) when "10",
+                dados(14 downto 12) when "01",
+                dados(11 downto 9) when "00",
                 "---" when others;
 
 
@@ -252,5 +338,8 @@ segmentos_ptos <="0000001" when "0000", -- 0
                 "1111111" when "1011", -- Apagado
                 "-------" when others;
 
-
+segmentos <= "1111111" when(STATE = S_APAGADO) else
+             segmentos_dados when(STATE=S_DADOS) else
+             segmentos_ptos;
+             
 end Behavioral;

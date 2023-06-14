@@ -31,25 +31,23 @@ begin
             end if; 
             if enable_1s='1' then 
                 case num_dados_mostrar is 
-                    when "101" => 
+                    when "110" => --6
+                            dados_i <= dados_i(17 downto 0) & dados_i(20 downto 18);
+                    when "101" => --5
                         dados_i <= dados_i(17 downto 3) & dados_i(20 downto 18) & dados_i(2 downto 0);
-                    when "110" =>
-                        dados_i <= dados_i(17 downto 0) & dados_i(20 downto 18);
-                    when others=>
-
-                    
+                    when others=> 
                 end case; 
             end if;
         end if;            
     end process;  
 
 with num_dados_mostrar select  
-dados_s <= dados_i when "101",      --5 dados
-           dados_i when "110",      --6 dados
-           "111111111111111111" & dados_i(20 downto 18) when "001", --1 dado
-           "111111111111111" & dados_i(20 downto 15) when "010",    --2 dados
-           "111111111111" & dados_i(20 downto 12) when "011",       --3 dados
-           "111111111" & dados_i(20 downto 9) when "100",           --4 dados
-           "---------------------" when others;
+dados_s <=  dados_i when "110",
+            dados_i when "101",
+            "000000000" & dados_i(20 downto 18)& "000000000" when "001", --1 dado
+            "000000" & dados_i(20 downto 15)&"000000000" when "010",    --2 dados
+            "000" & dados_i(20 downto 12)& "000000000"when "011",       --3 dados
+            dados_i(20 downto 9) &"000000"when "100",           --4 dados
+            "---------------------" when others;
            
 end Behavioral;
