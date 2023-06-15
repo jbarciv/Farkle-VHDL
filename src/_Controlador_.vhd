@@ -85,6 +85,7 @@ begin
 process(clk,reset)
 begin
     if(reset = '1') then
+        
         estado <= S_ESPERAR;
     elsif(clk'event and clk='1') then
         case estado is

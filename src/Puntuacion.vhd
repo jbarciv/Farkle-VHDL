@@ -63,15 +63,16 @@ end process;
 process(clk,reset)
 begin 
     if reset='1' then 
-        ptos_i<=(others=>'0');
+        ptos<=(others=>'0');
     elsif clk'event and clk='1' then 
         if STATE=S_ESPERA then 
-            ptos_i<=(others=>'0');
+            ptos<=(others=>'0');
         elsif STATE=S_CALCULADO then 
-            ptos_i<=std_logic_vector(TO_UNSIGNED(ptos_tirada,14));
+            ptos<=std_logic_vector(TO_UNSIGNED(ptos_tirada,14));
         end if;
     end if;
-end process;             
+end process;    
+
                 
 --Contador dados que entran --Hay que utilizar la variable , count_1, etc
 process(clk,reset)
@@ -342,6 +343,7 @@ error<='1' when ((count_2=1 or count_2=2) or
                   (count_3=1 or count_3=2) or 
                   (count_4=1 or count_4=2) or 
                   (count_6=1 or count_6=2)) and STATE=S_CALCULADO else '0';
+
 
 
 --Hay farkle

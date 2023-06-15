@@ -28,8 +28,7 @@ begin
         elsif(clk'event and clk = '1') then
             if en_refresh='1' then 
                 dados_i<=dados;
-            end if; 
-            if enable_1s='1' then 
+            elsif enable_1s='1' then 
                 case num_dados_mostrar is 
                     when "110" => --6
                             dados_i <= dados_i(17 downto 0) & dados_i(20 downto 18);
