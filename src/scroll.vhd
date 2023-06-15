@@ -36,7 +36,7 @@ begin
                     when "101" => --5
                         dados_i <= dados_i(17 downto 3) & dados_i(20 downto 18) & dados_i(2 downto 0);
                     when others=> 
-                end case; 
+                end case;
             end if;
         end if;            
     end process;  

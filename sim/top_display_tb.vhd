@@ -16,6 +16,7 @@ architecture Behavioral of top_display_tb is
             signal player              : std_logic;
             signal en_mostrar_dados    : std_logic; --Habilitacion del scroll
             signal en_mostrar_error    : std_logic; --Se seleccionan dados que no dan ptos
+            signal en_apagado          : std_logic;
             signal en_win              : std_logic; --Se muestra el jugador que gano en la pantalla
             signal en_ptos_ronda       : std_logic;
             signal en_ptos_partida     : std_logic;
@@ -34,11 +35,12 @@ architecture Behavioral of top_display_tb is
     constant clk_period     : time := 8 ns;
 
 begin
-    dados <= "001010011100101110111";   -- 123456E
+    dados <= "001111111111111111111";   -- 123456E
     puntos_tirada<="00000010010110";    -- 150
     puntos_ronda <= "00001000000000";   -- 512
     puntos_partida <= "10001000000000"; -- 8704
-    count_dados<="101";
+    count_dados<="001";
+    
 
 -- Generacion del reloj
 process
@@ -86,10 +88,18 @@ begin
     -- Pruebo visualizar puntuacion de la ronda, debe pasar automaticamente a ronda tras 5s
     en_mostrar_dados <= '0';
     en_ptos_ronda <= '1';
-    wait for 20 ms;
+    wait for 5000 us;
+    en_ptos_ronda <= '0';
+    en_ptos_partida<='1';
+    wait for 5000 us;
+    
+    --Estado S_APAGADO
+    en_ptos_partida<='0';
+    en_apagado<='1';
+    wait for 5000 us;
 
     -- Estado S_DADOS
-    en_ptos_ronda <= '0';
+    en_apagado<='0';
     en_mostrar_dados <= '1';
     wait for 5000 us;
 
@@ -128,7 +138,8 @@ end process;
             puntos_partida      => puntos_partida,  
             puntos_tirada       => puntos_tirada, 
             en_refresh          => en_refresh,   
-            player              => player,   
+            player              => player,  
+            en_apagado          => en_apagado, 
             en_mostrar_dados    => en_mostrar_dados,   
             en_mostrar_error    => en_mostrar_error,       
             en_win              => en_win,   

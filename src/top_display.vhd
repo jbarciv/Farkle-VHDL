@@ -11,6 +11,7 @@ entity top_display is
             puntos_tirada       : in std_logic_vector(13 downto 0);  
             en_refresh          : in std_logic;
             player              : in std_logic;
+            en_apagado          : in std_logic;
             en_mostrar_dados    : in std_logic; --Habilitacion del scroll
             en_mostrar_error    : in std_logic; --Se seleccionan dados que no dan ptos
             en_win              : in std_logic; --Se muestra el jugador que gano en la pantalla
@@ -89,12 +90,14 @@ begin
                 puntos_partida      => puntos_partida,
                 en_refresh          => en_refresh,
                 player              => player,
+                en_apagado          => en_apagado,
                 en_mostrar_dados    => en_mostrar_dados,
                 en_mostrar_error    => en_mostrar_error,           
                 en_win              => en_win,              
                 en_ptos_ronda       => en_ptos_ronda,       
                 en_ptos_partida     => en_ptos_partida,
-                en_ptos_tirada      => en_ptos_tirada,     
+                en_ptos_tirada      => en_ptos_tirada, 
+                count_dados         => count_dados,    
                 uni_t               => uni_t, 
                 dec_t               => dec_t, 
                 cen_t               => cen_t, 
@@ -114,7 +117,7 @@ begin
                 flag_ptos_tirada     => flag_ptos_tirada, 
                 flag_ptos_ronda      => flag_ptos_ronda, 
                 flag_ptos_partida    => flag_ptos_partida, 
-                flag_win             => flag_win ,
-                en_1s                =>en_1s        
+                flag_win             => flag_win,
+                en_1s                => en_1s        
             );
 end Structural;

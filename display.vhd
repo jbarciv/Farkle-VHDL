@@ -10,12 +10,14 @@ entity display is
             puntos_partida      : in std_logic_vector(13 downto 0);
             en_refresh          : in std_logic;
             player              : in std_logic;
+            en_apagado          : in std_logic;
             en_mostrar_dados    : in std_logic; --Habilitacion del scroll
             en_mostrar_error    : in std_logic; --Se seleccionan dados que no dan ptos
             en_win              : in std_logic; --Se muestra el jugador que gano en la pantalla
             en_ptos_ronda       : in std_logic;
             en_ptos_partida     : in std_logic;
             en_ptos_tirada      : in std_logic;
+            count_dados         : in std_logic_vector(2 downto 0);
             uni_t, dec_t, cen_t, mil_t : in std_logic_vector(3 downto 0);
             uni_r, dec_r, cen_r, mil_r : in std_logic_vector(3 downto 0);
             uni_p, dec_p, cen_p, mil_P : in std_logic_vector(3 downto 0);
@@ -41,11 +43,9 @@ signal enable_4KHz  : std_logic;
 
 --Senales divisor de frecuencia 1s
 constant maxcount   : integer := 125*10**3;   -- cambiar a 125000000 para probar en la placa fisica
-signal count_1s        : integer range 0 to maxcount-1;
+signal count_1s     : integer range 0 to maxcount-1;
 signal enable_1s    : std_logic;
 
---Senal timer
-signal timer        : unsigned(2 downto 0);
 
 -- Senal selector
 signal conta : unsigned(1 downto 0);
@@ -82,66 +82,48 @@ begin
                     STATE <= S_DADOS;
                 end if;
             when S_DADOS =>
-                flag_mostrar_dados <= '0';
+                flag_mostrar_dados <= '1';
                 if (en_mostrar_error = '1') then    --Desde FSM
                     STATE <= S_ERROR;
                     flag_mostrar_dados <= '0';
-                elsif (en_ptos_tirada='1') then     --Desde FSM
+                elsif (en_ptos_tirada = '1') then     --Desde FSM
                     STATE <= S_PTOS_TIRADA;
                     flag_mostrar_dados <= '0';
-                elsif (en_ptos_ronda='1') then      --Desde FSM
+                elsif (en_ptos_ronda = '1') then      --Desde FSM
                     STATE <= S_PTOS_RONDA;
                     flag_mostrar_dados <= '0';
                 end if;
             when S_ERROR =>
-                flag_error <= '1';
-                if enable_1s='1' then 
-                    timer<=timer+1;
-                    if (timer = 2) then 
-                        STATE <= S_DADOS;
-                        timer<=(others=>'0');
-                        flag_error<='0';
-                    end if;
+                flag_error <= '1'; 
+                if (en_mostrar_dados = '1') then 
+                    STATE <= S_DADOS;
+                    flag_error <= '0';
                 end if;
+
             when S_PTOS_TIRADA =>
                 flag_ptos_tirada <= '1';
-                if enable_1s='1' then 
-                    timer<=timer+1;
-                    if (timer=5) then 
-                        if (en_win='1') then     --Desde FSM general 
-                            STATE <= S_WIN;
-                        else
-                            STATE <= S_DADOS;
-                        end if;
-                        flag_ptos_tirada <= '0';
-                        timer<=(others=>'0');
-                    end if;
+                if(en_win='1') then 
+                    STATE<=S_WIN;
+                    flag_ptos_partida<='0';
+                elsif(en_mostrar_dados='1') then 
+                    STATE<=S_DADOS;
+                    flag_ptos_partida<='0';
                 end if;
                 
             when S_PTOS_RONDA =>
                 flag_ptos_ronda <= '1';
-                if enable_1s='1' then 
-                    timer<=timer+1;
-                    if (timer=5) then 
-                        STATE <= S_PTOS_PARTIDA;
-                        timer<=(others=>'0');
-                        flag_ptos_ronda <= '1';
-                    end if;
+                if (en_ptos_partida = '1') then 
+                    STATE <= S_PTOS_PARTIDA;
+                    flag_ptos_ronda <= '0';
                 end if;
+
             when S_PTOS_PARTIDA =>
                 flag_ptos_partida <= '1';
-                if enable_1s='1' then 
-                    timer<=timer+1;
-                    if (timer=5) then 
-                        if(en_win='1') then 
-                            STATE<=S_WIN;
-                        else
-                            STATE <= S_APAGADO;
-                        end if;
-                        timer<=(others=>'0');
-                        flag_ptos_partida <= '0';
-                    end if;
+                if (en_apagado = '1') then 
+                    STATE<=S_APAGADO;
+                    flag_ptos_partida <= '0';
                 end if;
+                
             when S_WIN =>
                 flag_win<='1';
             when others=>
