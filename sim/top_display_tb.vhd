@@ -24,12 +24,12 @@ architecture Behavioral of top_display_tb is
             signal en_ptos_tirada      : std_logic;
             signal segmentos           : std_logic_vector(6 downto 0);
             signal selector            : std_logic_vector(3 downto 0);
-            signal flag_mostrar_dados  : std_logic;
-            signal flag_error          : std_logic;
-            signal flag_ptos_tirada    : std_logic;
-            signal flag_ptos_ronda     : std_logic;
-            signal flag_ptos_partida   : std_logic;
-            signal flag_win            : std_logic;
+            signal ready_mostrar_dados  : std_logic;
+            signal ready_error          : std_logic;
+            signal ready_ptos_tirada    : std_logic;
+            signal ready_ptos_ronda     : std_logic;
+            signal ready_ptos_partida   : std_logic;
+            signal ready_win            : std_logic;
 
 
     constant clk_period     : time := 8 ns;
@@ -149,11 +149,11 @@ end process;
             count_dados         => count_dados,   
             segmentos           => segmentos,   
             selector            => selector,   
-            flag_mostrar_dados   => flag_mostrar_dados, 
-            flag_error          => flag_error,   
-            flag_ptos_tirada    => flag_ptos_tirada,   
-            flag_ptos_ronda     => flag_ptos_ronda,   
-            flag_ptos_partida   => flag_ptos_partida,   
-            flag_win            => flag_win
+            ready_mostrar_dados   => ready_mostrar_dados, 
+            ready_error          => ready_error,   
+            ready_ptos_tirada    => ready_ptos_tirada,   
+            ready_ptos_ronda     => ready_ptos_ronda,   
+            ready_ptos_partida   => ready_ptos_partida,   
+            ready_win            => ready_win
             );
 end Behavioral;

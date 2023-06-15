@@ -23,12 +23,12 @@ entity display is
             uni_p, dec_p, cen_p, mil_P : in std_logic_vector(3 downto 0);
             segmentos           : out std_logic_vector(6 downto 0);
             selector            : out std_logic_vector(3 downto 0);
-            flag_mostrar_dados   : out std_logic;   -- ha terminado proceso
-            flag_error           : out std_logic;
-            flag_ptos_tirada     : out std_logic;
-            flag_ptos_ronda      : out std_logic;
-            flag_ptos_partida    : out std_logic;
-            flag_win             : out std_logic;
+            ready_mostrar_dados   : out std_logic;   -- ha terminado proceso
+            ready_error           : out std_logic;
+            ready_ptos_tirada     : out std_logic;
+            ready_ptos_ronda      : out std_logic;
+            ready_ptos_partida    : out std_logic;
+            ready_win             : out std_logic;
             en_1s                : out std_logic
             ); 
 end display; 
@@ -82,50 +82,50 @@ begin
                     STATE <= S_DADOS;
                 end if;
             when S_DADOS =>
-                flag_mostrar_dados <= '1';
+                ready_mostrar_dados <= '1';
                 if (en_mostrar_error = '1') then    --Desde FSM
                     STATE <= S_ERROR;
-                    flag_mostrar_dados <= '0';
+                    ready_mostrar_dados <= '0';
                 elsif (en_ptos_tirada = '1') then     --Desde FSM
                     STATE <= S_PTOS_TIRADA;
-                    flag_mostrar_dados <= '0';
+                    ready_mostrar_dados <= '0';
                 elsif (en_ptos_ronda = '1') then      --Desde FSM
                     STATE <= S_PTOS_RONDA;
-                    flag_mostrar_dados <= '0';
+                    ready_mostrar_dados <= '0';
                 end if;
             when S_ERROR =>
-                flag_error <= '1'; 
+                ready_error <= '1'; 
                 if (en_mostrar_dados = '1') then 
                     STATE <= S_DADOS;
-                    flag_error <= '0';
+                    ready_error <= '0';
                 end if;
 
             when S_PTOS_TIRADA =>
-                flag_ptos_tirada <= '1';
+                ready_ptos_tirada <= '1';
                 if(en_win='1') then 
                     STATE<=S_WIN;
-                    flag_ptos_partida<='0';
+                    ready_ptos_partida<='0';
                 elsif(en_mostrar_dados='1') then 
                     STATE<=S_DADOS;
-                    flag_ptos_partida<='0';
+                    ready_ptos_partida<='0';
                 end if;
                 
             when S_PTOS_RONDA =>
-                flag_ptos_ronda <= '1';
+                ready_ptos_ronda <= '1';
                 if (en_ptos_partida = '1') then 
                     STATE <= S_PTOS_PARTIDA;
-                    flag_ptos_ronda <= '0';
+                    ready_ptos_ronda <= '0';
                 end if;
 
             when S_PTOS_PARTIDA =>
-                flag_ptos_partida <= '1';
+                ready_ptos_partida <= '1';
                 if (en_apagado = '1') then 
                     STATE<=S_APAGADO;
-                    flag_ptos_partida <= '0';
+                    ready_ptos_partida <= '0';
                 end if;
                 
             when S_WIN =>
-                flag_win<='1';
+                ready_win<='1';
             when others=>
                 
         end case;
