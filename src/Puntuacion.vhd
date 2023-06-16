@@ -9,9 +9,9 @@ entity Puntuacion is
         en_calcula          : in std_logic;
         dados               : in std_logic_vector(17 downto 0);
         ptos                : out std_logic_vector(13 downto 0);
-        error               : out std_logic;
-        ready_puntuacion    : out std_logic;
-        farkle_ok           : out std_logic; 
+        error_s             : out std_logic;
+        flag_puntuacion     : out std_logic;
+        farkle_s            : out std_logic; 
         count_dados         : out std_logic_vector(2 downto 0) 
         );
 end Puntuacion;
@@ -39,39 +39,37 @@ process(clk,reset)
 begin
     if reset='1' then 
         STATE<= S_ESPERA; 
+        ptos<=(others=>'0');
     elsif clk'event and clk='1' then 
         case STATE is 
             when S_ESPERA=> 
-                if en_calcula='1' then 
+                error_s<='0';
+                farkle_s<='0';
+                ptos<=(others=>'0');
+                if (en_calcula='1') then 
                     STATE<=S_CALCULANDO;
                 end if;                     
             when S_CALCULANDO=>
+                flag_puntuacion<='1';
                 if flag_cnt='1' then 
                     STATE<=S_CALCULADO;
                 end if;
             when S_CALCULADO=>
-                ready_puntuacion<='1';
-                if en_calcula='0' then 
+                flag_puntuacion<='0';
+                if(error='1') then 
+                    error_s<='1';
+                elsif(farkle_ok='1') then 
+                    farkle_s<='1';
+                else 
+                    ptos<=std_logic_vector(TO_UNSIGNED(ptos_tirada,14));
+                end if;    
+                if(en_calcula='0') then
                     STATE<=S_ESPERA;
                 end if;
             when others=>
         end case;
     end if;
-end process;
-
---Guardamos el valor en un registro
-process(clk,reset)
-begin 
-    if reset='1' then 
-        ptos<=(others=>'0');
-    elsif clk'event and clk='1' then 
-        if STATE=S_ESPERA then 
-            ptos<=(others=>'0');
-        elsif STATE=S_CALCULADO then 
-            ptos<=std_logic_vector(TO_UNSIGNED(ptos_tirada,14));
-        end if;
-    end if;
-end process;    
+end process;   
 
                 
 --Contador dados que entran --Hay que utilizar la variable , count_1, etc

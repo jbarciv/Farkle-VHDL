@@ -73,35 +73,35 @@ begin
 -- Maquina de estados
 process (clk, reset)
 begin
-    if( reset = '1') then
+    if( reset = '1') then 
         STATE <= S_APAGADO;
-    elsif (clk'event and clk = '1') then
+    elsif (clk'event and clk = '1') then 
         case STATE is
             when S_APAGADO =>
                 if (en_mostrar_dados = '1') then    --Desde FSM general 
                     STATE <= S_DADOS;
                 end if;
             when S_DADOS =>
-                ready_mostrar_dados <= '1';
+                flag_mostrar_dados <= '1';
                 if (en_mostrar_error = '1') then    --Desde FSM
                     STATE <= S_ERROR;
-                    ready_mostrar_dados <= '0';
+                    flag_mostrar_dados <= '0';
                 elsif (en_ptos_tirada = '1') then     --Desde FSM
                     STATE <= S_PTOS_TIRADA;
-                    ready_mostrar_dados <= '0';
+                    flag_mostrar_dados <= '0';
                 elsif (en_ptos_ronda = '1') then      --Desde FSM
                     STATE <= S_PTOS_RONDA;
                     ready_mostrar_dados <= '0';
                 end if;
             when S_ERROR =>
-                ready_error <= '1'; 
+                flag_error <= '1'; 
                 if (en_mostrar_dados = '1') then 
                     STATE <= S_DADOS;
-                    ready_error <= '0';
+                    flag_error <= '0';
                 end if;
 
             when S_PTOS_TIRADA =>
-                ready_ptos_tirada <= '1';
+                flag_ptos_tirada <= '1';
                 if(en_win='1') then 
                     STATE<=S_WIN;
                     ready_ptos_partida<='0';
@@ -111,21 +111,21 @@ begin
                 end if;
                 
             when S_PTOS_RONDA =>
-                ready_ptos_ronda <= '1';
+                flag_ptos_ronda <= '1';
                 if (en_ptos_partida = '1') then 
                     STATE <= S_PTOS_PARTIDA;
-                    ready_ptos_ronda <= '0';
+                    flag_ptos_ronda <= '0';
                 end if;
 
             when S_PTOS_PARTIDA =>
-                ready_ptos_partida <= '1';
+                flag_ptos_partida <= '1';
                 if (en_apagado = '1') then 
                     STATE<=S_APAGADO;
                     ready_ptos_partida <= '0';
                 end if;
                 
             when S_WIN =>
-                ready_win<='1';
+                flag_win<='1';
             when others=>
                 
         end case;

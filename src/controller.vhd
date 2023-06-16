@@ -98,24 +98,29 @@ begin
                 end if;
                 
             when S_MOSTRAR =>
+                en_mostrar_dados    <= '1';
                 en_refresh          <= '0';
                 en_calcula          <= '1';
-                if (ready_puntuacion = '1') then
-                    if (farkle_ok = '1') then
+                if (flag_puntuacion = '0') then --ESTADO EN PUNTUACION:S_CALCULADO
+                    if (farkle_s = '1') then
                         ESTADO <= S_FARKLE;
-                        en_calcula <= '0';
+                        en_calcula<='0';
                     end if;
                 end if;
-                
-                
-                if (sel='1' or planta='1') then
-                    ESTADO <= S_CALCULA;
-                else 
-                    en_mostrar_dados <= '1';
+                if(sel='1' or planta='1') then 
+                    ESTADO <= S_CALCULA; --DOS ESTADOS? PARA CALCULA_SEL Y CALCULA_PLANTA?
+                    en_calcula<='0';
                 end if;
-                if (ready_mostrar_dados = '1') then
-                    en_mostrar_dados <= '0';
+                if(flag_mostrar_dados='0') then 
+                    en_mostrar_dados   <='0';
                 end if;
+                
+
+            when S_FARKLE =>
+            --condicion de terminar de mostrar dados durante 2 scroll, puntuacion 0000 y puntuacion partida if() then
+                en_mostrar_dados    <= '0';
+                en_farkle_ok        <= '1';
+                
 
             when S_CALCULA =>
                 en_calcula <= '1';  --
