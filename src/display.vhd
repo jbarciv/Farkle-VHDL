@@ -104,10 +104,10 @@ begin
                 flag_ptos_tirada <= '1';
                 if(en_win='1') then 
                     STATE<=S_WIN;
-                    ready_ptos_partida<='0';
+                    flag_ptos_tirada<='0';
                 elsif(en_mostrar_dados='1') then 
                     STATE<=S_DADOS;
-                    ready_ptos_partida<='0';
+                    flag_ptos_tirada<='0';
                 end if;
                 
             when S_PTOS_RONDA =>
@@ -121,7 +121,7 @@ begin
                 flag_ptos_partida <= '1';
                 if (en_apagado = '1') then 
                     STATE<=S_APAGADO;
-                    ready_ptos_partida <= '0';
+                    flag_ptos_partida <= '0';
                 end if;
                 
             when S_WIN =>
