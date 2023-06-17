@@ -30,14 +30,14 @@ architecture Behavioral of cuenta_puntuaciones is
     type ESTADOS is (S_ESPERANDO, S_ACTUALIZANDO, S_ACTUALIZADO);
     signal ESTADO : ESTADOS;
     -- Flags internas
-    signal flag_ronda, flag_partida, flag_reset, flag_dual: std_logic;
+    signal flag_ronda, flag_partida, flag_reset, flag_dual  : std_logic;
 
 begin
 
     process(clk, reset)
     begin
         if (reset = '1') then
-            ESTADO <= ESPERANDO;
+            ESTADO <= S_ESPERANDO;
         elsif (clk'event and clk = '1') then
             case ESTADO is 
                 when S_ESPERANDO =>
@@ -45,7 +45,7 @@ begin
                         ESTADO <= S_ACTUALIZANDO;
                     end if;
 
-                when S_ACTUALIANZANDO =>
+                when S_ACTUALIZANDO =>
                     if (flag_ronda = '1') then    
                         flag_puntuacion_ronda <= '1';
                         ESTADO <= S_ACTUALIZADO; 
@@ -53,7 +53,7 @@ begin
                         flag_puntuacion_partida <= '1';
                         ESTADO <= S_ACTUALIZADO;
                     elsif (flag_reset = '1') then
-                        flag_puntuacion_reset = '1'
+                        flag_puntuacion_reset <= '1';
                         ESTADO <= S_ACTUALIZADO;
                     elsif (flag_dual = '1') then
                         flag_puntuacion_ronda <= '1';
@@ -71,10 +71,11 @@ begin
                         flag_puntuacion_partida <= '0';
                         ESTADO <= S_ESPERANDO; 
                     elsif (en_reset_ronda = '0') then
-                        flag_puntuacion_reset = '0'
-                        ESTADO <= S_ESPERANDO; 
-                    end if; 
-
+                        flag_puntuacion_reset <= '0';
+                        ESTADO <= S_ESPERANDO;
+                    end if;
+            end case;
+        end if;
     end process;
 
     process(clk, reset)
@@ -90,40 +91,40 @@ begin
                 flag_partida <= '0';
                 flag_reset <= '0';
                 flag_dual <= '0';
+            end if;
             case which_player is
                 when '0' =>
                     ptos_ronda_2 <= (others => '0');
                     if (en_suma_ronda = '1' and flag_ronda = '0') then                       
                         ptos_ronda_1 <= ptos_ronda_1 + unsigned(ptos);
                         flag_ronda <= '1';
-                    elsif (en_suma_partida and flag_partida = '0') then                       
+                    elsif (en_suma_partida = '1' and flag_partida = '0') then                       
                         ptos_partida_1 <= ptos_partida_1 + ptos_ronda_1;
                         flag_partida <= '1';
-                    elsif (en_reset_ronda and flag_reset = '0') then
+                    elsif (en_reset_ronda = '1' and flag_reset = '0') then
                         ptos_ronda_1 <= (others => '0');
                         flag_reset <= '1';
-                    elsif (ens_suma_ronda = '1' and en_suma_partida = '1' and flag_dual = '0') then
+                    elsif (en_suma_ronda = '1' and en_suma_partida = '1' and flag_dual = '0') then
                         ptos_ronda_1 <= ptos_ronda_1 + unsigned(ptos);
                         ptos_partida_1 <= ptos_partida_1 + ptos_ronda_1;
                         flag_dual <= '1';
                     end if;
-                when '1'=>
+                when '1' =>
                     ptos_ronda_1 <= (others => '0');
                     if (en_suma_ronda = '1' and flag_ronda = '0') then
                             ptos_ronda_2 <= ptos_ronda_2 + unsigned(ptos);
                             flag_ronda <= '1';
-                        elsif (en_suma_partida and flag_partida = '0') then
+                    elsif (en_suma_partida = '1' and flag_partida = '0') then
                             ptos_partida_2 <= ptos_partida_2 + ptos_ronda_2;
                             flag_partida <= '1';
-                        elsif (en_reset_ronda and flag_reset = '0') then
+                    elsif (en_reset_ronda = '1' and flag_reset = '0') then
                             ptos_ronda_2 <= (others => '0');
                             flag_reset <= '1';
-                        elsif (ens_suma_ronda = '1' and en_suma_partida = '1' and flag_dual = '0') then
+                    elsif (en_suma_ronda = '1' and en_suma_partida = '1' and flag_dual = '0') then
                             ptos_ronda_1 <= ptos_ronda_1 + unsigned(ptos);
                             ptos_partida_1 <= ptos_partida_1 + ptos_ronda_1;
                             flag_dual <= '1';
-                        end if;
-                when others =>
+                    end if;
             end case;
         end if;
     end process;
