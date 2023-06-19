@@ -129,8 +129,6 @@ begin
                     en_refresh<='1';
                 end if;
                                 
- 
-                    
                 when S_COMPROBAR_FARKLE=> 
                 en_calcula          <= '1'; 
                 en_refresh<='0';        --COMPROBAR SI FUNCIONA EN_REFRESH
@@ -144,9 +142,6 @@ begin
                     end if;
                 end if;
        
-                
-            
-                
             when S_MOSTRAR =>
                 en_mostrar_dados    <= '1';
                 --en_refresh          <= '0';
@@ -162,7 +157,6 @@ begin
                     en_mostrar_dados<='0';
                     flag_planta<='1';
                 end if;
-
 
                 if(flag_farkle_dados = '1') then
                     if(timer_farkle =(count_dados_i + count_dados_i)) then
@@ -194,8 +188,6 @@ begin
         
                 end if;
                     
-                
-            
             when S_MOSTRAR_PTOS=>
                 flag_conta5s<='1';
                 if(flag_sel='1') then 
@@ -232,24 +224,19 @@ begin
                             aux<='0';
                             ESTADO<=S_ESPERAR;
                             change_player<='1';
-                        end if;
-
-                                        
-                end if;
+                        end if;                  
+                    end if;
                 
-                if(flag_farkle_0000='1') then 
-                    en_reset_ronda<='1';
-                    en_ptos_ronda<='1';
+                    if(flag_farkle_0000='1') then 
+                        en_reset_ronda<='1';
+                        en_ptos_ronda<='1';
                     if(conta_5s=5) then --5 s mostrar ptuacion 0000
                         en_ptos_ronda<='0';
                         flag_farkle_partida<='1';
                         ESTADO<=S_FARKLE;
                         flag_farkle_0000<='0';
-                        flag_conta5s<='0';
-                       
+                        flag_conta5s<='0';  
                     end if;
-
-
                 end if;
 
                 if(flag_farkle_partida='1') then 
@@ -260,9 +247,7 @@ begin
                         change_player<='1';
                         flag_farkle_partida<='0';
                         flag_conta5s<='0';
-                    end if;
-                    
-                    
+                    end if;   
                 end if;
             end if;
 
@@ -288,8 +273,6 @@ begin
             when S_WIN =>
                 en_win<='1';
             
-                
-
             when others =>
         end case;
     end if;
@@ -302,11 +285,11 @@ begin
     if (reset = '1') then
         count <= 0;
     elsif (clk'event and clk = '1') then       
-            if(count = maxcount-1) then
-                count <= 0;
-            else 
-                count <= count + 1;
-            end if;
+        if(count = maxcount-1) then
+            count <= 0;
+        else 
+            count <= count + 1;
+        end if;
     end if;    
 end process;      
 
@@ -329,8 +312,6 @@ begin
                         timer_farkle <= timer_farkle + 1;
                     end if;
             end if;
-    
-         
     
             if(flag_conta5s='1' or aux='1') then 
                 
@@ -357,7 +338,6 @@ end process;
 
 
 aux_sel<=flag_sel;
-
 
 end Behavioral;
 
