@@ -11,11 +11,11 @@ entity controlador is
             planta            : in std_logic;
             switch              : in std_logic_vector(5 downto 0);
             --Display
-            flag_mostrar_dados : in std_logic;
-            flag_error         : in std_logic;
-            flag_ptos_tirada   : in std_logic;
-            flag_ptos_ronda    : in std_logic;
-            flag_ptos_partida  : in std_logic;
+            --flag_mostrar_dados : in std_logic;
+            --flag_error         : in std_logic; --PUEDE QUE NO SEA NECESARIO DESDE EL BLOQUE DE DISPLAY
+            --flag_ptos_tirada   : in std_logic;
+            --flag_ptos_ronda    : in std_logic;
+            --flag_ptos_partida  : in std_logic;
             flag_win           : in std_logic;
             en_apagado          : out std_logic;
             en_mostrar_dados    : out std_logic; --Habilitacion del scroll
@@ -59,7 +59,7 @@ type ESTADOS is (S_ESPERAR, S_MOSTRAR, S_FARKLE, S_CALCULA, S_ERROR, S_MOSTRAR_P
 signal ESTADO : ESTADOS;
 
 --Contadores para activar displays por 1 segundo y 5 segundos
-constant maxcount           : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa f�sica
+constant maxcount           : integer := 125*10**3;   -- cambiar a 125000000 para probar en la placa f?sica
 signal count                : integer range 0 to maxcount-1;
 signal enable_1s            : std_logic;
 signal conta_2s             : unsigned(1 downto 0);
@@ -69,6 +69,8 @@ signal flag_sel, flag_planta : std_logic;
 signal timer_farkle         : integer;
 signal count_dados_i        : integer;
 signal flag_conta5s         : std_logic;
+signal flag_error           : std_logic;
+signal aux                  : std_logic;
 
 begin
 
@@ -106,10 +108,12 @@ begin
                 if (LFSR_listo ='1') then
                     en_lfsr_top <= '0';
                     en_refresh  <= '1';
+                    en_apagado<='0';
                     ESTADO      <= S_MOSTRAR;
                 end if;
                 
             when S_MOSTRAR =>
+                en_compacta<='1';       --LUGAR CORRECTO??
                 en_mostrar_dados    <= '1';
                 en_refresh          <= '0';
                 en_calcula          <= '1'; 
@@ -119,6 +123,7 @@ begin
                     if (farkle_s = '1' and flag_farkle_dados='0') then
                         ESTADO <= S_FARKLE;
                         en_mostrar_dados<='0'; 
+                        flag_farkle_dados<='1';
                     end if;
                 end if;
 
@@ -145,8 +150,10 @@ begin
                 end if;
                             
             when S_ERROR =>
+                flag_error<='1';
                 en_mostrar_error <='1';
                 if(conta_2s = "10") then
+                    flag_error<='0';
                     ESTADO              <= S_MOSTRAR;
                     en_mostrar_error    <='0';
                 end if;
@@ -154,13 +161,13 @@ begin
             when S_FARKLE =>
             --Se tiene que resetear a 0 la puntuacion de ronda
             --condicion de terminar de mostrar dados durante 2 scroll, puntuacion 0000 y puntuacion partida if() then
-                flag_farkle_dados<='1';
                 if(flag_farkle_dados = '1') then
                     ESTADO <= S_MOSTRAR;
                 elsif(flag_farkle_0000 = '1') then
                     ESTADO <= S_MOSTRAR_PTOS; --PENDIENTE
                 elsif(flag_farkle_partida='1') then
                     ESTADO<= S_MOSTRAR_PTOS;
+        
                 end if;
                     
                 
@@ -177,19 +184,34 @@ begin
                     end if;
                     
                 elsif(flag_planta='1') then 
-                    
-                    en_ptos_ronda<='1';
-                    if(conta_5s=5) then --5 s de mostrar ptos ronda
-                        en_ptos_partida<='1';
-                        en_ptos_ronda<='0';
-                        --HAY QUE REVISAR ESTO
-                        if(conta_5s=5) then --5 s de mostrar ptos partida
-                            en_ptos_partida<='0';
-                            flag_planta<='0';
-                            flag_conta5s<='0';
-                      
+                    if(ready_win='1') then 
+                        en_ptos_tirada<='1';
+                        if(conta_5s=5) then 
+                        en_ptos_tirada<='0';
+                        flag_planta<='0';
+                        flag_conta5s<='0';
+                        ESTADO<=S_WIN;
                         end if;
                     end if;
+                    else
+                        en_ptos_ronda<='1';
+                        if(conta_5s=5) then --5 s de mostrar ptos ronda
+                            en_ptos_partida<='1';
+                            en_ptos_ronda<='0';
+                            flag_conta5s<='0';
+                            aux<='0';  
+                          
+                            if(conta_5s=5) then --5 s de mostrar ptos partida
+                                en_ptos_partida<='0';
+                                flag_planta<='0';
+                                flag_conta5s<='0';
+                                aux<='1';
+                                ESTADO<=S_ESPERAR;
+                            
+                        
+                            end if;
+                        end if;
+
                                         
                 end if;
                 
@@ -214,6 +236,7 @@ begin
                         change_player<='1';
                         flag_farkle_partida<='0';
                         flag_conta5s<='0';
+                        change_player<='1';
                     end if;
                     
                     
@@ -229,11 +252,11 @@ begin
                     else
                         ESTADO<=S_MOSTRAR_PTOS;
                         if(flag_sel='1') then 
-                            en_suma_ronda<='1';
+                            en_suma_ronda<='1'; --DE CUANTOS PULSOS ES NECESSARIO ESTE EN???
                         end if;
                         if(flag_planta='1') then 
                             en_suma_ronda<='1';
-                            en_suma_partida<='1';
+                            en_suma_partida<='1'; --DE CUANTOS PULSOS ES NECCESARIO ESTE EN??
                         end if;    
                     end if;
                 end if;
@@ -273,11 +296,6 @@ begin
         conta_5s <= (others => '0');
         timer_farkle <=0;
     elsif (clk'event and clk = '1') then
-        --Revisar esta condicion 
-        if(ESTADO = S_MOSTRAR) then
-            conta_2s <= (others => '0');
-        end if;
-        
         if(enable_1s = '1') then
         
             if(ESTADO = S_MOSTRAR and flag_farkle_dados = '1') then
@@ -290,13 +308,15 @@ begin
     
          
     
-            if(flag_conta5s='1') then 
+            if(flag_conta5s='1' or aux='0') then 
                 
                     if(conta_5s = 5) then
                         conta_5s <= (others => '0');
+                        aux<='1';
            
                     else                
                         conta_5s<=conta_5s+1;
+                        aux<='1';
                     end if;
             end if;
                     
