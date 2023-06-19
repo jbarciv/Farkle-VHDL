@@ -20,8 +20,11 @@ type Status_t is (S_ESPERANDO, S_COMPACTANDO, S_COMPACTADO);
 signal STATE: Status_t;
 
 signal flag_aux : std_logic;
+signal num_dados_mostrar_i : unsigned(2 downto 0);
 
 begin
+
+num_dados_mostrar_i<="110"-unsigned(num_dados_mostrar);
 
     process (clk, reset)
     begin

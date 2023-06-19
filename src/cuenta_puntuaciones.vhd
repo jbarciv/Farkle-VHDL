@@ -19,53 +19,22 @@ end cuenta_puntuaciones;
 
 architecture Behavioral of cuenta_puntuaciones is
 
-    -- Se�ales ptos partida y ronda 1 y 2
+    -- Se?ales ptos partida y ronda 1 y 2
     signal ptos_partida_1   : unsigned (13 downto 0); 
     signal ptos_partida_2   : unsigned (13 downto 0); 
     signal ptos_ronda_1     : unsigned (13 downto 0); 
-    signal ptos_ronda_2     : unsigned (13 downto 0);
-    --FSM
-    type ESTADOS is (S_ESPERANDO, S_ACTUALIZANDO, S_ACTUALIZADO);
-    signal ESTADO : ESTADOS;
-    -- Flags internas
-    signal aux, flag_dual, flag_ronda, flag_planta: std_logic;
+    signal ptos_ronda_2     : unsigned (13 downto 0); 
     
 begin
+
     --Proceso para sumar puntuaciones 
+    
     -- en_suma_ronda y planta_en se espera que sean pulsos de un ciclo
     -- Y es necesario que se produzcan en el mismo instante de tiempo
-    -- entre la se�al de farkle_ok (que tambien es un pulso) y el cambio
+    -- entre la se?al de farkle_ok (que tambien es un pulso) y el cambio
     -- de jugador en necesario que pasen varios ciclos de reloj, pues se 
     -- sobreescribe la informacion
-
-
-    process(clk, reset)
-    begin
-        if (reset = '1') then
-            ESTADO <= S_ESPERANDO;
-        elsif (clk'event and clk = '1') then
-            case ESTADO is 
-                when S_ESPERANDO =>
-                    if (en_suma_ronda = '1' and planta_en = '1') then
-                        ESTADO <= S_ACTUALIZANDO;
-                        flag_dual <= '1';
-                    elsif (en_suma_ronda = '1') then
-                        ESTADO <= S_ACTUALIZANDO;
-                        flag_ronda <= '1';
-                    elsif (planta_en = '1') then
-                        ESTADO <= S_ACTUALIZANDO;
-                        flag_planta <= '1';
-                    end if;
-
-                when S_ACTUALIZANDO =>
-                    if (aux
-
-                when S_ACTUALIZADO =>
-                    
-            end case;
-        end if;
-    end process;
-   
+    
     process(clk, reset)
     begin
         if(reset = '1') then

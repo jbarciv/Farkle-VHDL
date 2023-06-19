@@ -97,7 +97,7 @@ begin
                 en_ptos_ronda       => en_ptos_ronda,       
                 en_ptos_partida     => en_ptos_partida,
                 en_ptos_tirada      => en_ptos_tirada, 
-                count_dados         => count_dados,    
+                --count_dados         => count_dados,   NO HACE FALTA, MOVIDO A CONTROLADOR
                 uni_t               => uni_t, 
                 dec_t               => dec_t, 
                 cen_t               => cen_t, 

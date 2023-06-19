@@ -7,12 +7,13 @@ entity Puntuacion is
   Port (clk                 : in std_logic;
         reset               : in std_logic;
         en_calcula          : in std_logic;
-        dados               : in std_logic_vector(17 downto 0);
+        dados               : in std_logic_vector(20 downto 0);
         ptos                : out std_logic_vector(13 downto 0);
         error_s             : out std_logic;
         flag_puntuacion     : out std_logic;
         farkle_s            : out std_logic; 
-        count_dados         : out std_logic_vector(2 downto 0) 
+        dados_sel           : out std_logic_vector(2 downto 0);
+        flag_sel            : in std_logic
         );
 end Puntuacion;
 
@@ -28,6 +29,7 @@ signal ovf_dados    : std_logic;
 signal flag_cnt     : std_logic; 
 signal dado_pto     : std_logic_vector(2 downto 0);
 signal error,farkle_ok        : std_logic;
+signal count_dados           : std_logic_vector(2 downto 0);
 
 --FSM 
 type State_t is (S_ESPERA, S_CALCULANDO, S_CALCULADO);
@@ -48,22 +50,26 @@ begin
                 error_s<='0';
                 farkle_s<='0';
                 ptos<=(others=>'0');
+                dados_sel<=(others=>'0');
                 if (en_calcula='1') then 
                     STATE<=S_CALCULANDO;
                 end if;                     
             when S_CALCULANDO=>
+                dados_sel<=(others=>'0');
                 flag_puntuacion<='1';
                 if flag_cnt='1' then 
                     STATE<=S_CALCULADO;
                 end if;
             when S_CALCULADO=>
                 flag_puntuacion<='0';
-                if(error='1') then 
+                if(error='1' and flag_sel='1') then 
                     error_s<='1';
+                   
                 elsif(farkle_ok='1') then 
                     farkle_s<='1';
                 else 
                     ptos<=std_logic_vector(TO_UNSIGNED(ptos_tirada,14));
+                    dados_sel<=count_dados;
                 end if;    
                 if(en_calcula='0') then
                     STATE<=S_ESPERA;
@@ -80,7 +86,7 @@ begin
         cnt_dados<="000"; 
     elsif clk'event and clk='1' then 
         if STATE=S_CALCULANDO and flag_cnt='0' then 
-            if cnt_dados=5 then 
+            if cnt_dados=6 then 
                 cnt_dados<="000"; 
                 flag_cnt<='1'; 
             else
@@ -102,18 +108,21 @@ begin
     elsif clk'event and clk='1' then 
         if state=S_CALCULANDO and flag_cnt='0' then 
             case cnt_dados is 
-                when "000"=>
-                    dado_pto<=dados(17 downto 15); 
+                when "000"=> 
+                    dado_pto<=dados(20 downto 18); 
                 when "001"=>
-                    dado_pto<=dados(14 downto 12); --1
+                    dado_pto<=dados(17 downto 15); 
                 when "010"=>
-                    dado_pto<=dados(11 downto 9); --2
+                    dado_pto<=dados(14 downto 12); --1
                 when "011"=>
-                    dado_pto<=dados(8 downto 6);
+                    dado_pto<=dados(11 downto 9); --2
                 when "100"=>
-                    dado_pto<=dados(5 downto 3);
+                    dado_pto<=dados(8 downto 6);
                 when "101"=>
+                    dado_pto<=dados(5 downto 3);
+                when "110"=>
                     dado_pto<=dados(2 downto 0);
+  
                 when others=>
                 
             end case; 
@@ -164,7 +173,7 @@ begin
     end if;
 end process;
  
-count_dados<=std_logic_vector(count_1+count_2+count_3+count_4+count_5+count_6) when state=S_CALCULADO else "000";      
+count_dados<=std_logic_vector(count_1+count_2+count_3+count_4+count_5+count_6) when (state=S_CALCULADO and error='0' and farkle_ok='0') else "000";      
 
 
 

@@ -16,7 +16,7 @@ entity controlador is
             --flag_ptos_tirada   : in std_logic;
             --flag_ptos_ronda    : in std_logic;
             --flag_ptos_partida  : in std_logic;
-            flag_win           : in std_logic;
+            --flag_win           : in std_logic;
             en_apagado          : out std_logic;
             en_mostrar_dados    : out std_logic; --Habilitacion del scroll
             en_mostrar_error    : out std_logic; --Se seleccionan dados que no dan ptos
@@ -30,6 +30,7 @@ entity controlador is
             en_compacta         : out std_logic;
             --Cuenta puntuaciones
             ready_win           : in std_logic;
+            en_reset_ronda      : out std_logic;
             en_suma_ronda       : out std_logic;
             --top LFSR
             LFSR_listo          : in std_logic;
@@ -42,6 +43,7 @@ entity controlador is
             error_s               : in std_logic;
             farkle_s           : in std_logic; 
             flag_puntuacion    : in std_logic;
+            aux_sel            : out std_logic;
             --Which player
             change_player       : out std_logic;
             -- Puntuacion (count dados)
@@ -55,7 +57,7 @@ end controlador;
 architecture Behavioral of controlador is
 
 --FSM
-type ESTADOS is (S_ESPERAR, S_MOSTRAR, S_FARKLE, S_CALCULA, S_ERROR, S_MOSTRAR_PTOS, S_WIN);
+type ESTADOS is (S_ESPERAR,S_MASCARA,S_MOSTRAR,S_COMPROBAR_FARKLE,S_FARKLE,S_COMPACTA, S_CALCULA, S_ERROR, S_MOSTRAR_PTOS, S_WIN);
 signal ESTADO : ESTADOS;
 
 --Contadores para activar displays por 1 segundo y 5 segundos
@@ -65,7 +67,7 @@ signal enable_1s            : std_logic;
 signal conta_2s             : unsigned(1 downto 0);
 signal conta_5s            : unsigned(2 downto 0);
 signal flag_farkle_0000, flag_farkle_dados, flag_farkle_partida : std_logic;
-signal flag_sel, flag_planta : std_logic;
+signal flag_sel,flag_planta : std_logic;
 signal timer_farkle         : integer;
 signal count_dados_i        : integer;
 signal flag_conta5s         : std_logic;
@@ -97,6 +99,7 @@ begin
         flag_farkle_dados   <= '0';
         flag_farkle_0000    <= '0';
         flag_farkle_partida <= '0';
+        aux<='0';
     elsif(clk'event and clk='1') then
         case ESTADO is
             when S_ESPERAR =>
@@ -107,26 +110,47 @@ begin
                 end if;
                 if (LFSR_listo ='1') then
                     en_lfsr_top <= '0';
-                    en_refresh  <= '1';
                     en_apagado<='0';
-                    ESTADO      <= S_MOSTRAR;
+                    ESTADO      <= S_MASCARA;
+                end if;
+            
+            when S_MASCARA=>
+                en_select<='1';
+                if(ready_select='1') then 
+                    ESTADO<=S_COMPACTA;
+                    en_select<='0';
                 end if;
                 
-            when S_MOSTRAR =>
-                en_compacta<='1';       --LUGAR CORRECTO??
-                en_mostrar_dados    <= '1';
-                en_refresh          <= '0';
+            when S_COMPACTA=>
+                en_compacta<='1';
+                if(ready_compacta='1') then 
+                    ESTADO<=S_COMPROBAR_FARKLE;
+                    en_compacta<='0';
+                    en_refresh<='1';
+                end if;
+                                
+ 
+                    
+                when S_COMPROBAR_FARKLE=> 
                 en_calcula          <= '1'; 
-                --Comprobar farkle
+                en_refresh<='0';        --COMPROBAR SI FUNCIONA EN_REFRESH
                 if (flag_puntuacion = '0') then --ESTADO EN PUNTUACION.VHD:S_CALCULADO
-                    en_calcula<='0';
-                    if (farkle_s = '1' and flag_farkle_dados='0') then
+                    if (farkle_s = '1') then
                         ESTADO <= S_FARKLE;
-                        en_mostrar_dados<='0'; 
+                        en_calcula<='0'; 
                         flag_farkle_dados<='1';
+                    else
+                        ESTADO<=S_MOSTRAR;
                     end if;
                 end if;
-
+       
+                
+            
+                
+            when S_MOSTRAR =>
+                en_mostrar_dados    <= '1';
+                --en_refresh          <= '0';
+  
                 if(sel='1') then 
                     ESTADO <= S_CALCULA;
                     en_mostrar_dados<='0';
@@ -180,7 +204,7 @@ begin
                         en_ptos_tirada<='0';
                         flag_sel<='0';
                         flag_conta5s<='0';
-                        ESTADO<=S_MOSTRAR;
+                        ESTADO<=S_ESPERAR;
                     end if;
                     
                 elsif(flag_planta='1') then 
@@ -192,30 +216,29 @@ begin
                         flag_conta5s<='0';
                         ESTADO<=S_WIN;
                         end if;
-                    end if;
-                    else
+                   else
                         en_ptos_ronda<='1';
-                        if(conta_5s=5) then --5 s de mostrar ptos ronda
+                        if(conta_5s=5 and aux='0') then --5 s de mostrar ptos ronda
                             en_ptos_partida<='1';
                             en_ptos_ronda<='0';
                             flag_conta5s<='0';
-                            aux<='0';  
+                            aux<='1';  
+                        end if;
                           
-                            if(conta_5s=5) then --5 s de mostrar ptos partida
-                                en_ptos_partida<='0';
-                                flag_planta<='0';
-                                flag_conta5s<='0';
-                                aux<='1';
-                                ESTADO<=S_ESPERAR;
-                            
-                        
-                            end if;
+                        if(conta_5s=5 and aux='1') then --5 s de mostrar ptos partida
+                            en_ptos_partida<='0';
+                            flag_planta<='0';
+                            flag_conta5s<='0';
+                            aux<='0';
+                            ESTADO<=S_ESPERAR;
+                            change_player<='1';
                         end if;
 
                                         
                 end if;
                 
                 if(flag_farkle_0000='1') then 
+                    en_reset_ronda<='1';
                     en_ptos_ronda<='1';
                     if(conta_5s=5) then --5 s mostrar ptuacion 0000
                         en_ptos_ronda<='0';
@@ -223,6 +246,7 @@ begin
                         ESTADO<=S_FARKLE;
                         flag_farkle_0000<='0';
                         flag_conta5s<='0';
+                       
                     end if;
 
 
@@ -236,11 +260,11 @@ begin
                         change_player<='1';
                         flag_farkle_partida<='0';
                         flag_conta5s<='0';
-                        change_player<='1';
                     end if;
                     
                     
                 end if;
+            end if;
 
             when S_CALCULA => --Da igual que sea sel o planta
                 en_calcula <= '1';  --
@@ -308,7 +332,7 @@ begin
     
          
     
-            if(flag_conta5s='1' or aux='0') then 
+            if(flag_conta5s='1' or aux='1') then 
                 
                     if(conta_5s = 5) then
                         conta_5s <= (others => '0');
@@ -331,6 +355,8 @@ begin
     end if;
 end process;
 
+
+aux_sel<=flag_sel;
 
 
 end Behavioral;

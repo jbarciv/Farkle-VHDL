@@ -17,18 +17,18 @@ entity display is
             en_ptos_ronda       : in std_logic;
             en_ptos_partida     : in std_logic;
             en_ptos_tirada      : in std_logic;
-            count_dados         : in std_logic_vector(2 downto 0);
+            --count_dados         : in std_logic_vector(2 downto 0); --YA NO HACE FALTA, MOVIDO A CONTROLADOR
             uni_t, dec_t, cen_t, mil_t : in std_logic_vector(3 downto 0);
             uni_r, dec_r, cen_r, mil_r : in std_logic_vector(3 downto 0);
             uni_p, dec_p, cen_p, mil_P : in std_logic_vector(3 downto 0);
             segmentos           : out std_logic_vector(6 downto 0);
             selector            : out std_logic_vector(3 downto 0);
-            flag_mostrar_dados   : out std_logic;   -- ha terminado proceso
-            flag_error           : out std_logic;
-            flag_ptos_tirada     : out std_logic;
-            flag_ptos_ronda      : out std_logic;
-            flag_ptos_partida    : out std_logic;
-            flag_win             : out std_logic;
+            --flag_mostrar_dados   : out std_logic;   -- ha terminado proceso
+            --flag_error           : out std_logic;
+            --flag_ptos_tirada     : out std_logic;
+            --flag_ptos_ronda      : out std_logic;
+            --flag_ptos_partida    : out std_logic;
+            --flag_win             : out std_logic;
             en_1s                : out std_logic
             ); 
 end display; 
@@ -125,7 +125,7 @@ begin
                 end if;
                 
             when S_WIN =>
-                flag_win<='1';
+                --flag_win<='1';
             when others=>
                 
         end case;
