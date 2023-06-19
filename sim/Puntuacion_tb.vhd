@@ -11,22 +11,27 @@ component Puntuacion is --decirle a chema cuantos dados tiene que mostrar en la 
   Port (clk                 : in std_logic;
         reset               : in std_logic;
         en_calcula          : in std_logic;
-        dados               : in std_logic_vector(17 downto 0);
+        dados               : in std_logic_vector(20 downto 0);
         ptos                : out std_logic_vector(13 downto 0);
-        error               : out std_logic;
-        ready_puntuacion    : out std_logic;
-        farkle_ok           : out std_logic 
+        error_s             : out std_logic;
+        flag_puntuacion     : out std_logic;
+        farkle_s            : out std_logic; 
+        dados_sel           : out std_logic_vector(2 downto 0);
+        flag_sel            : in std_logic
+       
         );
 end component;
 
 
 --Inputs
 signal clk, reset, en_calcula   : std_logic;
-signal dados                    : std_logic_vector(17 downto 0);
+signal dados                    : std_logic_vector(20 downto 0);
+signal flag_sel                 : std_logic;
 
 --Outputs
-signal error, ready_puntuacion, farkle_ok  : std_logic;
-signal ptos                                    : std_logic_vector(13 downto 0);
+signal error_s, flag_puntuacion, farkle_s   : std_logic;
+signal ptos                                 : std_logic_vector(13 downto 0);
+signal dados_sel                            : std_logic_vector(2 downto 0) ;
 
 constant clk_period : time := 8 ns;
 
@@ -48,25 +53,30 @@ begin
     wait for 100 ns;
     reset <= '0';
     wait for 100 ns;
-    --Viene la siguiente secuencia de dados 110501
-    -- Debe dar como puntuacion 1050 ptos
+    --Viene la siguiente secuencia de dados 000111E
+    -- Debe dar como puntuacion 1000 ptos
     --error=0
     en_calcula<='0';
+    wait for 10 ns;
     
     en_calcula<='1';
-    dados<="001001000101000001";        
+    dados<="000000000001001001111"; 
+    flag_sel<='1';      
     wait for 100 ns;  
     en_calcula<='0';
+    flag_sel<='0';
     wait for 100 ns;
 
     --La persona ha seleccionado los dados mal, ha bajado los 2 primeros switches -66XXXX-
-    --661050 con puntuacion de 150 aunque luego hay que ver desde la maquina de estados que no salga puntuacion sino un error
+    --661500E con puntuacion de 150 aunque luego hay que ver desde la maquina de estados que no salga puntuacion sino un error
     --error=1, farkle_ok=0, en_suma_ronda=0
     
     en_calcula<='1'; 
-    dados<="110110001000101000";        
-     wait for 100 ns;  
+    flag_sel<='1';
+    dados<="110110001101000000111";        
+    wait for 100 ns;  
     en_calcula<='0';
+    flag_sel<='0';
     wait for 100 ns; 
  
     
@@ -75,8 +85,8 @@ begin
     --La persona no ha seleccionado pero deberia salir farkle
     
     en_calcula<='1';
-    dados<="110100011010010110";        
-     wait for 100 ns;  
+    dados<="110100011010010110111";        
+    wait for 100 ns;  
     en_calcula<='0';
     wait for 100 ns;
     
@@ -96,7 +106,8 @@ i_Puntuacion: Puntuacion
             error_s             => error_s,        
             flag_puntuacion     => flag_puntuacion,
             farkle_s            => farkle_s,        
-            count_dados         => count_dados     
+            dados_sel           => dados_sel, 
+            flag_sel            => flag_sel  
         );
 
 
