@@ -88,14 +88,15 @@ begin
 end process;
 
 i_Puntuacion: Puntuacion 
-  Port map (clk     => clk, 
-            reset   => reset,
-            en_calcula=> en_calcula,
-            dados=> dados, 
-            ptos    => ptos, 
-            error   => error,
-            ready_puntuacion=> ready_puntuacion, 
-            farkle_ok => farkle_ok
+  Port map (clk                 => clk,            
+            reset               => reset,          
+            en_calcula          => en_calcula,     
+            dados               => dados,          
+            ptos                => ptos,           
+            error_s             => error_s,        
+            flag_puntuacion     => flag_puntuacion,
+            farkle_s            => farkle_s,        
+            count_dados         => count_dados     
         );
 
 
