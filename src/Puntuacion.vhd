@@ -27,11 +27,12 @@ signal cnt_dados    : unsigned(2 downto 0);
 signal ovf_dados    : std_logic; 
 signal flag_cnt     : std_logic; 
 signal dado_pto     : std_logic_vector(2 downto 0);
-signal error        : std_logic;
+signal error,farkle_ok        : std_logic;
 
 --FSM 
 type State_t is (S_ESPERA, S_CALCULANDO, S_CALCULADO);
 signal STATE : State_t; 
+
 
 
 begin
