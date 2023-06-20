@@ -71,7 +71,7 @@ signal ready_win        : std_logic;
 signal en_suma_ronda    : std_logic;
 signal en_suma_partida  : std_logic;
 signal en_reset_ronda   : std_logic;
--- signal ready_cuenta_puntuacion : std_logic;
+signal ready_cuenta_puntuacion : std_logic;
 
 
 --CONTROLADOR       
@@ -139,7 +139,7 @@ filtrado    => planta_f
 );
 
 
-i_CONTROLLER: entity work.controller 
+i_CONTROLLER: entity work.controlador 
 
 Port map (  clk                 => clk,
             reset               => reset,
@@ -217,7 +217,7 @@ i_PUNTUACION: entity work.Puntuacion
             flag_sel            => flag_sel  
         );
 
-i_CUENTA_PUNTUACIONES: work.cuenta_puntuaciones
+i_CUENTA_PUNTUACIONES: entity work.cuenta_puntuaciones
 port map (  clk             => clk,
             reset           => reset,
             ptos            => ptos,
