@@ -12,19 +12,21 @@ architecture Behavioral of cuenta_puntuaciones_tb is
                 reset           : in std_logic;
                 ptos            : in std_logic_vector(13 downto 0);
                 en_suma_ronda   : in std_logic;
+                en_suma_partida : in std_logic;
+                en_reset_ronda  : in std_logic;
                 which_player    : in std_logic;
-                planta_en       : in std_logic;
-                farkle_ok       : in std_logic;
                 puntos_ronda    : out std_logic_vector(13 downto 0);
                 puntos_partida  : out std_logic_vector(13 downto 0);
-                error           : in std_logic;
+                ready_cuenta_puntuacion   : out std_logic;
                 ready_win       : out std_logic
              );
     end component;
     
-    signal clk, reset, en_suma_ronda, which_player, planta_en, farkle_ok, error, ready_win   : std_logic;
-    signal ptos, puntos_ronda, puntos_partida                               : std_logic_vector(13 downto 0);
-    constant clk_period                                                     : time := 8 ns;
+    signal clk, reset, en_suma_ronda, which_player, ready_win   : std_logic;
+    signal en_suma_partida, en_reset_ronda                      : std_logic;
+    signal ptos, puntos_ronda, puntos_partida                   : std_logic_vector(13 downto 0);
+    signal ready_cuenta_puntuacion                             : std_logic;
+    constant clk_period                                         : time := 8 ns;
     
 begin
 
@@ -35,11 +37,11 @@ begin
                     ptos            => ptos,
                     en_suma_ronda   => en_suma_ronda,
                     which_player    => which_player,
-                    planta_en       => planta_en,
-                    farkle_ok       => farkle_ok,
+                    en_suma_partida   => en_suma_partida,
+                    en_reset_ronda   => en_reset_ronda,
                     puntos_ronda    => puntos_ronda,
                     puntos_partida  => puntos_partida,
-                    error           => error, 
+                    ready_cuenta_puntuacion  => ready_cuenta_puntuacion,
                     ready_win       => ready_win
                 );
 
@@ -59,9 +61,8 @@ begin
         reset <= '1';
         ptos <= (others => '0');
         en_suma_ronda <= '0';
-        planta_en <= '0';
-        farkle_ok <= '0';
-        error<='0';
+        en_suma_partida <= '0';
+        en_reset_ronda <= '0';
         -- comienza jugando el jugador 1
         which_player <= '0';
         wait for 10*clk_period;
@@ -136,8 +137,10 @@ begin
         -- llegan 1000 puntos := 10000 ¡Ha ganado!
         ptos <= "00001111101000";
         en_suma_ronda <= '1';
+        en_suma_partida <= '1';
         wait for clk_period;
         en_suma_ronda <= '0';
+        en_suma_partida <= '0';
         ptos <= (others => '0');
         -- esperamos hasta la siguiente tirada
         wait for 10*clk_period;
@@ -170,10 +173,10 @@ begin
         -- llegan 50 puntos y SE PLANTA
         ptos <= "00000000110010";
         en_suma_ronda <= '1';
-        planta_en <= '1';
+        en_suma_partida <= '1';
         wait for clk_period;
         en_suma_ronda <= '0';
-        planta_en <= '0';
+        en_suma_partida <= '0';
         ptos <= (others => '0');
         wait for clk_period;
         which_player <= '1';
@@ -205,10 +208,10 @@ begin
         -- Y SE PLANTA EL JUGADOR 2
         ptos <= "00000000110010";
         en_suma_ronda <= '1';
-        planta_en <= '1';
+        en_suma_partida <= '1';
         wait for clk_period;
         en_suma_ronda <= '0';
-        planta_en <= '0';
+        en_suma_partida <= '0';
         ptos <= (others => '0');
         wait for clk_period;
         which_player <= '0';
@@ -228,10 +231,9 @@ begin
          
         -- farkle! lo siento jugador 1 has perdido los 50 puntos de esta ronda
         ptos <= (others => '0');
-        en_suma_ronda <= '0';
-        farkle_ok <= '1';
+        en_reset_ronda <= '1';
         wait for clk_period;
-        farkle_ok <= '0';
+        en_reset_ronda <= '0';
         wait for clk_period;
         which_player <= '1';
         -- esperamos hasta la siguiente tirada
@@ -269,10 +271,10 @@ begin
         -- llegan 1050 puntos := 10000 ¡Ha ganado!
         ptos <= "00010000011010";
         en_suma_ronda <= '1';
-        planta_en <= '1';
+        en_suma_partida <= '1';
         wait for clk_period;
         en_suma_ronda <= '0';
-        planta_en <= '0';
+        en_suma_partida <= '0';
         ptos <= (others => '0');
         -- esperamos hasta la siguiente tirada
         wait for 10*clk_period;
