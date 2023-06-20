@@ -29,14 +29,13 @@ begin
         wait for clk_period/2;
     end process;
 
-    -- Proceso que lleva a cabo un reset asincrono al inicio del test bench
     process
     begin
-        reset <= '1';
-        tirar <= '0';
-        sel <= '0';
-        planta <= '0';
-        switch <= "000000";
+        reset   <= '1';
+        tirar   <= '0';
+        sel     <= '0';
+        planta  <= '0';
+        switch  <= "000000";
         wait for 100 ns;
     
         reset <= '0';
@@ -54,6 +53,51 @@ begin
         sel <= '1';
         wait for 1 ms;
         sel <= '0';
+        wait for 10 ms;
+
+        tirar <= '1';
+        wait for 1 ms;
+        tirar <= '0';
+        wait for 10 ms;
+    
+        switch <= "110000";
+        wait for 50 ns;
+    
+        planta <= '1';
+        wait for 1 ms;
+        planta <= '0';
+        wait for 10 ms;
+
+        ---TIRADA 2 JUGADOR 1
+
+        tirar <= '1';
+        wait for 1 ms;
+        tirar <= '0';
+        wait for 10 ms;
+    
+        switch <= "000001";
+        wait for 50 ns;
+    
+        sel <= '1';
+        wait for 1 ms;
+        sel <= '0';
+        wait for 10 ms;
+
+        tirar <= '1';
+        wait for 1 ms;
+        tirar <= '0';
+        wait for 10 ms;
+    
+        switch <= "000011";
+        wait for 50 ns;
+    
+        planta <= '1';
+        wait for 1 ms;
+        planta <= '0';
+        wait for 10 ms;
+
+
+
     
     
     wait;
@@ -65,18 +109,15 @@ begin
 
 
 i_TOP: entity work.top
-Port map     (clk         =>clk,      
-              reset       =>reset,     
-              tirar       =>tirar,     
-              sel         =>sel,       
-              planta      =>planta,    
-              switch      =>switch,    
-              leds        =>leds,      
-              segmentos   =>segmentos, 
-              selector    =>selector  
-              );
-
-
-
+Port map   (clk         =>clk,      
+         reset       =>reset,     
+         tirar       =>tirar,     
+         sel         =>sel,       
+         planta      =>planta,    
+         switch      =>switch,    
+         leds        =>leds,      
+         segmentos   =>segmentos, 
+         selector    =>selector  
+         );
 
 end Behavioral;

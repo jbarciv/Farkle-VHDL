@@ -78,7 +78,11 @@ signal ready_cuenta_puntuacion : std_logic;
 signal flag_sel         : std_logic;
 
 --MASCARA
-signal dados_mascara    : std_logic_vector(20 downto 0);       
+signal dados_mascara    : std_logic_vector(20 downto 0); 
+
+--LEDS
+signal leds_which_player : std_logic_vector(7 downto 0);
+signal leds_win : std_logic_vector(7 downto 0);
 
 
 begin 
@@ -183,7 +187,7 @@ Port map (  clk                 => clk,
             --Which player
             change_player       => change_player       ,
             -- Puntuacion 
-            count_dados         => count_dados
+            count_dados         => dados_sel
           );
 
 i_LFSR: entity work.top_LFSR 
@@ -236,7 +240,7 @@ port map  ( clk             => clk,
             reset           => reset,
             change_player   => change_player,
             player          => player, 
-            leds            => leds
+            leds            => leds_which_player
         );
 
 i_WIN: entity work.win
@@ -244,8 +248,13 @@ port map (
     clk => clk,
     reset => reset,
     en_win => en_win,
-    leds => leds
+    leds => leds_win
 );
+
+-- Nos quitamos el punto decimal
+segmentos(7) <= '1';
+-- Asignacion LEDS 
+leds <= leds_which_player when en_win = '0' else leds_win;
 
 
 end Structural;
