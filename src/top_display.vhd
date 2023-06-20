@@ -112,12 +112,6 @@ begin
                 mil_P               => mil_P,          
                 segmentos           => segmentos,           
                 selector            => selector, 
-                flag_mostrar_dados   => flag_mostrar_dados, 
-                flag_error           => flag_error, 
-                flag_ptos_tirada     => flag_ptos_tirada, 
-                flag_ptos_ronda      => flag_ptos_ronda, 
-                flag_ptos_partida    => flag_ptos_partida, 
-                flag_win             => flag_win,
                 en_1s                => en_1s        
             );
 end Structural;

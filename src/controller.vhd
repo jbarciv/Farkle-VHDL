@@ -63,14 +63,14 @@ signal conta_5s            : unsigned(2 downto 0);
 signal flag_farkle_0000, flag_farkle_dados, flag_farkle_partida : std_logic;
 signal flag_sel,flag_planta : std_logic;
 signal timer_farkle         : integer;
-signal count_dados_i        : integer;
+signal count_dados_i        : unsigned(2 downto 0);
 signal flag_conta5s         : std_logic;
 signal flag_error           : std_logic;
 signal aux                  : std_logic;
 
 begin
 
-count_dados_i<=to_integer(unsigned(count_dados));
+count_dados_i<="110"-unsigned(count_dados);
 
 process(clk,reset)
 begin
@@ -205,10 +205,10 @@ begin
                     if(ready_win='1') then 
                         en_ptos_tirada<='1';
                         if(conta_5s=5) then 
-                        en_ptos_tirada<='0';
-                        flag_planta<='0';
-                        flag_conta5s<='0';
-                        ESTADO<=S_WIN;
+                            en_ptos_tirada<='0';
+                            flag_planta<='0';
+                            flag_conta5s<='0';
+                            ESTADO<=S_WIN;
                         end if;
                    else
                         en_ptos_ronda<='1';
@@ -226,9 +226,8 @@ begin
                             aux<='0';
                             ESTADO<=S_ESPERAR;
                             change_player<='1';
-                        end if;
-
-                                        
+                        end if;                    
+                    end if;
                 end if;
                 
                 if(flag_farkle_0000='1') then 
@@ -240,10 +239,7 @@ begin
                         ESTADO<=S_FARKLE;
                         flag_farkle_0000<='0';
                         flag_conta5s<='0';
-                       
                     end if;
-
-
                 end if;
 
                 if(flag_farkle_partida='1') then 
@@ -255,10 +251,7 @@ begin
                         flag_farkle_partida<='0';
                         flag_conta5s<='0';
                     end if;
-                    
-                    
                 end if;
-            end if;
 
             when S_CALCULA => --Da igual que sea sel o planta
                 en_calcula <= '1';  --

@@ -44,18 +44,17 @@ begin
     if reset='1' then 
         STATE<= S_ESPERA; 
         ptos<=(others=>'0');
+        dados_sel<="110";
     elsif clk'event and clk='1' then 
         case STATE is 
             when S_ESPERA=> 
                 error_s<='0';
                 farkle_s<='0';
                 ptos<=(others=>'0');
-                dados_sel<=(others=>'0');
                 if (en_calcula='1') then 
                     STATE<=S_CALCULANDO;
                 end if;                     
             when S_CALCULANDO=>
-                dados_sel<=(others=>'0');
                 flag_puntuacion<='1';
                 if flag_cnt='1' then 
                     STATE<=S_CALCULADO;
@@ -67,10 +66,9 @@ begin
                    
                 elsif(farkle_ok='1') then 
                     farkle_s<='1';
-                else 
-                    ptos<=std_logic_vector(TO_UNSIGNED(ptos_tirada,14));
-                    dados_sel<=count_dados;
-                end if;    
+                end if; 
+                ptos<=std_logic_vector(TO_UNSIGNED(ptos_tirada,14));
+                dados_sel<=count_dados;    
                 if(en_calcula='0') then
                     STATE<=S_ESPERA;
                 end if;

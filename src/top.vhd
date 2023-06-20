@@ -21,7 +21,6 @@ architecture Structural of top is
 signal dados                : std_logic_vector(20 downto 0);            
 signal puntos_ronda         : std_logic_vector(13 downto 0);  
 signal puntos_partida       : std_logic_vector(13 downto 0); 
-signal puntos_tirada        : std_logic_vector(13 downto 0); 
 signal en_refresh           : std_logic;  
 signal player               : std_logic;
 signal en_apagado           : std_logic;
@@ -31,7 +30,7 @@ signal en_win               : std_logic;
 signal en_ptos_ronda        : std_logic;  
 signal en_ptos_partida      : std_logic;
 signal en_ptos_tirada       : std_logic;     
-signal count_dados          : std_logic_vector(2 downto 0);  
+signal count_dados          : std_logic_vector(2 downto 0); 
 
 
 --COMPACTA_DADOS
@@ -65,17 +64,24 @@ signal dados_sel            : std_logic_vector(2 downto 0);
 
 --WHICH_PLAYER
 signal change_player    : std_logic;  
-signal which_player     : std_logic;
 
 --CUENTA_PUNTUACION
 signal ready_win        : std_logic;  
-signal en_suma_ronda    : std_logic; 
+signal en_suma_ronda    : std_logic;
+signal en_suma_partida  : std_logic;
+signal en_reset_ronda   : std_logic;
+signal ready_cuenta_puntuacion : std_logic;
+
 
 --CONTROLADOR       
 signal flag_sel         : std_logic;
 
 --MASCARA
-signal dados_mascara    : std_logic_vector(20 downto 0);       
+signal dados_mascara    : std_logic_vector(17 downto 0); 
+
+--LEDS
+signal leds_which_player : std_logic_vector(7 downto 0);
+signal leds_win : std_logic_vector(7 downto 0);
 
 
 begin 
@@ -96,8 +102,8 @@ the_display: entity work.top_display
     en_ptos_ronda       => en_ptos_ronda,   
     en_ptos_partida     => en_ptos_partida,
     en_ptos_tirada      => en_ptos_tirada,      
-    count_dados         => count_dados,   
-    segmentos           => segmentos,   
+    count_dados         => dados_sel,   
+    segmentos           => segmentos(6 downto 0),   
     selector            => selector 
 );
   
@@ -107,7 +113,7 @@ Port map  ( clk                 => clk,
             reset               => reset,            
             en_compacta         => en_compacta,      
             dados               => dados_mascara,            
-            num_dados_mostrar   => num_dados_mostrar,
+            num_dados_mostrar   => dados_sel,
             ready_compacta      => ready_compacta,   
             dados_s             => dados_compacta          
 );
@@ -173,14 +179,14 @@ Port map (  clk                 => clk,
             en_select           => en_select           ,
             --Puntuacion.vhd
             en_calcula          => en_calcula          ,
-            error_s             =>    error_s            ,  
+            error_s             => error_s            ,  
             farkle_s           =>  farkle_s           , 
             flag_puntuacion    =>  flag_puntuacion    ,
             aux_sel             => aux_sel,
             --Which player
             change_player       => change_player       ,
             -- Puntuacion 
-            count_dados         => count_dados
+            count_dados         => dados_sel
           );
 
 i_LFSR: entity work.top_LFSR 
@@ -214,12 +220,26 @@ i_PUNTUACION: entity work.Puntuacion
             flag_sel            => flag_sel  
         );
 
+i_CUENTA_PUNTUACIONES: entity work.cuenta_puntuaciones
+port map (  clk             => clk,
+            reset           => reset,
+            ptos            => ptos,
+            en_suma_ronda   => en_suma_ronda,
+            which_player    => player,
+            en_suma_partida   => en_suma_partida,
+            en_reset_ronda   => en_reset_ronda,
+            puntos_ronda    => puntos_ronda,
+            puntos_partida  => puntos_partida,
+            ready_cuenta_puntuacion  => ready_cuenta_puntuacion,
+            ready_win       => ready_win
+        );
+
 i_WHICH_PLAYER: entity work.which_Player 
 port map  ( clk             => clk,
             reset           => reset,
             change_player   => change_player,
             player          => player, 
-            leds            => leds
+            leds            => leds_which_player
         );
 
 i_WIN: entity work.win
@@ -227,8 +247,13 @@ port map (
     clk => clk,
     reset => reset,
     en_win => en_win,
-    leds => leds
+    leds => leds_win
 );
+
+-- Nos quitamos el punto decimal
+segmentos(7) <= '1';
+-- Asignacion LEDS 
+leds <= leds_which_player when en_win = '0' else leds_win;
 
 
 end Structural;
