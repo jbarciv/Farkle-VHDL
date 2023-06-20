@@ -24,7 +24,7 @@ signal num_dados_mostrar_i : unsigned(2 downto 0);
 
 begin
 
-num_dados_mostrar_i<="110"-unsigned(num_dados_mostrar);
+num_dados_mostrar_i <= "110" - unsigned(num_dados_mostrar);
 
     process (clk, reset)
     begin

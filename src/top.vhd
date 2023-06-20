@@ -77,7 +77,7 @@ signal ready_cuenta_puntuacion : std_logic;
 signal flag_sel         : std_logic;
 
 --MASCARA
-signal dados_mascara    : std_logic_vector(17 downto 0); 
+signal dados_mascara    : std_logic_vector(20 downto 0);       
 
 --LEDS
 signal leds_which_player : std_logic_vector(7 downto 0);
@@ -218,20 +218,6 @@ i_PUNTUACION: entity work.Puntuacion
             farkle_s            => farkle_s,        
             dados_sel           => dados_sel, 
             flag_sel            => flag_sel  
-        );
-
-i_CUENTA_PUNTUACIONES: entity work.cuenta_puntuaciones
-port map (  clk             => clk,
-            reset           => reset,
-            ptos            => ptos,
-            en_suma_ronda   => en_suma_ronda,
-            which_player    => player,
-            en_suma_partida   => en_suma_partida,
-            en_reset_ronda   => en_reset_ronda,
-            puntos_ronda    => puntos_ronda,
-            puntos_partida  => puntos_partida,
-            ready_cuenta_puntuacion  => ready_cuenta_puntuacion,
-            ready_win       => ready_win
         );
 
 i_WHICH_PLAYER: entity work.which_Player 
