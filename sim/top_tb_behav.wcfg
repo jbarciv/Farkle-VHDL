@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="top_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="top_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="35911592001fs"></ZoomEndTime>
+      <Cursor1Time time="25018216000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="294"></NameColumnWidth>
+      <ValueColumnWidth column_width="137"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="28" />
+   <wvobject fp_name="/top_tb/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/reset" type="logic">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/tirar" type="logic">
+      <obj_property name="ElementShortName">tirar</obj_property>
+      <obj_property name="ObjectShortName">tirar</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/sel" type="logic">
+      <obj_property name="ElementShortName">sel</obj_property>
+      <obj_property name="ObjectShortName">sel</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/planta" type="logic">
+      <obj_property name="ElementShortName">planta</obj_property>
+      <obj_property name="ObjectShortName">planta</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/switch" type="array">
+      <obj_property name="ElementShortName">switch[5:0]</obj_property>
+      <obj_property name="ObjectShortName">switch[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/leds" type="array">
+      <obj_property name="ElementShortName">leds[7:0]</obj_property>
+      <obj_property name="ObjectShortName">leds[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/segmentos" type="array">
+      <obj_property name="ElementShortName">segmentos[7:0]</obj_property>
+      <obj_property name="ObjectShortName">segmentos[7:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/selector" type="array">
+      <obj_property name="ElementShortName">selector[3:0]</obj_property>
+      <obj_property name="ObjectShortName">selector[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/clk_period" type="other">
+      <obj_property name="ElementShortName">clk_period</obj_property>
+      <obj_property name="ObjectShortName">clk_period</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_LFSR/dados" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">dados[17:0]</obj_property>
+      <obj_property name="ObjectShortName">dados[17:0]</obj_property>
+      <obj_property name="label">dados_LFSR[17:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_MASCARA/dados" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">dados[17:0]</obj_property>
+      <obj_property name="ObjectShortName">dados[17:0]</obj_property>
+      <obj_property name="label">dados_mascara[17:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_COMPACTA/dados" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">dados[17:0]</obj_property>
+      <obj_property name="ObjectShortName">dados[17:0]</obj_property>
+      <obj_property name="label">dados_compacta[17:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/the_display/mostrar_dados/dados_s" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">dados_s[20:0]</obj_property>
+      <obj_property name="ObjectShortName">dados_s[20:0]</obj_property>
+      <obj_property name="label">dados_scroll[20:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_CONTROLLER/count_dados" type="array">
+      <obj_property name="ElementShortName">count_dados[2:0]</obj_property>
+      <obj_property name="ObjectShortName">count_dados[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_CUENTA_PUNTUACIONES/puntos_ronda" type="array">
+      <obj_property name="ElementShortName">puntos_ronda[13:0]</obj_property>
+      <obj_property name="ObjectShortName">puntos_ronda[13:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_CUENTA_PUNTUACIONES/puntos_partida" type="array">
+      <obj_property name="ElementShortName">puntos_partida[13:0]</obj_property>
+      <obj_property name="ObjectShortName">puntos_partida[13:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_CUENTA_PUNTUACIONES/ready_win" type="logic">
+      <obj_property name="ElementShortName">ready_win</obj_property>
+      <obj_property name="ObjectShortName">ready_win</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/player" type="logic">
+      <obj_property name="ElementShortName">player</obj_property>
+      <obj_property name="ObjectShortName">player</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_CONTROLLER/conta_5s" type="array">
+      <obj_property name="ElementShortName">conta_5s[2:0]</obj_property>
+      <obj_property name="ObjectShortName">conta_5s[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_CONTROLLER/flag_conta5s" type="logic">
+      <obj_property name="ElementShortName">flag_conta5s</obj_property>
+      <obj_property name="ObjectShortName">flag_conta5s</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_CONTROLLER/ESTADO" type="other">
+      <obj_property name="ElementShortName">ESTADO</obj_property>
+      <obj_property name="ObjectShortName">ESTADO</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/the_display/the_display/STATE" type="other">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">STATE</obj_property>
+      <obj_property name="ObjectShortName">STATE</obj_property>
+      <obj_property name="label">STATE_DISPLAY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_PUNTUACION/STATE" type="other">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">STATE</obj_property>
+      <obj_property name="ObjectShortName">STATE</obj_property>
+      <obj_property name="label">STATE_PUNTUACION</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_COMPACTA/STATE" type="other">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">STATE</obj_property>
+      <obj_property name="ObjectShortName">STATE</obj_property>
+      <obj_property name="label">STATE_COMPACTA</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_COMPACTA/num_dados_mostrar_i" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">num_dados_mostrar_i[2:0]</obj_property>
+      <obj_property name="ObjectShortName">num_dados_mostrar_i[2:0]</obj_property>
+      <obj_property name="label">num_dados_mostrar_i[2:0]_COMPACTA</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_COMPACTA/dados_i" type="array">
+      <obj_property name="ElementShortName">dados_i[20:0]</obj_property>
+      <obj_property name="ObjectShortName">dados_i[20:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/i_TOP/i_COMPACTA/dados_s" type="array">
+      <obj_property name="ElementShortName">dados_s[20:0]</obj_property>
+      <obj_property name="ObjectShortName">dados_s[20:0]</obj_property>
+   </wvobject>
+</wave_config>
