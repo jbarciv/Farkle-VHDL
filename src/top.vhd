@@ -21,7 +21,6 @@ architecture Structural of top is
 signal dados                : std_logic_vector(20 downto 0);            
 signal puntos_ronda         : std_logic_vector(13 downto 0);  
 signal puntos_partida       : std_logic_vector(13 downto 0); 
-signal puntos_tirada        : std_logic_vector(13 downto 0); 
 signal en_refresh           : std_logic;  
 signal player               : std_logic;
 signal en_apagado           : std_logic;
@@ -69,7 +68,11 @@ signal which_player     : std_logic;
 
 --CUENTA_PUNTUACION
 signal ready_win        : std_logic;  
-signal en_suma_ronda    : std_logic; 
+signal en_suma_ronda    : std_logic;
+signal en_suma_partida  : std_logic;
+signal en_reset_ronda   : std_logic;
+-- signal ready_cuenta_puntuacion : std_logic;
+
 
 --CONTROLADOR       
 signal flag_sel         : std_logic;
@@ -136,7 +139,7 @@ filtrado    => planta_f
 );
 
 
-i_CONTROLLER: entity work.controlador 
+i_CONTROLLER: entity work.controller 
 
 Port map (  clk                 => clk,
             reset               => reset,
@@ -173,7 +176,7 @@ Port map (  clk                 => clk,
             en_select           => en_select           ,
             --Puntuacion.vhd
             en_calcula          => en_calcula          ,
-            error_s             =>    error_s            ,  
+            error_s             => error_s            ,  
             farkle_s           =>  farkle_s           , 
             flag_puntuacion    =>  flag_puntuacion    ,
             aux_sel             => aux_sel,
@@ -212,6 +215,20 @@ i_PUNTUACION: entity work.Puntuacion
             farkle_s            => farkle_s,        
             dados_sel           => dados_sel, 
             flag_sel            => flag_sel  
+        );
+
+i_CUENTA_PUNTUACIONES: work.cuenta_puntuaciones
+port map (  clk             => clk,
+            reset           => reset,
+            ptos            => ptos,
+            en_suma_ronda   => en_suma_ronda,
+            which_player    => which_player,
+            en_suma_partida   => en_suma_partida,
+            en_reset_ronda   => en_reset_ronda,
+            puntos_ronda    => puntos_ronda,
+            puntos_partida  => puntos_partida,
+            ready_cuenta_puntuacion  => ready_cuenta_puntuacion,
+            ready_win       => ready_win
         );
 
 i_WHICH_PLAYER: entity work.which_Player 

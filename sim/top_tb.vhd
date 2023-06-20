@@ -18,7 +18,47 @@ leds        : std_logic_vector(7 downto 0);
 segmentos   : std_logic_vector(7 downto 0);
 selector    : std_logic_vector(3 downto 0)
 
+constant clk_period:= 8 ns;
 begin
+
+-- Se�al clk
+process
+begin
+  clk <= '0';
+  wait for 4 ns;
+  clk <= '1';
+  wait for 4 ns;
+end process;
+
+-- Proceso que lleva a cabo un reset as�ncrono al inicio del test bench
+process
+begin
+    reset <= '1';
+    tirar <= '0';
+    sel <= '0';
+    planta <= '0';
+    switch <= "000000";
+    wait for 100 ns;
+
+    reset <= '0';
+    wait for 8 ns;
+    --TIRADA 1 JUGADOR 1
+    tirar <= '1';
+    wait for 1 ms;
+    tirar <= '0';
+    wait for 10 ms;
+
+    switch <= "100000";
+    wait for 50 ns;
+
+    sel <= '1';
+    wait for 1 ms;
+    sel <= '0';
+
+
+wait;
+end process;
+
 
     
 
