@@ -44,7 +44,7 @@ begin
     if reset='1' then 
         STATE<= S_ESPERA; 
         ptos<=(others=>'0');
-        dados_sel<="110";
+        dados_sel<="000";
     elsif clk'event and clk='1' then 
         case STATE is 
             when S_ESPERA=> 
@@ -170,8 +170,17 @@ begin
         end if;
     end if;
 end process;
- 
-count_dados<=std_logic_vector(count_1+count_2+count_3+count_4+count_5+count_6) when (state=S_CALCULADO and error='0' and farkle_ok='0') else "000";      
+
+process
+begin 
+    if reset='1' then 
+        count_dados<=(others=>'0');
+    elsif clk'event and clk='1' then
+        if STATE=S_CALCULADO then 
+            count_dados<=std_logic_vector(count_1+count_2+count_3+count_4+count_5+count_6);
+        end if;
+    end if;
+end process;     
 
 
 

@@ -21,7 +21,7 @@ signal STATE: Status_t;
 
 signal flag_aux : std_logic;
 signal num_dados_mostrar_i : unsigned(2 downto 0);
-signal dados_i      :std_logic_vector(20 downto 0); 
+--signal dados_i      :std_logic_vector(20 downto 0); 
 
 begin
 
@@ -36,7 +36,6 @@ num_dados_mostrar_i<="110"-unsigned(num_dados_mostrar);
             case STATE is
             
                 when S_ESPERANDO =>
-                    dados_i<=(others=>'0');
                     if 	( en_compacta = '1') then   
                         STATE <= S_COMPACTANDO;  
                     end if;
@@ -51,7 +50,6 @@ num_dados_mostrar_i<="110"-unsigned(num_dados_mostrar);
                     if (en_compacta = '0') then
                         ready_compacta <= '0';
                         STATE <= S_ESPERANDO;
-                        dados_s<=dados_i;
                     end if;
             end case;
         end if;
@@ -62,22 +60,23 @@ num_dados_mostrar_i<="110"-unsigned(num_dados_mostrar);
     begin
         if (reset = '1') then
             flag_aux <= '0';
-            dados_i <= (others => '0');
+            dados_s <= (others => '0');
         elsif (clk'event and clk = '1') then
             if (STATE = S_COMPACTANDO and flag_aux = '0') then
                 case num_dados_mostrar_i is
-                    when "000" => dados_i <= "111" & dados(17 downto 0);
-                    when "001" => dados_i <= dados(17 downto 15) & "111" & dados(14 downto 0);
-                    when "010" => dados_i <= dados(17 downto 12) & "111" & dados(11 downto 0);
-                    when "011" => dados_i <= dados(17 downto 9) & "111" & dados(8 downto 0);
-                    when "100" => dados_i <= dados(17 downto 6) & "111" & dados(5 downto 0);
-                    when "101" => dados_i <= dados(17 downto 3) & "111" & dados(2 downto 0);
-                    when "110" => dados_i <= dados(17 downto 0) & "111";
-                    when others => dados_i <= (others => '1');
+                    when "000" => dados_s <= "111" & dados(17 downto 0);
+                    when "001" => dados_s <= dados(17 downto 15) & "111" & dados(14 downto 0);
+                    when "010" => dados_s <= dados(17 downto 12) & "111" & dados(11 downto 0);
+                    when "011" => dados_s <= dados(17 downto 9) & "111" & dados(8 downto 0);
+                    when "100" => dados_s <= dados(17 downto 6) & "111" & dados(5 downto 0);
+                    when "101" => dados_s <= dados(17 downto 3) & "111" & dados(2 downto 0);
+                    when "110" => dados_s <= dados(17 downto 0) & "111";
+                    when others => dados_s <= (others => '1');
                 end case;
                 flag_aux <= '1';
             elsif (STATE = S_ESPERANDO) then
                 flag_aux <= '0';
+                dados_s<=(others=>'0');
             end if;
         end if;
     end process;
