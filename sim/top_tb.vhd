@@ -16,7 +16,8 @@ architecture Behavioral of top_tb is
     signal leds        : std_logic_vector(7 downto 0);
     signal segmentos   : std_logic_vector(7 downto 0);
     signal selector    : std_logic_vector(3 downto 0);
-    constant clk_period:= 8 ns;
+    
+    constant clk_period: time:= 8 ns;
 
 begin
 
@@ -39,39 +40,41 @@ begin
         wait for 100 ns;
     
         reset <= '0';
-        wait for 8 ns;
+        wait for 10 ms;
     
         --TIRADA 1 JUGADOR 1
         tirar <= '1';
-        wait for 1 ms;
+        wait for 10 ns;
         tirar <= '0';
-        wait for 10 ms;
+        wait for 20 ms;
     
-        switch <= "100000";
+        switch <= "110001";
         wait for 50 ns;
     
         sel <= '1';
-        wait for 1 ms;
+        wait for 10 ns;
         sel <= '0';
-        wait for 10 ms;
+        wait for 10 ns;
 
+        switch <= "000000";
         tirar <= '1';
-        wait for 1 ms;
+        wait for 1 ns;
         tirar <= '0';
-        wait for 10 ms;
+        wait for 20 ms;
     
         switch <= "110000";
-        wait for 50 ns;
+        wait for 5 ms;
     
         planta <= '1';
-        wait for 1 ms;
+        wait for 10 ns;
         planta <= '0';
-        wait for 10 ms;
+        wait for 5 ms;
 
         ---TIRADA 2 JUGADOR 1
-
+        
+        switch <= "000000";
         tirar <= '1';
-        wait for 1 ms;
+        wait for 10 ns;
         tirar <= '0';
         wait for 10 ms;
     
@@ -79,12 +82,13 @@ begin
         wait for 50 ns;
     
         sel <= '1';
-        wait for 1 ms;
+        wait for 10 ns;
         sel <= '0';
         wait for 10 ms;
 
+        switch <= "000000";
         tirar <= '1';
-        wait for 1 ms;
+        wait for 1 ns;
         tirar <= '0';
         wait for 10 ms;
     
@@ -94,13 +98,7 @@ begin
         planta <= '1';
         wait for 1 ms;
         planta <= '0';
-        wait for 10 ms;
-
-
-
-    
-    
-    wait;
+        wait;
     end process;
     
 
