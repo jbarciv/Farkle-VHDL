@@ -21,10 +21,10 @@ signal uni_num : unsigned(3 downto 0);
 signal dec_num : unsigned(3 downto 0);
 signal cen_num : unsigned(3 downto 0);
 signal mil_num : unsigned(3 downto 0);
-signal digit : unsigned(3 downto 0);
+--signal digit : unsigned(3 downto 0);
     
 --SENALES CONTADORES BCD --
-signal cuenta : integer range 0 to 8000;
+signal cuenta : integer range 0 to 10000;
 signal fin : std_logic;
 signal en_dec : std_logic;
 signal en_cen : std_logic;
