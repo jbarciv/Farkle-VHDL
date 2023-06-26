@@ -45,6 +45,7 @@ begin
     begin
         if( reset = '1') then
             STATE <= S_LISTO;
+            LFSR_listo <= '0';
         elsif (clk'event and clk = '1') then
             case STATE is
             
@@ -56,7 +57,7 @@ begin
                     end if;
 
                 when S_GENERANDO =>
-                    new_lfsr <= '1';
+                    --new_lfsr <= '1';
                     if 	( all_LFSR_ready = '1') then
                         LFSR_listo <= '1';
                         STATE <= S_GENERADO;
