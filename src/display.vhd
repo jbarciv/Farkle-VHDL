@@ -20,7 +20,7 @@ entity display is
             --count_dados         : in std_logic_vector(2 downto 0); --YA NO HACE FALTA, MOVIDO A CONTROLADOR
             uni_t, dec_t, cen_t, mil_t : in std_logic_vector(3 downto 0);
             uni_r, dec_r, cen_r, mil_r : in std_logic_vector(3 downto 0);
-            uni_p, dec_p, cen_p, mil_P : in std_logic_vector(3 downto 0);
+            uni_p, dec_p, cen_p, mil_p : in std_logic_vector(3 downto 0);
             segmentos           : out std_logic_vector(6 downto 0);
             selector            : out std_logic_vector(3 downto 0);
             --flag_mostrar_dados   : out std_logic;   -- ha terminado proceso
@@ -37,12 +37,12 @@ architecture Behavioral of display is
 
 
 --Senales divisor de frecuencia 4KHz
-constant maxcount4  : integer := 31;      --31250
+constant maxcount4  : integer := 31250;      --31250
 signal count4       : integer range 0 to maxcount4-1;
 signal enable_4KHz  : std_logic;
 
 --Senales divisor de frecuencia 1s
-constant maxcount   : integer := 125*10**3;   -- cambiar a 125000000 para probar en la placa fisica
+constant maxcount   : integer := 125*10**6;   -- cambiar a 125000000 para probar en la placa fisica
 signal count_1s     : integer range 0 to maxcount-1;
 signal enable_1s    : std_logic;
 
@@ -52,7 +52,7 @@ signal conta : unsigned(1 downto 0);
 
 -- Senales decodificadores display
 signal disp_dados : std_logic_vector(2 downto 0);
-signal disp_ptos : std_logic_vector(2 downto 0);
+--signal disp_ptos : std_logic_vector(2 downto 0);
 
 -- Senales auxiliares segmentos
 signal segmentos_dados : std_logic_vector(6 downto 0);
@@ -81,6 +81,9 @@ begin
                 if (en_mostrar_dados = '1') then    --Desde FSM general 
                     STATE <= S_DADOS;
                 end if;
+                if(en_win='1') then 
+                    STATE<=S_WIN;
+                end if;
             when S_DADOS =>
                 --flag_mostrar_dados <= '1';
                 if (en_mostrar_error = '1') then    --Desde FSM
@@ -105,8 +108,8 @@ begin
                 if(en_win='1') then 
                     STATE<=S_WIN;
                     --flag_ptos_tirada<='0';
-                elsif(en_mostrar_dados='1') then 
-                    STATE<=S_DADOS;
+                elsif (en_ptos_tirada = '0') then     --Desde FSM
+                    STATE <= S_APAGADO;
                     --flag_ptos_tirada<='0';
                 end if;
                 
