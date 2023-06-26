@@ -20,7 +20,7 @@ architecture Behavioral of Antirrebotes is
     signal STATE: Status_t;
     
     signal T, enable    : std_logic;
-    constant max_valor  : integer := 124999; -- ¿como automatizar el cambio para el testbench?
+    constant max_valor  : integer := 124999;--124999 -- Â¿como automatizar el cambio para el testbench?
     signal conta        : integer range 0 to max_valor;
     
 begin
