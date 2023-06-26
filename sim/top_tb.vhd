@@ -32,6 +32,7 @@ begin
 
     process
     begin
+        -- RESET
         reset   <= '1';
         tirar   <= '0';
         sel     <= '0';
@@ -44,68 +45,201 @@ begin
     
         --TIRADA 1 JUGADOR 1
         tirar <= '1';
-        wait for 10 ns;
+        wait for 2 ms;
         tirar <= '0';
         wait for 20 ms;
-    
-        switch <= "110001";
-        wait for 50 ns;
-    
-        sel <= '1';
-        wait for 10 ns;
-        sel <= '0';
-        wait for 10 ns;
-
-        switch <= "000000";
-        tirar <= '1';
-        wait for 1 ns;
-        tirar <= '0';
-        wait for 20 ms;
-    
-        switch <= "110000";
-        wait for 5 ms;
-    
-        planta <= '1';
-        wait for 10 ns;
-        planta <= '0';
-        wait for 5 ms;
-
-        ---TIRADA 2 JUGADOR 1
         
-        switch <= "000000";
-        tirar <= '1';
-        wait for 10 ns;
-        tirar <= '0';
-        wait for 10 ms;
-    
-        switch <= "000001";
+        -- SELECCION BUENA
+        switch <= "110000"; 
         wait for 50 ns;
-    
+        
         sel <= '1';
-        wait for 10 ns;
+        wait for 1 ms;
         sel <= '0';
-        wait for 10 ms;
-
+        wait for 20 ms;
+        
+        -- TIRADA 2 JUGAROD 1        
         switch <= "000000";
         tirar <= '1';
-        wait for 1 ns;
-        tirar <= '0';
-        wait for 10 ms;
-    
-        switch <= "000011";
-        wait for 50 ns;
-    
-        planta <= '1';
         wait for 1 ms;
-        planta <= '0';
+        tirar <= '0';
+        wait for 20 ms;
+        
+        -- SELECCION BUENA
+        switch <= "010000";
+        wait for 50 ns;
+        
+        sel <= '1';
+        wait for 1 ms;
+        sel <= '0';
+        wait for 20 ms;
+        
+        -- TIRADA 3 JUGAD
+        switch <= "000000";
+        tirar <= '1';
+        wait for 1 ms;
+        tirar <= '0';
+        wait for 20 ms;
+        
+        switch <= "010000";
+        wait for 50 ns;
+        
+        sel <= '1';
+        wait for 1 ms;
+        sel <= '0';
+        wait for 20 ms;
+        
+        
+--        -- jugador 2
+        
+--        switch <= "000000";
+--        tirar <= '1';
+--        wait for 1 ms;
+--        tirar <= '0';
+--        wait for 20 ms;
+    
+--        planta <= '1';
+--        wait for 1 ms;
+--        planta <= '0';
+--        wait for 20 ms;
+        
+        
+        
+--        sel <= '1';
+--        wait for 1 ms;
+--        sel <= '0';
+--        wait for 20 ms;
+
+--        switch <= "000000";
+--        tirar <= '1';       --543354, solo te enseña 5433
+--        wait for 1 ms;
+--        tirar <= '0';
+--        wait for 20 ms;
+        
+    
+--        switch <= "100000"; -- 500000
+--        wait for 50 ns;
+    
+--        sel <= '1';
+--        wait for 1 ms;
+--        sel <= '0';
+--        wait for 20 ms;
+        
+--        switch <= "000000";
+--        tirar <= '1';
+--        wait for 1 ms;
+--        tirar <= '0';
+--        wait for 20 ms;
+        
+--        switch <= "010000"; --
+--        wait for 50 ns;
+    
+--        sel <= '1';
+--        wait for 1 ms;
+--        sel <= '0';
+--        wait for 20 ms;
+        
+--        --COMPROBADO HASTA AQUI
+        
+        
+        
+--        ---TIRADA 1 JUGADOR 2
+        
+--        switch <= "000000";
+--        tirar <= '1';
+--        wait for 1 ms;
+--        tirar <= '0';
+--        wait for 30 ms; --farkle
+        
+--       --
+        
+--        switch <= "010100";
+--        wait for 50 ns;
+    
+--        sel <= '1';
+--        wait for 1 ms;
+--        sel <= '0';
+--        wait for 20 ms;
+--        --------------
+
+--        switch <= "000000";
+--        tirar <= '1';
+--        wait for 1 ms;
+--        tirar <= '0';
+--        wait for 20 ms;
+        
+    
+--        switch <= "100100"; --
+--        wait for 50 ns;
+    
+--        sel <= '1';
+--        wait for 1 ms;
+--        sel <= '0';
+--        wait for 20 ms;
+        
+--        switch <= "000000";
+--        tirar <= '1';
+--        wait for 1 ms;
+--        tirar <= '0';
+--        wait for 20 ms;
+        
+--        switch <= "110000";
+--        wait for 50 ns;
+    
+--        sel <= '1';
+--        wait for 1 ms;
+--        sel <= '0';
+--        wait for 20 ms;
+        
+--        switch <= "000000";
+--        tirar <= '1';
+--        wait for 1 ms;
+--        tirar <= '0';
+--        wait for 20 ms;
+        
+--        switch <= "100001";
+--        wait for 50 ns;
+    
+--        sel <= '1';
+--        wait for 1 ms;
+--        sel <= '0';
+--        wait for 20 ms;
+        
+--        switch <= "000000";
+--        tirar <= '1';
+--        wait for 1 ms;
+--        tirar <= '0';
+--        wait for 20 ms;
+        
+--        switch <= "110000";
+--        wait for 50 ns;
+    
+--        sel <= '1';
+--        wait for 1 ms;
+--        sel <= '0';
+--        wait for 20 ms;
+        
+--        switch <= "000000";
+--        tirar <= '1';
+--        wait for 1 ms;
+--        tirar <= '0';
+--        wait for 20 ms;
+        
+--        switch <= "100000";
+--        wait for 50 ns;
+    
+--        planta <= '1';
+--        wait for 1 ms;
+--        planta <= '0';
+--        wait for 20 ms;
+        
+        
+        
+        --COMPROBADO HASTA AQUI
+        
         wait;
     end process;
     
-
-    
-
-
-
 i_TOP: entity work.top
 Port map   (clk         =>clk,      
          reset       =>reset,     
