@@ -55,12 +55,15 @@ signal ready_select            : std_logic;
 
 --PUNTUACION 
 signal en_calcula          : std_logic;
+signal en_calcula_farkle   : std_logic; 
 signal ptos                :  std_logic_vector(13 downto 0);
 signal error_s             :  std_logic;
 signal flag_puntuacion     :  std_logic;
 signal farkle_s            :  std_logic; 
 signal aux_sel             : std_logic;
 signal dados_sel            : std_logic_vector(2 downto 0);
+signal dados_mostrar        : std_logic_vector(2 downto 0);
+
 
 --WHICH_PLAYER
 signal change_player    : std_logic;  
@@ -77,7 +80,7 @@ signal ready_cuenta_puntuacion : std_logic;
 signal flag_sel         : std_logic;
 
 --MASCARA
-signal dados_mascara    : std_logic_vector(17 downto 0); 
+signal dados_mascara    : std_logic_vector(20 downto 0); 
 
 --LEDS
 signal leds_which_player : std_logic_vector(7 downto 0);
@@ -102,7 +105,7 @@ the_display: entity work.top_display
     en_ptos_ronda       => en_ptos_ronda,   
     en_ptos_partida     => en_ptos_partida,
     en_ptos_tirada      => en_ptos_tirada,      
-    count_dados         => dados_sel,   
+    count_dados         => dados_mostrar,   
     segmentos           => segmentos(6 downto 0),   
     selector            => selector 
 );
@@ -112,8 +115,8 @@ i_COMPACTA: entity work.compacta_dados
 Port map  ( clk                 => clk,              
             reset               => reset,            
             en_compacta         => en_compacta,      
-            dados               => dados_mascara,            
-            num_dados_mostrar   => dados_sel,
+            dados               => dados_LFSR,            
+            num_dados_mostrar   => dados_mostrar,
             ready_compacta      => ready_compacta,   
             dados_s             => dados_compacta          
 );
@@ -146,9 +149,9 @@ i_CONTROLLER: entity work.controlador
 
 Port map (  clk                 => clk,
             reset               => reset,
-            tirar               => tirar,
-            sel                 => sel,
-            planta              => planta,
+            tirar               => tirar_f,
+            sel                 => sel_f,
+            planta              => planta_f,
             switch              => switch,               
             --Display
             --flag_mostrar_dados  => flag_mostrar_dados   ,
@@ -169,8 +172,11 @@ Port map (  clk                 => clk,
             ready_compacta      => ready_compacta       ,
             en_compacta         => en_compacta         ,
             --Cuenta puntuaciones- 
-            ready_win           => ready_win            ,
-            en_suma_ronda       => en_suma_ronda       ,
+            ready_win           => ready_win,
+            en_suma_ronda       => en_suma_ronda,
+            en_suma_partida     => en_suma_partida,
+            ready_cuenta_puntuacion=> ready_cuenta_puntuacion,
+            en_reset_ronda      => en_reset_ronda,
             --top LFSR
             LFSR_listo          => LFSR_listo           ,
             en_LFSR_top         => en_LFSR_top         ,
@@ -179,14 +185,15 @@ Port map (  clk                 => clk,
             en_select           => en_select           ,
             --Puntuacion.vhd
             en_calcula          => en_calcula          ,
+            en_calcula_farkle          => en_calcula_farkle          ,
             error_s             => error_s            ,  
             farkle_s           =>  farkle_s           , 
             flag_puntuacion    =>  flag_puntuacion    ,
             aux_sel             => aux_sel,
+            dados_mostrar       => dados_mostrar,
+            dados_sel           => dados_sel,
             --Which player
-            change_player       => change_player       ,
-            -- Puntuacion 
-            count_dados         => dados_sel
+            change_player       => change_player      
           );
 
 i_LFSR: entity work.top_LFSR 
@@ -201,8 +208,9 @@ i_MASCARA: entity work.mascara_dados
 port map(   clk         => clk,
             reset       => reset,
             sw          => switch,
-            dados       => dados_LFSR,
+            dados       => dados_compacta,
             en_select   => en_select,
+--            count_dados => dados_sel,
             dados_s     => dados_mascara,
             ready_select=> ready_select
         );
@@ -210,14 +218,16 @@ port map(   clk         => clk,
 i_PUNTUACION: entity work.Puntuacion
   Port map (clk                 => clk,            
             reset               => reset,          
-            en_calcula          => en_calcula,     
-            dados               => dados_compacta,          
+            en_calcula          => en_calcula,
+            en_calcula_farkle   => en_calcula_farkle,     
+            dados_mascara       => dados_mascara,
+            dados_farkle        => dados_compacta,
+            dados_mostrar       => dados_mostrar,
             ptos                => ptos,           
             error_s             => error_s,        
             flag_puntuacion     => flag_puntuacion,
             farkle_s            => farkle_s,        
-            dados_sel           => dados_sel, 
-            flag_sel            => flag_sel  
+            dados_sel           => dados_sel 
         );
 
 i_CUENTA_PUNTUACIONES: entity work.cuenta_puntuaciones
