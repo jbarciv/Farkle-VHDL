@@ -34,7 +34,7 @@ architecture Structural of top_display is
 
     signal uni_t,dec_t,cen_t,mil_t : std_logic_vector(3 downto 0);
     signal uni_r,dec_r,cen_r,mil_r : std_logic_vector(3 downto 0);
-    signal uni_p,dec_p,cen_p,mil_P : std_logic_vector(3 downto 0);
+    signal uni_p,dec_p,cen_p,mil_p : std_logic_vector(3 downto 0);
     signal dados_s_interna : std_logic_vector(20 downto 0);
     signal en_1s        :std_logic;
 
@@ -109,7 +109,7 @@ begin
                 uni_p               => uni_p, 
                 dec_p               => dec_p, 
                 cen_p               => cen_p, 
-                mil_P               => mil_P,          
+                mil_p               => mil_p,          
                 segmentos           => segmentos,           
                 selector            => selector, 
                 en_1s                => en_1s        
