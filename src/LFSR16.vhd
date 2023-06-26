@@ -20,7 +20,7 @@ architecture Behavioral of LFSR16 is
 
 begin
 
-    process (clk, reset)
+    process (clk, reset, semilla)
     begin
         if reset = '1' then
             Qint <= semilla;
