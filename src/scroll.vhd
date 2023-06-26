@@ -49,7 +49,7 @@ dados_s <=  dados_i when "110",
             "000000000" & dados_i(20 downto 18)& "000000000" when "001", --1 dado
             "000000" & dados_i(20 downto 15)&"000000000" when "010",    --2 dados
             "000" & dados_i(20 downto 12)& "000000000"when "011",       --3 dados
-            dados_i(20 downto 9) &"000000"when "100",           --4 dados
+            dados_i(20 downto 9) &"000000000"when "100",           --4 dados
             "---------------------" when others;
            
 end Behavioral;
