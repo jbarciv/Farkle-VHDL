@@ -20,7 +20,7 @@ end cuenta_puntuaciones;
 architecture Behavioral of cuenta_puntuaciones is
 
     -- Senales ptos partida y ronda 1 y 2
-    signal ptos_partida_1   : unsigned (13 downto 0); 
+    signal ptos_partida_1   : unsigned (13 downto 0);
     signal ptos_partida_2   : unsigned (13 downto 0); 
     signal ptos_ronda_1     : unsigned (13 downto 0); 
     signal ptos_ronda_2     : unsigned (13 downto 0); 
@@ -39,6 +39,11 @@ begin
         if (reset = '1') then
             ESTADO <= S_ESPERANDO;
             ptos_i <= (others => '0');
+            ready_cuenta_puntuacion <= '0';
+            flag_ronda <= '0';
+            flag_partida <= '0';
+            flag_reset <= '0';
+            flag_dual <= '0';
         elsif (clk'event and clk = '1') then
             case ESTADO is 
                 when S_ESPERANDO =>
@@ -61,7 +66,6 @@ begin
 
                 when S_ACTUALIZANDO =>
                     if (aux = '1') then    
-                        ready_cuenta_puntuacion <= '1';
                         flag_dual <= '0';
                         flag_ronda <= '0';
                         flag_partida <= '0';
@@ -70,6 +74,7 @@ begin
                     end if;
 
                 when S_ACTUALIZADO =>
+                        ready_cuenta_puntuacion <= '1';
                     if (en_suma_ronda = '0' and en_suma_partida = '0' and en_reset_ronda = '0') then    
                         ready_cuenta_puntuacion <= '0';
                         ESTADO <= S_ESPERANDO; 
@@ -138,6 +143,6 @@ begin
     puntos_ronda    <= std_logic_vector(ptos_ronda_1) when which_player = '0' else std_logic_vector(ptos_ronda_2);
     puntos_partida  <= std_logic_vector(ptos_partida_1) when which_player = '0' else std_logic_vector(ptos_partida_2);
     
-    ready_win <= '1' when((ptos_partida_1 or ptos_partida_2) > "10011100001111") else '0';
+    ready_win <= '1' when   ((ptos_partida_1 or ptos_partida_2) > "10011100001111") else '0';
     
 end Behavioral;
