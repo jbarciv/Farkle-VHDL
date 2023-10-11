@@ -4,7 +4,7 @@ This project is centered on designing and testing a circuit using **Xilinx Vivad
 
 
 Key words:
->> FPGA design, programming, physical implementation.
+> FPGA design, programming, physical implementation.
 
 ## Content
 **[1. Project Description](#1-project-description)**
