@@ -25,8 +25,8 @@ The circuit's objective is to replicate the Farkle dice game. The game mechanics
 - Four, five, or six identical dice: They are worth 1000, 2000, and 3000 points, respectively, regardless of the die values.
 
 
-[![IROS 2019: FASTER: Fast and Safe Trajectory Planner for Flights in Unknown Environments](./imgs/farkle.gif)]
-(Loading... Please wait)
+![Farkle](./imgs/farkle.gif)
+
 ### 1.2. Code
 There are two folders: one containing the code and another with the simulations (*testbenches*). The VHDL code files correspond to hardware description, essentially defining the digital components for building the circuit. Almost all the main blocks have a *top file* (e.g., `top_display.vhd`) that creates instances and establishes connections between the subblocks. The inclusion of state machines endows the files with a form of intelligence that enables a more efficient way of designing. Finally, there is the *main* (`top.vhd`) file that instantiates and interconnects the primary blocks.
 
